@@ -1,54 +1,39 @@
-# CLAUDE.md — Frontend Website Rules
+# 大豐耳鼻喉科聯合診所 — Clinic Website
 
-## Always Do First
-- **Invoke the `frontend-design` skill** before writing any frontend code, every session, no exceptions.
+A website for 大豐耳鼻喉科聯合診所 (Dafeng ENT United Clinic), a four-location ENT clinic in Taipei.
 
-## Reference Images
-- If a reference image is provided: match layout, spacing, typography, and color exactly. Swap in placeholder content (images via `https://placehold.co/`, generic copy). Do not improve or add to the design.
-- If no reference image: design from scratch with high craft (see guardrails below).
-- Screenshot your output, compare against reference, fix mismatches, re-screenshot. Do at least 2 comparison rounds. Stop only when no visible differences remain or user says so.
+## Content brief
 
-## Local Server
-- **Always serve on localhost** — never screenshot a `file:///` URL.
-- Start the dev server: `node serve.mjs` (serves the project root at `http://localhost:3000`)
-- `serve.mjs` lives in the project root. Start it in the background before taking any screenshots.
-- If the server is already running, do not start a second instance.
+The full site content — structure, page-by-page copy, doctor bios, locations, and SEO metadata — lives in `site-spec.md` at the project root. Treat that file as the source of truth for what goes on the site. Do not invent content, doctor information, or services not listed there. Where the brief has placeholders marked 〔待補〕, leave them as visible placeholders or flag them — do not make up replacement content.
 
-## Screenshot Workflow
-- Puppeteer is installed at `C:/Users/nateh/AppData/Local/Temp/puppeteer-test/`. Chrome cache is at `C:/Users/nateh/.cache/puppeteer/`.
-- **Always screenshot from localhost:** `node screenshot.mjs http://localhost:3000`
-- Screenshots are saved automatically to `./temporary screenshots/screenshot-N.png` (auto-incremented, never overwritten).
-- Optional label suffix: `node screenshot.mjs http://localhost:3000 label` → saves as `screenshot-N-label.png`
-- `screenshot.mjs` lives in the project root. Use it as-is.
-- After screenshotting, read the PNG from `temporary screenshots/` with the Read tool — Claude can see and analyze the image directly.
-- When comparing, be specific: "heading is 32px but reference shows ~24px", "card gap is 16px but should be 24px"
-- Check: spacing/padding, font size/weight/line-height, colors (exact hex), alignment, border-radius, shadows, image sizing
+## Brand assets
 
-## Output Defaults
-- Single `index.html` file, all styles inline, unless user says otherwise
-- Tailwind CSS via CDN: `<script src="https://cdn.tailwindcss.com"></script>`
-- Placeholder images: `https://placehold.co/WIDTHxHEIGHT`
-- Mobile-first responsive
+Real brand assets live in `brand_assets/`:
 
-## Brand Assets
-- Always check the `brand_assets/` folder before designing. It may contain logos, color guides, style guides, or images.
-- If assets exist there, use them. Do not use placeholders where real assets are available.
-- If a logo is present, use it. If a color palette is defined, use those exact values — do not invent brand colors.
+- `logo.pdf` — clinic logo
+- `新店 LINE QR code.jpg`, `木柵 LINE QR code.jpg`, `興隆 LINE QR code.jpg` — general LINE booking QR codes for each existing location
+- `興隆 surgery LINE QR code.png` — surgery inquiry/booking QR for 興隆
+- `新店木柵 surgery LINE QR code.png` — surgery inquiry/booking QR shared between 新店 and 木柵
 
-## Anti-Generic Guardrails
-- **Colors:** Never use default Tailwind palette (indigo-500, blue-600, etc.). Pick a custom brand color and derive from it.
-- **Shadows:** Never use flat `shadow-md`. Use layered, color-tinted shadows with low opacity.
-- **Typography:** Never use the same font for headings and body. Pair a display/serif with a clean sans. Apply tight tracking (`-0.03em`) on large headings, generous line-height (`1.7`) on body.
-- **Gradients:** Layer multiple radial gradients. Add grain/texture via SVG noise filter for depth.
-- **Animations:** Only animate `transform` and `opacity`. Never `transition-all`. Use spring-style easing.
-- **Interactive states:** Every clickable element needs hover, focus-visible, and active states. No exceptions.
-- **Images:** Add a gradient overlay (`bg-gradient-to-t from-black/60`) and a color treatment layer with `mix-blend-multiply`.
-- **Spacing:** Use intentional, consistent spacing tokens — not random Tailwind steps.
-- **Depth:** Surfaces should have a layering system (base → elevated → floating), not all sit at the same z-plane.
+Pair each location with its general QR on its location page. Surgery QRs belong on the surgery / 手術中心 section, and on each respective location page when surgery is mentioned. 中山 has no QR codes yet — leave placeholders.
 
-## Hard Rules
-- Do not add sections, features, or content not in the reference
-- Do not "improve" a reference design — match it
-- Do not stop after one screenshot pass
-- Do not use `transition-all`
-- Do not use default Tailwind blue/indigo as primary color
+Use these real assets instead of generic placeholders wherever possible.
+
+## Design
+
+Use the frontend-design skill in `.claude/skills/frontend-design/` for all UI work. The site is bilingual (primary: Traditional Chinese; secondary: English where useful). Tone: professional, warm, trustworthy — this is a healthcare site for patients and family members, not a design showcase. Avoid aggressive colors, flashy gradients, or anything that feels like a tech-startup landing page.
+
+## Technical
+
+- Plain HTML, CSS, and JavaScript — no build step, hostable on GitHub Pages
+- Mobile-first (over 70% of patients will visit on phones; see brief section 十)
+- Each location page should include structured data (schema.org MedicalClinic / LocalBusiness) per brief section 十二
+- Preview locally with `python3 -m http.server 8000` from the project root, then open `http://localhost:8000` in the browser. Never test against `file:///` URLs.
+
+## Compliance
+
+Taiwan medical advertising rules apply. See section 九 in `site-spec.md` for the do-not-use word list (no 保證, 最, 根治, 唯一, etc.) and the required footer disclaimer. Treat that section as hard constraints.
+
+## Status
+
+The 中山 (Zhongshan) flagship location opens October 2026. Until then, present it as "2026 年 10 月開幕・敬請期待" with no surgery-specific marketing language live on the site.
