@@ -128,7 +128,10 @@ body > * { position: relative; z-index: 1; }
   background: var(--surface);
   border: 1px solid var(--line);
   box-shadow: var(--shadow-sm);
-  object-fit: cover;
+  /* logo.png is a centered square mark with even built-in padding;
+     contain + center keeps the figure fully visible, never clipped */
+  object-fit: contain;
+  object-position: center;
   padding: 2px;
 }
 .brand__text { display: flex; flex-direction: column; line-height: 1.2; }
