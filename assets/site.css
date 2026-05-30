@@ -259,9 +259,9 @@ body > * { position: relative; z-index: 1; }
   inset: -30% -10% auto -10%;
   height: 150%;
   z-index: -1;
+  /* single-hue ambient depth (teal + cream) — no multi-color accent, per Design rules */
   background:
-    radial-gradient(44% 50% at 82% 0%, rgba(22, 99, 91, 0.10), transparent 70%),
-    radial-gradient(40% 46% at 8% 10%, rgba(204, 122, 69, 0.09), transparent 70%),
+    radial-gradient(48% 52% at 80% 0%, rgba(22, 99, 91, 0.08), transparent 70%),
     radial-gradient(70% 60% at 50% 120%, rgba(227, 239, 236, 0.55), transparent 70%);
 }
 .breadcrumb {
@@ -297,7 +297,6 @@ body > * { position: relative; z-index: 1; }
   content: "";
   width: 9px; height: 9px; border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 0 4px var(--accent-soft);
 }
 .page-head h1 {
   font-size: clamp(2rem, 4.8vw, 3rem);

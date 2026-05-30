@@ -23,6 +23,16 @@ Use these real assets instead of generic placeholders wherever possible.
 
 Use the frontend-design skill in `.claude/skills/frontend-design/` for all UI work. The site is bilingual (primary: Traditional Chinese; secondary: English where useful). Tone: professional, warm, trustworthy — this is a healthcare site for patients and family members, not a design showcase. Avoid aggressive colors, flashy gradients, or anything that feels like a tech-startup landing page.
 
+## Design rules (apply to every page, every component)
+
+**No glows, halos, or "glare" effects.** Dots, pills, badges, and status indicators are flat solid shapes. No box-shadow blur on dots, no radial-gradient halos, no soft outer glows. A colored dot is just a colored circle.
+
+**No multi-color gradient accents.** Cards, sections, and components do not use teal-to-terracotta or any other gradient as decoration — no gradient top bars, no gradient borders, no gradient hover states. Solid colors only. Linear gradients are permitted only for very subtle single-hue background washes (e.g. cream to slightly-darker cream) when used for depth, never as a color accent.
+
+**Hover state for cards = lift, not color.** Interactive cards translate up 4–6px on hover and deepen their shadow slightly. They do not change color, gain gradient bars, or shift hue. Transition transform and box-shadow only — never use `transition-all`.
+
+**Shadows are layered and tinted, not glowy.** Per the frontend-design skill: shadows use the established tinted-shadow tokens (`--shadow-sm`, `--shadow-md`, `--shadow-lg`). They suggest depth and physical layering, not light emission.
+
 ## Technical
 
 - Plain HTML, CSS, and JavaScript — no build step, hostable on GitHub Pages

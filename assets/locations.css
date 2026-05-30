@@ -22,21 +22,10 @@
   border-radius: var(--radius-lg);
   padding: var(--s-5);
   box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), border-color 0.35s var(--ease);
+  /* lift + shadow only on hover — no gradient, no color/border change */
+  transition: transform 0.35s ease-out, box-shadow 0.35s ease-out;
 }
-.loc-card::after {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary), var(--accent));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s var(--ease);
-}
-.loc-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: transparent; }
-.loc-card:hover::after { transform: scaleX(1); }
+.loc-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
 .loc-card:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
 .loc-card--soon { background: linear-gradient(180deg, #fff, var(--bg-2)); }
 
