@@ -16,7 +16,8 @@
   /* ============ English placeholder ============ */
   .coming { padding: var(--s-6) 0 var(--s-7); }
   .coming__inner { max-width: 760px; margin-inline: auto; text-align: center; }
-  .coming h1 { font-size: clamp(1.9rem, 4.6vw, 2.8rem); color: var(--primary-deep); margin-bottom: var(--s-3); }
+  /* override .page-head h1's max-width:22ch (no auto-margin) so the heading centres in the column */
+  .coming h1 { font-size: clamp(1.9rem, 4.6vw, 2.8rem); color: var(--primary-deep); margin: 0 auto var(--s-3); max-width: 18ch; text-align: center; }
   .coming__lead { color: var(--ink-soft); font-size: 1.06rem; line-height: 2; margin: 0 auto var(--s-2); max-width: 54ch; }
   .coming__zh { color: var(--ink-faint); font-size: 0.95rem; margin: 0 auto var(--s-5); }
 
@@ -78,8 +79,7 @@
   <section class="page-head coming">
     <div class="wrap">
       <div class="coming__inner">
-        <span class="eyebrow reveal in" style="display:inline-flex;align-items:center;gap:0.6rem;font-family:'Noto Serif TC',serif;font-size:0.95rem;letter-spacing:0.08em;color:var(--primary-deep);font-weight:600;padding:0.5rem 1.15rem;border:1px solid var(--primary-soft);background:#fff;box-shadow:var(--shadow-sm);border-radius:999px;margin-bottom:var(--s-4);">Dafeng ENT Clinic</span>
-        <h1 class="reveal in d1">English version coming soon</h1>
+        <h1 class="reveal in">English version coming soon</h1>
         <p class="coming__lead reveal in d2">Our English website is on its way — please check back. For inquiries in English, please contact us via LINE using the QR codes below.</p>
         <p class="coming__zh reveal in d2">英文版網站建置中，敬請期待。需要英文諮詢，歡迎透過下方 LINE 與我們聯繫。</p>
 
