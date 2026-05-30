@@ -2,7 +2,9 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-05-30_
+_Last updated: 2026-05-31_
+
+**2026-05-31 fixes:** (1) hero slogan reordered to **新店・文山在地深耕** (新店 first — founding location, 2010) across `index.html`, `about.html` title/meta/lead, and canonical `site-spec.md` §二-B. (2) All 5 `assets/qr/*` images cropped to a tight square + ~5% quiet-zone padding, removing the baked-in clinic-name text band (HTML labels unchanged). (3) Inter-section spacing tightened one step: `--s-7` 4.5→3.5rem, `--s-8` 6.5→5rem in `assets/site.css` (calmer hero→section gap site-wide).
 
 ---
 
