@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>診療項目｜耳・鼻・喉・頭頸一次照顧｜大豐耳鼻喉科聯合診所</title>
+<meta name="description" content="大豐耳鼻喉科提供一般耳鼻喉診療，以及睡眠呼吸中止症、眩暈、頭頸部腫瘤等專業評估門診，看診成人與兒童。中山旗艦手術中心 2026 年 10 月開幕。" />
+<link rel="icon" type="image/png" href="assets/favicon.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="assets/site.css" />
+<style>
+  /* ============ Services-specific ============ */
+
+  /* anchor nav under the page head */
+  .svc-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: var(--s-5); }
+  .svc-nav a {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.9rem; font-weight: 500;
+    color: var(--primary-deep);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 0.45rem 0.95rem;
+    transition: background 0.25s ease-out, border-color 0.25s ease-out, transform 0.25s ease-out;
+  }
+  .svc-nav a:hover { background: var(--primary-soft); border-color: var(--primary); transform: translateY(-2px); }
+  .svc-nav a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .svc-nav .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+  .svc-nav .dot--accent { background: var(--accent); }
+
+  /* block list */
+  .svc-list { display: flex; flex-direction: column; gap: var(--s-5); padding: var(--s-2) 0 var(--s-7); }
+  .svc {
+    scroll-margin-top: 88px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--s-6);
+  }
+  .svc__head { display: flex; align-items: flex-start; gap: var(--s-3); margin-bottom: var(--s-3); }
+  .svc__icon {
+    width: 52px; height: 52px; flex-shrink: 0;
+    border-radius: 14px;
+    display: grid; place-items: center;
+    background: var(--primary-soft); color: var(--primary-deep);
+  }
+  .svc:nth-of-type(even) .svc__icon { background: var(--accent-soft); color: var(--accent); }
+  .svc__icon svg { width: 26px; height: 26px; }
+  .svc__heading { flex: 1; min-width: 0; }
+  .svc__num { font-family: "Noto Serif TC", serif; color: var(--accent); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.06em; }
+  .svc__title {
+    font-family: "Noto Serif TC", serif; color: var(--primary-deep);
+    font-size: clamp(1.35rem, 3vw, 1.72rem); font-weight: 600;
+    display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+    margin: 0.1rem 0 0;
+  }
+  .svc-tag {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
+    color: #fff; background: var(--accent);
+    padding: 0.2rem 0.62rem; border-radius: 6px;
+    font-family: "Noto Sans TC", sans-serif;
+  }
+  .svc__intro { color: var(--ink-soft); margin: 0.4rem 0 var(--s-4); font-size: 1rem; }
+
+  .svc__grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-5); }
+  .svc__col h3 {
+    font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-faint); font-weight: 700;
+    display: flex; align-items: center; gap: 0.5rem; margin-bottom: var(--s-3);
+  }
+  .svc__col h3::before { content: ""; width: 18px; height: 2px; background: var(--accent); border-radius: 2px; }
+
+  /* symptom groups */
+  .sym-cats { display: flex; flex-direction: column; gap: var(--s-3); }
+  .sym-cat__label { font-weight: 600; color: var(--primary-deep); font-size: 0.94rem; margin-bottom: 0.25rem; }
+  .sym-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.45rem; }
+  .sym-list li {
+    font-size: 0.88rem; color: var(--ink-soft);
+    background: var(--bg-2); border-radius: 999px;
+    padding: 0.28rem 0.75rem; line-height: 1.5;
+  }
+
+  /* approach text */
+  .svc__col p { color: var(--ink-soft); margin: 0 0 var(--s-3); font-size: 0.97rem; line-height: 1.95; }
+  .svc__col p:last-child { margin-bottom: 0; }
+
+  /* warning-sign callout — solid left accent, no gradient */
+  .svc-callout {
+    display: flex; gap: 0.7rem;
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: var(--s-3) var(--s-4);
+    margin-top: var(--s-3);
+  }
+  .svc-callout svg { width: 20px; height: 20px; color: var(--accent); flex-shrink: 0; margin-top: 0.2rem; }
+  .svc-callout p { margin: 0; font-size: 0.9rem; color: var(--ink); line-height: 1.8; }
+
+  /* future-facility note (中山 link) — solid teal-soft */
+  .svc-future {
+    display: flex; gap: 0.6rem;
+    background: var(--primary-soft);
+    border-left: 3px solid var(--primary);
+    border-radius: 10px;
+    padding: var(--s-3) var(--s-4);
+    margin-top: var(--s-3);
+    font-size: 0.9rem; color: var(--primary-deep); line-height: 1.8;
+  }
+  .svc-future svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 0.2rem; }
+  .svc-future a { font-weight: 600; text-decoration: underline; }
+
+  /* meta footer (醫師 / 院區) */
+  .svc-meta {
+    display: flex; flex-wrap: wrap; gap: var(--s-4) var(--s-6);
+    margin-top: var(--s-5); padding-top: var(--s-4);
+    border-top: 1px solid var(--line);
+  }
+  .svc-meta__item { flex: 1 1 18rem; }
+  .svc-meta__label {
+    font-size: 0.76rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-faint); font-weight: 700; margin-bottom: 0.5rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .svc-meta__label svg { width: 15px; height: 15px; color: var(--primary); }
+  .svc-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+  .svc-chip {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    font-size: 0.88rem; font-weight: 500; color: var(--primary-deep);
+    border: 1px solid var(--line-strong); border-radius: 999px;
+    padding: 0.35rem 0.85rem;
+    transition: background 0.25s ease-out, border-color 0.25s ease-out, transform 0.25s ease-out;
+  }
+  .svc-chip:hover { background: var(--primary-soft); border-color: var(--primary); transform: translateY(-2px); }
+  .svc-chip:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .svc-chip svg { width: 14px; height: 14px; }
+  .svc-chip--soon { color: var(--ink-faint); border-style: dashed; }
+  .svc-chip--soon:hover { background: var(--bg-2); border-color: var(--line-strong); transform: none; }
+
+  /* ============ 中山 surgery-centre teaser ============ */
+  .svc-soon {
+    /* single-hue teal-soft wash for depth (no multi-color accent) */
+    background: linear-gradient(180deg, var(--primary-soft), #fff);
+    border: 1px solid var(--primary-soft);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--s-6);
+    scroll-margin-top: 88px;
+  }
+  .svc-soon__top { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; margin-bottom: var(--s-3); }
+  .svc-soon__badge {
+    font-family: "Noto Serif TC", serif; font-weight: 700; font-size: 0.86rem;
+    color: #fff; background: var(--accent);
+    padding: 0.35rem 0.9rem; border-radius: 999px;
+  }
+  .svc-soon h2 { font-size: clamp(1.4rem, 3.2vw, 1.9rem); color: var(--primary-deep); }
+  .svc-soon p { color: var(--ink-soft); margin: var(--s-3) 0 0; font-size: 0.99rem; line-height: 1.95; }
+  .feature-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: var(--s-3) 0 0; padding: 0; }
+  .feature-chips li {
+    list-style: none; font-size: 0.86rem; color: var(--primary-deep);
+    background: rgba(255,255,255,0.7); border: 1px solid var(--primary-soft);
+    border-radius: 999px; padding: 0.35rem 0.9rem;
+  }
+  .svc-soon__actions { margin-top: var(--s-5); display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+  /* ============ closing CTA ============ */
+  .svc-cta {
+    background:
+      linear-gradient(180deg, transparent, rgba(242, 234, 221, 0.6) 14%, rgba(242, 234, 221, 0.6) 86%, transparent);
+    padding: var(--s-7) 0;
+  }
+  .svc-cta__card {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    gap: var(--s-4) var(--s-5);
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+    padding: var(--s-5) var(--s-6);
+  }
+  .svc-cta__card h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); color: var(--primary-deep); }
+  .svc-cta__card p { margin: 0.4rem 0 0; color: var(--ink-soft); font-size: 0.96rem; max-width: 48ch; }
+  .svc-cta__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+  /* ============ Responsive ============ */
+  @media (max-width: 760px) {
+    .svc { padding: var(--s-5); }
+    .svc__grid { grid-template-columns: 1fr; gap: var(--s-4); }
+    .svc-cta__card { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">跳到主要內容</a>
+
+<!-- ===================== Header ===================== -->
+<header class="site-header" id="header">
+  <div class="wrap nav">
+    <a href="index.html" class="brand" aria-label="大豐耳鼻喉科聯合診所 首頁">
+      <img src="assets/logo.png" alt="大豐耳鼻喉科聯合診所 標誌" class="brand__mark" />
+      <span class="brand__text">
+        <span class="brand__name">大豐耳鼻喉科</span>
+        <span class="brand__sub">DAFENG ENT CLINIC</span>
+      </span>
+    </a>
+    <nav class="nav__links" id="navLinks" aria-label="主要選單">
+      <a href="about.html">關於大豐</a>
+      <a href="services.html" aria-current="page">診療項目</a>
+      <a href="team.html">醫療團隊</a>
+      <a href="locations.html">院區・門診</a>
+      <a href="blog.html">衛教專欄</a>
+    </nav>
+    <a href="contact.html" class="btn nav__cta">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      立即預約
+    </a>
+    <button class="nav__toggle" id="navToggle" aria-label="開啟選單" aria-expanded="false" aria-controls="navLinks">
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+  <!-- ===================== Page head ===================== -->
+  <section class="page-head">
+    <div class="wrap">
+      <nav class="breadcrumb" aria-label="麵包屑">
+        <a href="index.html">首頁</a>
+        <span class="sep">／</span>
+        <span aria-current="page">診療項目</span>
+      </nav>
+      <span class="eyebrow reveal in">耳・鼻・喉・頭頸 一次照顧</span>
+      <h1 class="reveal in d1">診療項目</h1>
+      <p class="page-head__lead reveal in d2">從耳、鼻、喉到頭頸，大豐照顧成人與兒童的日常與特殊耳鼻喉需求。除一般門診外，另設睡眠呼吸中止症、眩暈與頭頸部專業評估門診；第四家旗艦院區「中山手術中心」將於 2026 年 10 月開幕。</p>
+      <nav class="svc-nav reveal in d3" aria-label="診療項目快速連結">
+        <a href="#general"><span class="dot"></span>一般耳鼻喉診療</a>
+        <a href="#sleep"><span class="dot dot--accent"></span>睡眠呼吸中止症</a>
+        <a href="#vertigo"><span class="dot dot--accent"></span>眩暈評估</a>
+        <a href="#headneck"><span class="dot dot--accent"></span>頭頸部腫瘤</a>
+        <a href="#zhongshan"><span class="dot"></span>中山手術中心</a>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ===================== Service blocks ===================== -->
+  <section aria-label="診療項目" >
+    <div class="wrap svc-list">
+
+      <!-- ① 一般耳鼻喉診療 -->
+      <article class="svc reveal" id="general">
+        <div class="svc__head">
+          <span class="svc__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A1 1 0 0 0 3 3v3a6 6 0 0 0 12 0V3a1 1 0 0 0-1.8-.7"/><path d="M9 14v2a5 5 0 0 0 10 0v-1"/><circle cx="20" cy="10" r="2"/></svg>
+          </span>
+          <div class="svc__heading">
+            <span class="svc__num">01</span>
+            <h2 class="svc__title">一般耳鼻喉診療</h2>
+          </div>
+        </div>
+        <p class="svc__intro">從感冒、過敏到反覆發作的老毛病，都是我們的日常。無論大人小孩，常見的耳鼻喉問題都能在大豐就近看診。</p>
+
+        <div class="svc__grid">
+          <div class="svc__col">
+            <h3>看診範圍</h3>
+            <div class="sym-cats">
+              <div>
+                <div class="sym-cat__label">耳科</div>
+                <ul class="sym-list"><li>中耳炎</li><li>中耳積水</li><li>外耳炎</li><li>耳垢栓塞</li><li>耳鳴</li><li>聽力檢查與評估</li></ul>
+              </div>
+              <div>
+                <div class="sym-cat__label">鼻科</div>
+                <ul class="sym-list"><li>過敏性鼻炎</li><li>鼻竇炎</li><li>鼻塞</li><li>流鼻血</li><li>鼻中膈彎曲評估</li></ul>
+              </div>
+              <div>
+                <div class="sym-cat__label">咽喉</div>
+                <ul class="sym-list"><li>咽喉炎</li><li>扁桃腺炎</li><li>聲音沙啞</li><li>喉嚨異物感</li><li>慢性咳嗽</li></ul>
+              </div>
+              <div>
+                <div class="sym-cat__label">小兒專科</div>
+                <ul class="sym-list"><li>兒童感冒</li><li>過敏</li><li>中耳炎</li><li>扁桃腺與腺樣體問題</li></ul>
+              </div>
+            </div>
+          </div>
+          <div class="svc__col">
+            <h3>什麼時候來</h3>
+            <p>感冒、鼻過敏、喉嚨不適這些看似小事，反覆發作或拖久了都可能影響生活品質。大豐以一致的專業標準，為您與家人就近處理常見的耳鼻喉問題。</p>
+            <p>兒童的感冒、過敏、中耳炎，以及扁桃腺與腺樣體問題，由小兒專科醫師細心診療，家長更安心。</p>
+          </div>
+        </div>
+
+        <div class="svc-meta">
+          <div class="svc-meta__item">
+            <div class="svc-meta__label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+              由哪些醫師看診
+            </div>
+            <div class="svc-chips">
+              <a class="svc-chip" href="team.html">耳鼻喉科專科醫師＋小兒專科醫師<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            </div>
+          </div>
+          <div class="svc-meta__item">
+            <div class="svc-meta__label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              可前往哪些院區
+            </div>
+            <div class="svc-chips">
+              <a class="svc-chip" href="location-xindian.html">新店</a>
+              <a class="svc-chip" href="location-xinglong.html">興隆</a>
+              <a class="svc-chip" href="location-muzha.html">木柵</a>
+              <a class="svc-chip svc-chip--soon" href="location-zhongshan.html">中山 2026/10</a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ② 睡眠呼吸中止症 -->
+      <article class="svc reveal" id="sleep">
+        <div class="svc__head">
+          <span class="svc__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+          <div class="svc__heading">
+            <span class="svc__num">02</span>
+            <h2 class="svc__title">睡眠呼吸中止症<span class="svc-tag">特色門診</span></h2>
+          </div>
+        </div>
+        <p class="svc__intro">長期打鼾、睡不飽、白天嗜睡，可能不只是累，而是睡眠呼吸中止症在影響您的健康。</p>
+
+        <div class="svc__grid">
+          <div class="svc__col">
+            <h3>常見症狀</h3>
+            <ul class="sym-list">
+              <li>夜間打鼾</li><li>睡眠中被旁人發現呼吸暫停</li><li>晨起頭痛</li><li>白天嗜睡</li><li>注意力不集中</li><li>睡不飽</li>
+            </ul>
+            <div class="svc-callout">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+              <p>出現以上狀況，建議來院評估。睡眠呼吸中止症與高血壓、心血管疾病、白天注意力下降都有關聯。</p>
+            </div>
+          </div>
+          <div class="svc__col">
+            <h3>評估與安排</h3>
+            <p>大豐提供完整的評估流程：詳細問診、上呼吸道內視鏡檢查，並可安排（或轉介）睡眠檢測，協助釐清打鼾與呼吸中止的原因。</p>
+            <p>依個別狀況，治療方向可能包含生活型態調整、陽壓呼吸器（CPAP）、口腔矯正裝置，或進一步的手術評估。我們會與您一起找出合適的方式。</p>
+            <div class="svc-future">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4 8 4v14"/><path d="M9 9h.01M9 13h.01M9 17h.01"/></svg>
+              <span>2026 年 10 月起，<a href="#zhongshan">中山院區</a>將提供居家睡眠檢測、口腔 3D 掃描與 3D 列印止鼾牙套，以及鼻中隔／軟齶手術等一站式選項。</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="svc-meta">
+          <div class="svc-meta__item">
+            <div class="svc-meta__label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+              由哪些醫師看診
+            </div>
+            <div class="svc-chips">
+              <a class="svc-chip" href="team.html">團隊醫師<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              <span class="tbd">醫師 × 院區 × 時段待確認</span>
+            </div>
+          </div>
+          <div class="svc-meta__item">
+            <div class="svc-meta__label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              可前往哪些院區
+            </div>
+            <div class="svc-chips">
+              <a class="svc-chip" href="location-xindian.html">新店</a>
+              <a class="svc-chip" href="location-muzha.html">木柵</a>
+              <a class="svc-chip svc-chip--soon" href="location-zhongshan.html">中山手術中心 2026/10</a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ③ 眩暈評估 -->
+      <article class="svc reveal" id="vertigo">
+        <div class="svc__head">
+          <span class="svc__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0"/><path d="M12 12a5 5 0 0 1 5-5 7 7 0 0 1 0 14H8a6 6 0 0 1 0-12"/></svg>
+          </span>
+          <div class="svc__heading">
+            <span class="svc__num">03</span>
+            <h2 class="svc__title">眩暈評估<span class="svc-tag">特色門診</span></h2>
+          </div>
+        </div>
+        <p class="svc__intro">天旋地轉、走路飄、姿勢一變就頭暈 —— 眩暈的成因很多，找對原因才能對症處理。</p>
+
+        <div class="svc__grid">
+          <div class="svc__col">
+            <h3>常見狀況</h3>
+            <ul class="sym-list">
+              <li>天旋地轉</li><li>走路飄、站不穩</li><li>姿勢改變就頭暈</li><li>合併耳鳴或聽力變化</li>
+            </ul>
+            <div class="svc-callout">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+              <p>若眩暈合併單側聽力下降、耳鳴、劇烈頭痛、手腳無力或意識變化，請儘速就醫評估。</p>
+            </div>
+          </div>
+          <div class="svc__col">
+            <h3>評估與安排</h3>
+            <p>大豐的眩暈門診會從病史、耳部與平衡功能評估著手，協助鑑別常見成因，例如耳石脫落（良性陣發性姿勢性眩暈，BPPV）、梅尼爾氏症、前庭神經炎等。</p>
+            <p>並依診斷提供藥物治療、耳石復位術，或衛教與追蹤建議，陪您一步步釐清頭暈的原因。</p>
+          </div>
+        </div>
+
+        <div class="svc-meta">
+          <div class="svc-meta__item">
+            <div class="svc-meta__label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+              由哪些醫師看診
+            </div>
+            <div class="svc-chips">
+              <a class="svc-chip" href="team.html">團隊醫師<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              <span class="tbd">醫師 × 院區 × 時段待確認</span>
+            </div>
+          </div>
+          <div class="svc-meta__item">
+            <div class="svc-meta__label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              可前往哪些院區
+            </div>
+            <div class="svc-chips">
+              <a class="svc-chip" href="location-xindian.html">新店</a>
+              <a class="svc-chip" href="location-xinglong.html">興隆</a>
+              <a class="svc-chip" href="location-muzha.html">木柵</a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ④ 頭頸部腫瘤 -->
+      <article class="svc reveal" id="headneck">
+        <div class="svc__head">
+          <span class="svc__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          </span>
+          <div class="svc__heading">
+            <span class="svc__num">04</span>
+            <h2 class="svc__title">頭頸部腫瘤<span class="svc-tag">特色門診</span></h2>
+          </div>
+        </div>
+        <p class="svc__intro">摸到脖子上的腫塊、長期不消，別自己嚇自己，也別輕忽 —— 交給專業評估更安心。</p>
+
+        <div class="svc__grid">
+          <div class="svc__col">
+            <h3>常見評估對象</h3>
+            <ul class="sym-list">
+              <li>頸部腫塊</li><li>甲狀腺腫瘤</li><li>唾液腺腫瘤</li><li>口腔與咽喉部病灶</li>
+            </ul>
+            <div class="svc-callout">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+              <p>頸部腫塊長期不消、持續變大，或合併吞嚥、聲音的變化時，建議及早就醫評估。</p>
+            </div>
+          </div>
+          <div class="svc__col">
+            <h3>診斷、評估與治療規劃</h3>
+            <p>大豐提供頭頸部腫塊與腫瘤的診斷與評估，包含鼻咽喉內視鏡檢查、頸部超音波，必要時安排細針穿刺或影像檢查<span class="review-note">（請依實際服務調整）</span>。</p>
+            <p>完成診斷後，醫師會為您說明結果、提供治療建議，並在需要時協助轉介至合作醫院進行後續治療，讓您不必獨自摸索。</p>
+          </div>
+        </div>
+
+        <div class="svc-meta">
+          <div class="svc-meta__item">
+            <div class="svc-meta__label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+              由哪些醫師看診
+            </div>
+            <div class="svc-chips">
+              <a class="svc-chip" href="team.html">團隊醫師<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              <span class="tbd">醫師 × 院區 × 時段待確認</span>
+            </div>
+          </div>
+          <div class="svc-meta__item">
+            <div class="svc-meta__label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              可前往哪些院區
+            </div>
+            <div class="svc-chips">
+              <a class="svc-chip" href="location-muzha.html">木柵</a>
+              <a class="svc-chip" href="location-xindian.html">新店</a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== 中山手術中心 teaser ===================== -->
+  <section aria-label="中山手術中心">
+    <div class="wrap">
+      <div class="svc-soon reveal" id="zhongshan">
+        <div class="svc-soon__top">
+          <span class="svc-soon__badge">2026 年 10 月開幕・敬請期待</span>
+          <span class="svc__num">旗艦院區・手術中心</span>
+        </div>
+        <h2>中山旗艦手術中心・一站式睡眠與鼻過敏中心</h2>
+        <p>2026 年 10 月，大豐第四家分院將於台北市中山區開幕。除一般門診外，中山院區將設有完整開刀房，並規劃由耳鼻喉科專科醫師執行鼻中隔（鼻中膈）手術與軟齶成型手術，用於協助改善鼻塞、鼻過敏與睡眠呼吸中止症。實際適用方式由醫師依個別狀況評估後建議。</p>
+        <p>針對鼻過敏、鼻塞與睡眠呼吸中止症，開幕後將提供整合式評估與治療工具：</p>
+        <ul class="feature-chips">
+          <li>鼻咽內視鏡檢查</li>
+          <li>居家睡眠檢測</li>
+          <li>口腔 3D 掃描</li>
+          <li>3D 列印止鼾牙套</li>
+        </ul>
+        <p><span class="tbd">中山院區地址、電話、開幕確切日期與開刀房可預約時程待補</span></p>
+        <div class="svc-soon__actions">
+          <a class="btn btn--ghost" href="location-zhongshan.html">
+            了解中山院區
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Closing CTA ===================== -->
+  <section class="svc-cta">
+    <div class="wrap">
+      <div class="svc-cta__card reveal">
+        <div>
+          <h2>看診前先預約，少等待、少白跑</h2>
+          <p>您可透過電話、LINE 官方帳號或線上掛號預約一般門診。特色門診的看診醫師與時段，請洽各院區。</p>
+        </div>
+        <div class="svc-cta__actions">
+          <a class="btn" href="contact.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            前往預約
+          </a>
+          <a class="btn btn--ghost" href="locations.html">查看院區・門診</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===================== Footer ===================== -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <img src="assets/logo.png" alt="大豐耳鼻喉科聯合診所 標誌" class="footer__logo" />
+        <span class="brand__name">大豐耳鼻喉科聯合診所</span>
+        <p>深耕新店、木柵與文山興隆，集結 6 位耳鼻喉科專科醫師與 1 位小兒專科醫師，陪伴社區每一個家庭。</p>
+      </div>
+      <div class="footer__locs">
+        <a class="loc" href="location-xindian.html">
+          <h4>新店大豐<span class="tag">總院</span></h4>
+          <p>231 新北市新店區明德里建國路 161、163 號 1 樓</p>
+          <p>電話 <span class="tel">02-2219-3122</span></p>
+        </a>
+        <a class="loc" href="location-xinglong.html">
+          <h4>興隆大豐</h4>
+          <p>116 臺北市文山區興安里興隆路二段 118 號</p>
+          <p>電話 <span class="tel">02-2933-6969</span></p>
+        </a>
+        <a class="loc" href="location-muzha.html">
+          <h4>木柵大豐</h4>
+          <p>116 臺北市文山區樟文里木新路三段 220 號 1 樓</p>
+          <p>電話 <span class="tel">02-2937-1299</span></p>
+        </a>
+        <a class="loc loc--soon" href="location-zhongshan.html">
+          <h4>中山大豐<span class="tag">手術中心</span></h4>
+          <p>臺北市中山區</p>
+          <p>2026 年 10 月開幕・敬請期待</p>
+        </a>
+      </div>
+    </div>
+
+    <p class="disclaimer">本網站依《醫療機構網際網路資訊管理辦法》規定：禁止任何網際網路服務業者轉錄本網站資訊之內容供人點閱；但以網路搜尋或超連結方式直接進入本網站者，不在此限。本網站內容僅供衛教參考，無法取代醫師親自診療，實際病情請以門診醫師評估為準。</p>
+
+    <div class="footer__base">
+      <span>© 2026 大豐耳鼻喉科聯合診所</span>
+      <nav aria-label="頁尾選單">
+        <a href="about.html">關於大豐</a>
+        <a href="services.html">診療項目</a>
+        <a href="team.html">醫療團隊</a>
+        <a href="locations.html">院區・門診</a>
+        <a href="contact.html">預約掛號</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>
