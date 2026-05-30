@@ -2,7 +2,32 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules.
 
-_Last updated: 2026-05-29_
+_Last updated: 2026-05-30_
+
+---
+
+## 🏗️ Architecture — shared stylesheet (NEW this session)
+
+The site is no longer one self-contained file. Shared chrome now lives in:
+- **`assets/site.css`** — design tokens, base/reset, grain overlay, header/nav, buttons, `.sec-head`, `.page-head` (interior banner) + breadcrumb, footer, `.reveal`, `.skip-link`, editorial flags (`.review-note`, `.tbd`), shared responsive. Every page links this.
+- **`assets/site.js`** — sticky-header border, mobile nav toggle, IntersectionObserver reveal (with no-JS/`prefers-reduced-motion` fallback). Linked at end of `<body>`.
+- **`assets/locations.css`** — components specific to the location hub + detail pages (loaded only by those pages).
+- `index.html` was refactored to use these; only homepage-specific CSS (hero/quick/features) stays inline in it.
+
+**When building the remaining pages:** link `assets/site.css` + `assets/site.js`, copy the header/footer markup verbatim (set `aria-current="page"` on the active nav item), and add page-specific CSS either inline or in a new `assets/<page>.css`. Nav order: 關於大豐 / 診療項目 / 醫療團隊 / 院區・門診 / 衛教專欄, CTA → `contact.html`.
+
+Nav/footer link targets (some pages not built yet → will 404 until then): `about.html`, `services.html`, `team.html`, `locations.html`, `blog.html`, `contact.html`.
+
+---
+
+## ✅ Done — Locations (NEW this session)
+
+- **`locations.html`** — hub: 院區切換 grid (4 cards), 全院區門診總表 call-out (data still `待補`).
+- **`location-xindian.html`** / **`-xinglong.html`** / **`-muzha.html`** — full detail pages: page-head + breadcrumb, 門診時間 table (all cells `待補`), 交通 + 地圖 placeholder panels, contact sidebar (院長 / 看診醫師`待補` / address / tel link / FB), and LINE QR cards using the **real** `brand_assets` QRs (copied to `assets/qr/` with ASCII names). Each has **schema.org `MedicalClinic`** JSON-LD (name/tel/address/sameAs).
+  - QR pairing: 新店 & 木柵 → general QR + shared `xindian-muzha-surgery-line.png`; 興隆 → general QR + `xinglong-surgery-line.png`. Surgery QRs framed neutrally as "手術・睡眠諮詢".
+- **`location-zhongshan.html`** — 中山 coming-soon: "2026 年 10 月開幕" banner, surgery-centre capabilities in **future/preview tense** (將/規劃/開幕後將提供) per §四⑤ ⚠️, all of 院長/地址/電話/門診 as `待補`, **no QR** (placeholder), pre-registration placeholder. No live surgery 招攬.
+- Compliance: scanned clean. Rephrased `第一時間`→`搶先` to avoid the §九 `第一` flag. `最近`(=nearest) kept (verbatim §二, previously accepted).
+- Verified: all pages + assets serve 200; screenshots in `temporary screenshots/loc-*` (desktop + mobile) look correct.
 
 ---
 
@@ -43,8 +68,8 @@ All nav links currently point to `#`. Remaining pages (per `site-spec.md` §一 
 - **關於大豐** (§三) — clinic philosophy + the five highlights (some already on homepage).
 - **診療項目 / Services** (§四) — four blocks: 一般耳鼻喉科 / 睡眠呼吸中止症 / 眩暈 / 頭頸部腫瘤, plus the 中山手術中心 一站式 section. Watch §四 ⚠️ tone warnings (頭頸部 = "診斷/轉介" language; 手術 = avoid 保證/最/根治).
 - **醫療團隊 / Team** (§五) — 7 doctors. NOTE: bios are marked **建議專長（待確認）** — flag as "pending confirmation", don't present as final.
-- **四大院區・門診時間・交通 / Locations** (§六) — per-location pages. Pair each with its `brand_assets/` LINE QR; surgery QRs on 手術中心 + relevant location pages; **中山 has no QR yet — placeholder**. Add schema.org `MedicalClinic`/`LocalBusiness` (§十二).
-- **全院區門診總表 / Weekly schedule** (§十一) — integrated 醫師 × 院區 × 時段 table; brief suggests filterable. **Schedule data is blank 〔待補〕** in the brief.
+- ~~**四大院區・門診時間・交通 / Locations** (§六)~~ — ✅ DONE this session (see above).
+- **全院區門診總表 / Weekly schedule** (§十一) — integrated 醫師 × 院區 × 時段 table; brief suggests filterable. **Schedule data is blank 〔待補〕** in the brief. (Hub page already has a call-out card pointing here; build the actual table page next, or fold into `locations.html`.)
 - **預約掛號 / 聯絡我們 / Contact** (§八) — 電話 / LINE / 線上掛號 CTAs.
 - **衛教專欄 / Blog** (§七) — SEO articles; topic list given, no article bodies yet.
 

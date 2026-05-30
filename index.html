@@ -11,229 +11,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet" />
 
+<link rel="stylesheet" href="assets/site.css" />
 <style>
-  /* ============ Tokens ============ */
-  :root {
-    /* warm, calm healthcare palette — deep teal + cream + warm apricot accent */
-    --bg:          #FAF6EF;
-    --bg-2:        #F2EADD;
-    --surface:     #FFFFFF;
-    --ink:         #2B2A26;
-    --ink-soft:    #5E584E;
-    --ink-faint:   #918A7C;
-    --primary:     #16635B;
-    --primary-deep:#0E4A44;
-    --primary-soft:#E3EFEC;
-    --accent:      #CC7A45;
-    --accent-soft: #F6E7D7;
-    --line:        rgba(43, 42, 38, 0.10);
-    --line-strong: rgba(43, 42, 38, 0.16);
+  /* ============ Homepage-specific ============ */
 
-    /* layered, color-tinted shadows */
-    --shadow-sm: 0 1px 2px rgba(14, 74, 68, 0.05), 0 2px 6px rgba(14, 74, 68, 0.05);
-    --shadow-md: 0 2px 4px rgba(14, 74, 68, 0.05), 0 8px 24px rgba(14, 74, 68, 0.08);
-    --shadow-lg: 0 4px 8px rgba(14, 74, 68, 0.06), 0 18px 48px rgba(14, 74, 68, 0.12);
-
-    /* spacing scale */
-    --s-1: 0.5rem;  --s-2: 0.75rem; --s-3: 1rem;  --s-4: 1.5rem;
-    --s-5: 2rem;    --s-6: 3rem;    --s-7: 4.5rem; --s-8: 6.5rem;
-
-    --maxw: 1140px;
-    --radius:   14px;
-    --radius-lg:22px;
-    --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  *, *::before, *::after { box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-
-  body {
-    margin: 0;
-    font-family: "Noto Sans TC", system-ui, sans-serif;
-    color: var(--ink);
-    background: var(--bg);
-    line-height: 1.8;
-    font-size: 16px;
-    letter-spacing: 0.01em;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    overflow-x: hidden;
-  }
-
-  h1, h2, h3 {
-    font-family: "Noto Serif TC", serif;
-    font-weight: 600;
-    line-height: 1.3;
-    letter-spacing: -0.01em;
-    margin: 0;
-    color: var(--ink);
-  }
-
-  a { color: inherit; text-decoration: none; }
-  img { display: block; max-width: 100%; }
-
-  .wrap { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: var(--s-4); }
-
-  /* ============ Grain / texture overlay ============ */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.4;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  }
-  body > * { position: relative; z-index: 1; }
-
-  /* ============ Header ============ */
-  .site-header {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: rgba(250, 246, 239, 0.78);
-    backdrop-filter: saturate(140%) blur(12px);
-    -webkit-backdrop-filter: saturate(140%) blur(12px);
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.4s var(--ease), background 0.4s var(--ease);
-  }
-  .site-header.scrolled {
-    border-bottom-color: var(--line);
-    background: rgba(250, 246, 239, 0.92);
-  }
-  .nav {
-    display: flex;
-    align-items: center;
-    gap: var(--s-4);
-    height: 72px;
-  }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-    margin-right: auto;
-    flex-shrink: 0;
-  }
-  .brand__mark {
-    width: 46px; height: 46px;
-    border-radius: 50%;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow-sm);
-    object-fit: cover;
-    padding: 2px;
-  }
-  .brand__text { display: flex; flex-direction: column; line-height: 1.2; }
-  .brand__name {
-    font-family: "Noto Serif TC", serif;
-    font-weight: 700;
-    font-size: 1.12rem;
-    letter-spacing: 0.02em;
-    color: var(--primary-deep);
-  }
-  .brand__sub {
-    font-size: 0.66rem;
-    letter-spacing: 0.22em;
-    color: var(--ink-faint);
-    text-transform: uppercase;
-  }
-
-  .nav__links {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-  .nav__links a {
-    padding: 0.5rem 0.85rem;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    color: var(--ink-soft);
-    font-weight: 500;
-    transition: color 0.25s var(--ease), background 0.25s var(--ease);
-  }
-  .nav__links a:hover { color: var(--primary-deep); background: var(--primary-soft); }
-  .nav__links a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-
-  /* buttons */
-  .btn {
-    --btn-bg: var(--primary);
-    --btn-fg: #fff;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.7rem 1.3rem;
-    border-radius: 999px;
-    background: var(--btn-bg);
-    color: var(--btn-fg);
-    font-weight: 500;
-    font-size: 0.95rem;
-    border: 1px solid transparent;
-    cursor: pointer;
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), background 0.25s var(--ease);
-  }
-  .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); background: var(--primary-deep); }
-  .btn:active { transform: translateY(0); }
-  .btn:focus-visible { outline: 2px solid var(--primary-deep); outline-offset: 3px; }
-  .btn svg { width: 16px; height: 16px; }
-
-  .btn--ghost {
-    --btn-bg: transparent;
-    --btn-fg: var(--primary-deep);
-    border-color: var(--line-strong);
-    box-shadow: none;
-  }
-  .btn--ghost:hover { background: var(--surface); border-color: var(--primary); transform: translateY(-2px); }
-
-  .nav__cta { flex-shrink: 0; }
-
-  /* hamburger */
-  .nav__toggle {
-    display: none;
-    width: 44px; height: 44px;
-    border: 1px solid var(--line-strong);
-    border-radius: 10px;
-    background: var(--surface);
-    cursor: pointer;
-    align-items: center; justify-content: center;
-  }
-  .nav__toggle span, .nav__toggle span::before, .nav__toggle span::after {
-    content: "";
-    display: block;
-    width: 20px; height: 2px;
-    background: var(--ink);
-    border-radius: 2px;
-    transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
-  }
-  .nav__toggle span::before { position: absolute; transform: translateY(-6px); }
-  .nav__toggle span::after  { position: absolute; transform: translateY(6px); }
-  .nav__toggle span { position: relative; }
-
-  /* ============ Hero ============ */
-  .hero {
-    position: relative;
-    padding: var(--s-8) 0 var(--s-4);
-    overflow: hidden;
-  }
-  /* layered soft radial gradients — atmosphere, not flash */
-  .hero::before {
-    content: "";
-    position: absolute;
-    inset: -20% -10% auto -10%;
-    height: 130%;
-    z-index: -1;
-    background:
-      radial-gradient(46% 50% at 78% 12%, rgba(22, 99, 91, 0.10), transparent 70%),
-      radial-gradient(40% 44% at 12% 22%, rgba(204, 122, 69, 0.10), transparent 70%),
-      radial-gradient(60% 60% at 50% 100%, rgba(227, 239, 236, 0.7), transparent 70%);
-  }
-  .hero__grid {
-    display: grid;
-    grid-template-columns: 1.4fr 0.72fr;
-    gap: var(--s-8);
-    align-items: center;
-  }
+  /* hero eyebrow pill */
   .eyebrow {
     display: inline-flex;
     align-items: center;
@@ -255,6 +37,30 @@
     width: 9px; height: 9px; border-radius: 50%;
     background: var(--accent);
     box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+
+  /* ============ Hero ============ */
+  .hero {
+    position: relative;
+    padding: var(--s-8) 0 var(--s-4);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: -20% -10% auto -10%;
+    height: 130%;
+    z-index: -1;
+    background:
+      radial-gradient(46% 50% at 78% 12%, rgba(22, 99, 91, 0.10), transparent 70%),
+      radial-gradient(40% 44% at 12% 22%, rgba(204, 122, 69, 0.10), transparent 70%),
+      radial-gradient(60% 60% at 50% 100%, rgba(227, 239, 236, 0.7), transparent 70%);
+  }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: 1.4fr 0.72fr;
+    gap: var(--s-8);
+    align-items: center;
   }
   .hero h1 {
     font-size: clamp(2.1rem, 5.2vw, 3.35rem);
@@ -397,26 +203,6 @@
   .qcard__more svg { width: 15px; height: 15px; transition: transform 0.3s var(--ease); }
   .qcard:hover .qcard__more svg { transform: translateX(4px); }
 
-  /* ============ Section heading ============ */
-  .sec-head { max-width: 46ch; margin-bottom: var(--s-6); }
-  .sec-head .kicker {
-    font-size: 0.92rem;
-    letter-spacing: 0.14em;
-    color: var(--accent);
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.8rem;
-  }
-  .sec-head .kicker::before {
-    content: "";
-    width: 22px; height: 2px; border-radius: 2px;
-    background: var(--accent);
-  }
-  .sec-head h2 { font-size: clamp(1.7rem, 3.6vw, 2.4rem); font-weight: 700; }
-  .sec-head p { color: var(--ink-soft); margin: var(--s-3) 0 0; font-size: 1.02rem; }
-
   /* ============ Features ============ */
   .features {
     padding: var(--s-8) 0;
@@ -461,145 +247,33 @@
   }
   .feature__title svg { width: 24px; height: 24px; color: var(--primary); flex-shrink: 0; }
   .feature p { margin: 0; color: var(--ink-soft); font-size: 0.96rem; line-height: 1.85; }
-  /* editorial note from the brief — flagged, not final patient copy */
-  .review-note {
-    color: var(--ink-faint);
-    font-style: normal;
-    background: var(--accent-soft);
-    border-radius: 5px;
-    padding: 0 0.3em;
-    font-size: 0.88em;
-  }
 
-  /* ============ Footer ============ */
-  .site-footer {
-    background: var(--primary-deep);
-    color: rgba(255, 255, 255, 0.82);
-    padding: var(--s-7) 0 var(--s-5);
-    margin-top: var(--s-6);
-  }
-  .footer__top {
-    display: grid;
-    grid-template-columns: 1.3fr 2fr;
-    gap: var(--s-6);
-    padding-bottom: var(--s-5);
-    border-bottom: 1px solid rgba(255,255,255,0.14);
-  }
-  .footer__brand { display: flex; flex-direction: column; gap: var(--s-3); }
-  .footer__brand .brand__name { color: #fff; font-size: 1.3rem; }
-  .footer__brand p { margin: 0; color: rgba(255,255,255,0.62); font-size: 0.9rem; line-height: 1.8; max-width: 34ch; }
-  .footer__logo {
-    width: 56px; height: 56px; border-radius: 50%;
-    background: #fff; padding: 3px; object-fit: cover;
-  }
-
-  .footer__locs {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--s-4);
-  }
-  .loc {
-    border: 1px solid rgba(255,255,255,0.14);
-    border-radius: var(--radius);
-    padding: var(--s-3) var(--s-4);
-  }
-  .loc h4 {
-    margin: 0 0 0.4rem;
-    font-family: "Noto Serif TC", serif;
-    font-size: 1.02rem;
-    font-weight: 600;
-    color: #fff;
-    display: flex; align-items: baseline; gap: 0.5rem;
-  }
-  .loc h4 .tag {
-    font-family: "Noto Sans TC", sans-serif;
-    font-size: 0.68rem;
-    letter-spacing: 0.05em;
-    color: var(--bg);
-    background: rgba(204, 122, 69, 0.85);
-    padding: 0.05rem 0.45rem;
-    border-radius: 5px;
-    font-weight: 500;
-  }
-  .loc p { margin: 0.15rem 0; font-size: 0.85rem; color: rgba(255,255,255,0.66); line-height: 1.7; }
-  .loc a.tel { color: #fff; font-weight: 500; }
-  .loc a.tel:hover { color: var(--accent-soft); }
-  .loc--soon { opacity: 0.72; }
-
-  .disclaimer {
-    margin-top: var(--s-5);
-    font-size: 0.78rem;
-    line-height: 1.85;
-    color: rgba(255,255,255,0.55);
-    max-width: 92ch;
-  }
-  .footer__base {
-    margin-top: var(--s-4);
-    padding-top: var(--s-4);
-    border-top: 1px solid rgba(255,255,255,0.12);
-    display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4);
-    justify-content: space-between; align-items: center;
-    font-size: 0.8rem; color: rgba(255,255,255,0.5);
-  }
-  .footer__base nav { display: flex; gap: var(--s-3); flex-wrap: wrap; }
-  .footer__base a:hover { color: #fff; }
-
-  /* ============ Reveal animation ============ */
-  .reveal { opacity: 0; transform: translateY(22px); }
-  .reveal.in { opacity: 1; transform: none; transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
-  .reveal.d1 { transition-delay: 0.08s; }
-  .reveal.d2 { transition-delay: 0.16s; }
-  .reveal.d3 { transition-delay: 0.24s; }
-  .reveal.d4 { transition-delay: 0.32s; }
-
-  @media (prefers-reduced-motion: reduce) {
-    .reveal, .reveal.in { opacity: 1; transform: none; transition: none; }
-    .breath-rings circle { animation: none; }
-    html { scroll-behavior: auto; }
-  }
-
-  /* ============ Responsive ============ */
+  /* ============ Homepage responsive ============ */
   @media (max-width: 900px) {
     .hero__grid { grid-template-columns: 1fr; gap: var(--s-5); }
     .hero__visual { width: 62%; max-width: 320px; margin-inline: auto; justify-self: center; order: -1; }
     .hero { padding-top: var(--s-6); }
-    .footer__top { grid-template-columns: 1fr; gap: var(--s-5); }
   }
   @media (max-width: 760px) {
-    .nav__links, .nav__cta { display: none; }
-    .nav__toggle { display: inline-flex; }
-    .nav__links.open {
-      display: flex;
-      position: absolute;
-      top: 72px; left: 0; right: 0;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 0.2rem;
-      padding: var(--s-3) var(--s-4) var(--s-4);
-      background: var(--bg);
-      border-bottom: 1px solid var(--line);
-      box-shadow: var(--shadow-md);
-    }
-    .nav__links.open a { padding: 0.8rem 0.6rem; border-radius: 10px; }
     .quick__grid { grid-template-columns: 1fr; }
     .features__grid { grid-template-columns: 1fr; }
     .feature, .feature:nth-child(4), .feature:nth-child(5) { grid-column: 1 / -1; }
-    .footer__locs { grid-template-columns: 1fr; }
     .hero__chip--a { right: 0; }
     .hero__chip--b { left: 0; }
   }
   @media (max-width: 420px) {
-    .wrap { padding-inline: var(--s-3); }
     .hero__chip { font-size: 0.78rem; padding: 0.5rem 0.7rem; }
   }
 </style>
 </head>
 <body>
 
+<a class="skip-link" href="#main">跳到主要內容</a>
+
 <!-- ===================== Header ===================== -->
 <header class="site-header" id="header">
   <div class="wrap nav">
-    <a href="#" class="brand" aria-label="大豐耳鼻喉科聯合診所 首頁">
+    <a href="index.html" class="brand" aria-label="大豐耳鼻喉科聯合診所 首頁">
       <img src="assets/logo.png" alt="大豐耳鼻喉科聯合診所 標誌" class="brand__mark" />
       <span class="brand__text">
         <span class="brand__name">大豐耳鼻喉科</span>
@@ -608,14 +282,14 @@
     </a>
 
     <nav class="nav__links" id="navLinks" aria-label="主要選單">
-      <a href="#">關於大豐</a>
-      <a href="#">診療項目</a>
-      <a href="#">醫療團隊</a>
-      <a href="#">院區・門診</a>
-      <a href="#">衛教專欄</a>
+      <a href="about.html">關於大豐</a>
+      <a href="services.html">診療項目</a>
+      <a href="team.html">醫療團隊</a>
+      <a href="locations.html">院區・門診</a>
+      <a href="blog.html">衛教專欄</a>
     </nav>
 
-    <a href="#" class="btn nav__cta">
+    <a href="contact.html" class="btn nav__cta">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
       立即預約
     </a>
@@ -626,7 +300,7 @@
   </div>
 </header>
 
-<main>
+<main id="main">
   <!-- ===================== Hero ===================== -->
   <section class="hero">
     <div class="wrap hero__grid">
@@ -635,7 +309,7 @@
         <h1 class="reveal in d1">文山・新店在地深耕，<br /><span class="hl">三院區</span>守護全家人的<br />呼吸與睡眠</h1>
         <p class="hero__lead reveal in d2">大豐耳鼻喉科聯合診所，由 6 位耳鼻喉科專科醫師與 1 位小兒專科醫師組成，於新店、木柵、興隆三處社區提供完整的成人與兒童耳鼻喉照護，並設有睡眠呼吸中止、眩暈與頭頸部專業評估門診。</p>
         <div class="hero__cta reveal in d3">
-          <a href="#" class="btn btn--ghost">
+          <a href="locations.html" class="btn btn--ghost">
             查看院區與門診
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
@@ -660,7 +334,7 @@
   <!-- ===================== Quick-entry cards ===================== -->
   <section class="quick" aria-label="快速入口">
     <div class="wrap quick__grid">
-      <a href="#" class="qcard reveal">
+      <a href="locations.html" class="qcard reveal">
         <span class="qcard__icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-4 7 4v13"/><path d="M9 21v-6h6v6"/><path d="M12 4v3"/></svg>
         </span>
@@ -671,7 +345,7 @@
         </span>
       </a>
 
-      <a href="#" class="qcard reveal d1">
+      <a href="services.html" class="qcard reveal d1">
         <span class="qcard__icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A1 1 0 0 0 3 3v3a6 6 0 0 0 12 0V3a1 1 0 0 0-1.8-.7"/><path d="M9 14v2a5 5 0 0 0 10 0v-1"/><circle cx="20" cy="10" r="2"/></svg>
         </span>
@@ -682,7 +356,7 @@
         </span>
       </a>
 
-      <a href="#" class="qcard reveal d2">
+      <a href="contact.html" class="qcard reveal d2">
         <span class="qcard__icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
         </span>
@@ -765,26 +439,26 @@
       </div>
 
       <div class="footer__locs">
-        <div class="loc">
+        <a class="loc" href="location-xindian.html">
           <h4>新店大豐<span class="tag">總院</span></h4>
           <p>231 新北市新店區明德里建國路 161、163 號 1 樓</p>
-          <p>電話 <a href="tel:0222193122" class="tel">02-2219-3122</a></p>
-        </div>
-        <div class="loc">
+          <p>電話 <span class="tel">02-2219-3122</span></p>
+        </a>
+        <a class="loc" href="location-xinglong.html">
           <h4>興隆大豐</h4>
           <p>116 臺北市文山區興安里興隆路二段 118 號</p>
-          <p>電話 <a href="tel:0229336969" class="tel">02-2933-6969</a></p>
-        </div>
-        <div class="loc">
+          <p>電話 <span class="tel">02-2933-6969</span></p>
+        </a>
+        <a class="loc" href="location-muzha.html">
           <h4>木柵大豐</h4>
           <p>116 臺北市文山區樟文里木新路三段 220 號 1 樓</p>
-          <p>電話 <a href="tel:0229371299" class="tel">02-2937-1299</a></p>
-        </div>
-        <div class="loc loc--soon">
+          <p>電話 <span class="tel">02-2937-1299</span></p>
+        </a>
+        <a class="loc loc--soon" href="location-zhongshan.html">
           <h4>中山大豐<span class="tag">手術中心</span></h4>
           <p>臺北市中山區</p>
           <p>2026 年 10 月開幕・敬請期待</p>
-        </div>
+        </a>
       </div>
     </div>
 
@@ -793,45 +467,16 @@
     <div class="footer__base">
       <span>© 2026 大豐耳鼻喉科聯合診所</span>
       <nav aria-label="頁尾選單">
-        <a href="#">關於大豐</a>
-        <a href="#">診療項目</a>
-        <a href="#">醫療團隊</a>
-        <a href="#">院區・門診</a>
-        <a href="#">預約掛號</a>
+        <a href="about.html">關於大豐</a>
+        <a href="services.html">診療項目</a>
+        <a href="team.html">醫療團隊</a>
+        <a href="locations.html">院區・門診</a>
+        <a href="contact.html">預約掛號</a>
       </nav>
     </div>
   </div>
 </footer>
 
-<script>
-  // sticky header border on scroll
-  const header = document.getElementById('header');
-  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8);
-  onScroll();
-  window.addEventListener('scroll', onScroll, { passive: true });
-
-  // mobile nav toggle
-  const toggle = document.getElementById('navToggle');
-  const links = document.getElementById('navLinks');
-  toggle.addEventListener('click', () => {
-    const open = links.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    toggle.setAttribute('aria-label', open ? '關閉選單' : '開啟選單');
-  });
-  links.querySelectorAll('a').forEach(a =>
-    a.addEventListener('click', () => {
-      links.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-    })
-  );
-
-  // scroll reveal (skips hero items already marked .in)
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
-  document.querySelectorAll('.reveal:not(.in)').forEach(el => io.observe(el));
-</script>
+<script src="assets/site.js"></script>
 </body>
 </html>
