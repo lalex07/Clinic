@@ -6,6 +6,17 @@ _Last updated: 2026-05-30_
 
 ---
 
+## ⏭️ NEXT DECISION POINT (start here)
+
+Today's session shipped the shared-stylesheet refactor + the full Locations set (hub + 4 location pages, 中山 as coming-soon). **Before building more pages, decide:**
+
+1. **Show the client (Alex's dad) first** — get a review/feedback pass on the homepage + locations as built, so the rest of the site is built on confirmed direction (content, tone, layout). Many `〔待補〕` items (門診時間, 看診醫師, 中山 details, traffic/maps) need his input anyway.
+2. **Continue building — next up: 診療項目 / Services (§四)** — recommended next page if continuing, since the location pages already link/defer to it (surgery-centre detail, 睡眠/眩暈/頭頸部 evaluation flows).
+
+> No need to ask which; whoever resumes should raise this choice with Alex.
+
+---
+
 ## 🏗️ Architecture — shared stylesheet (NEW this session)
 
 The site is no longer one self-contained file. Shared chrome now lives in:
