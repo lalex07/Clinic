@@ -126,7 +126,7 @@ body > * { position: relative; z-index: 1; }
   width: 46px; height: 46px;
   border-radius: 50%;
   background: var(--surface);
-  border: 1px solid var(--line);
+  /* no border — avoids a dark hairline around the avatar; soft shadow gives definition */
   box-shadow: var(--shadow-sm);
   /* logo.png is a centered square mark with even built-in padding;
      contain + center keeps the figure fully visible, never clipped */
