@@ -4,18 +4,29 @@ Orientation note for the next session. See `site-spec.md` for the full content b
 
 _Last updated: 2026-05-31_
 
-**2026-05-31 fixes:** (1) hero slogan reordered to **新店・文山在地深耕** (新店 first — founding location, 2010) across `index.html`, `about.html` title/meta/lead, and canonical `site-spec.md` §二-B. (2) All 5 `assets/qr/*` images cropped to a tight square + ~5% quiet-zone padding, removing the baked-in clinic-name text band (HTML labels unchanged). (3) Inter-section spacing tightened one step: `--s-7` 4.5→3.5rem, `--s-8` 6.5→5rem in `assets/site.css` (calmer hero→section gap site-wide).
+## 🗓️ 2026-05-31 — today's work
+
+- **Slogan reordered → 新店・文山 first** (`新店・文山在地深耕…`). 新店 now leads because it is the founding location (2010); 文山 came with 木柵 (2019) + 興隆 (2025). Applied to `index.html` hero, `about.html` (title / meta description / hero lead), and the canonical slogan in `site-spec.md` §二-B.
+- **QR images cropped clean** — all 5 `assets/qr/*` cropped to a tight square + ~5% quiet-zone padding, removing the baked-in clinic-name text band beneath the QR (e.g. "興隆大豐耳鼻喉科診所", "大豐耳鼻喉科診所(新店)"). Filenames unchanged; HTML labels above/below the QR are untouched. Verified on the 興隆 detail page. _Originals preserved in git at commit `1024099` (`git show 1024099:assets/qr/<file>`)._
+- **Inter-section spacing tightened one step, globally** — `--s-7` 4.5→3.5rem and `--s-8` 6.5→5rem in `assets/site.css`. Calmer hero→section gap on every page (About hero→發展歷程 was the worst offender); still breathable for Chinese typography. Re-screenshotted home / About / Services / Locations to confirm.
+- **About page** (`about.html`) is built — hero + founding-history **timeline 2010→2019→2025→2026** + 廖學森 credibility callout. (Pending 院長 review of the founding narrative.)
+- **Bilingual scaffolding live** — `中文 | EN` toggle in the header of every CN page; `/en/` is a placeholder (coming-soon + LINE QRs) until CN content is approved.
+- **Live + approved** — GitHub Pages is live at **https://lalex07.github.io/Clinic/** and 院長 (Alex's dad) has **approved the design direction**.
+
+**Content/data added to `site-spec.md`:**
+- New doctors on the roster: **林雅芳** (木柵, joined 2019) and **巫靚穎** (興隆, joined 2025).
+- **廖學森醫師**'s **萬芳醫學中心** affiliation and **兒童睡眠呼吸中止症手術經驗** now documented — use as the clinic's **institutional differentiator** (already surfaced in the About credibility callout; carry into the Team page).
+
+> ⚠️ One API crash mid-session may have left partial state. Today's three fixes were committed (`e009bcc`) and verified after the crash, but **next session should re-confirm** slogan, QR crops, and spacing all rendered correctly before moving on.
 
 ---
 
 ## ⏭️ NEXT SESSION (start here)
 
-1. **Finish the About page** (`about.html`) — built with founding history + timeline; pending 院長 (Alex's dad) review of the founding narrative / specialty framing, then any refinement.
-2. **Then build 醫療團隊 / Team** (`team.html`, §五) — 7 doctors. Bios are marked **建議專長（待確認）** → present as "pending confirmation", don't state as final. Founding roles now in `site-spec.md` (廖學森/蔡彥群 = 2010; +蕭仁豪/林雅芳 = 2019 木柵; 李順源/巫靚穎 = 2025 興隆).
+1. **Verify today's changes rendered correctly** — a mid-session API crash may have left partial state (it didn't, but confirm). Preview locally and check: hero slogan reads **新店・文山在地深耕**; all 5 QR cards show clean squares with **no baked-in clinic-name text**; inter-section gaps are tighter (esp. About hero→發展歷程). All committed in `e009bcc`.
+2. **Then build 醫療團隊 / Team** (`team.html`, §五) — use the **updated 7-doctor roster** in `site-spec.md`. Bios marked **建議專長（待確認）** → present as "pending confirmation", don't state as final. Founding roles: 廖學森/蔡彥群 = 2010; +蕭仁豪/**林雅芳** = 2019 木柵; 李順源/**巫靚穎** = 2025 興隆. Lead 廖學森 with his **萬芳醫學中心 + 兒童睡眠手術** experience (institutional differentiator).
 
-**Live site:** GitHub Pages enabled → **https://lalex07.github.io/Clinic/** (deploys from the default branch, no build step).
-
-**Status with client:** 院長 has reviewed and **approved the design direction** (palette, tone, layout). Build the rest on this foundation.
+**Live site:** GitHub Pages live → **https://lalex07.github.io/Clinic/** (deploys from the default branch, no build step). 院長 (Alex's dad) has **approved the design direction** (palette, tone, layout) — build the rest on this foundation.
 
 ---
 
