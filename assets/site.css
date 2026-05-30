@@ -208,6 +208,30 @@ body > * { position: relative; z-index: 1; }
 
 .nav__cta { flex-shrink: 0; }
 
+/* language toggle (中文 | EN) — no flags; active in primary, inactive in ink-faint */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.lang-toggle a,
+.lang-toggle .lang-toggle__on {
+  padding: 0.25rem 0.4rem;
+  border-radius: 6px;
+}
+.lang-toggle a {
+  color: var(--ink-faint);
+  transition: color 0.25s ease-out, background 0.25s ease-out;
+}
+.lang-toggle a:hover { color: var(--primary-deep); background: var(--primary-soft); }
+.lang-toggle a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.lang-toggle__on { color: var(--primary); font-weight: 700; cursor: default; }
+.lang-toggle .sep { color: var(--line-strong); }
+
 /* hamburger */
 .nav__toggle {
   display: none;
@@ -437,6 +461,10 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
 @media (max-width: 760px) {
   .nav__links, .nav__cta { display: none; }
   .nav__toggle { display: inline-flex; }
+  /* tighten so brand + language toggle + hamburger all fit the bar */
+  .nav { gap: 0.6rem; }
+  .lang-toggle { font-size: 0.86rem; gap: 0.3rem; }
+  .lang-toggle a, .lang-toggle .lang-toggle__on { padding: 0.2rem 0.3rem; }
   .nav__links.open {
     display: flex;
     position: absolute;
@@ -451,6 +479,15 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   }
   .nav__links.open a { padding: 0.8rem 0.6rem; border-radius: 10px; }
   .footer__locs { grid-template-columns: 1fr; }
+}
+/* on phones, compact the brand so brand + language toggle + hamburger
+   all fit the bar down to ~320px (drop the wide sub-label, shrink name/mark) */
+@media (max-width: 500px) {
+  .brand__sub { display: none; }
+  .brand__name { font-size: 1rem; }
+  .brand__mark { width: 40px; height: 40px; }
+  .nav { gap: 0.5rem; }
+  .lang-toggle { font-size: 0.85rem; }
 }
 @media (max-width: 420px) {
   .wrap { padding-inline: var(--s-3); }

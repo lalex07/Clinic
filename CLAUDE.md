@@ -44,6 +44,14 @@ Use the frontend-design skill in `.claude/skills/frontend-design/` for all UI wo
 
 Taiwan medical advertising rules apply. See section 九 in `site-spec.md` for the do-not-use word list (no 保證, 最, 根治, 唯一, etc.) and the required footer disclaimer. Treat that section as hard constraints.
 
+## Bilingual
+
+The site is bilingual. Chinese (Traditional) is the default and lives at the project root (`/`). English lives under `/en/`.
+
+- Currently `/en/` is a single placeholder (`en/index.html`: "English version coming soon" + LINE QR codes). Full English pages are deferred until 院長 approves the Chinese content.
+- A language toggle (`中文 | EN`, no flag icons) sits in the header of every page — active language in `--primary`, inactive in `--ink-faint` (`.lang-toggle` in `assets/site.css`). Chinese pages link to `en/index.html`; English pages link back to the Chinese root.
+- When English pages are built, they go in `/en/` mirroring the Chinese structure. Same design rules apply. Compliance rules (§九) apply to both languages — translate the forbidden words list.
+
 ## Status
 
 The 中山 (Zhongshan) flagship location opens October 2026. Until then, present it as "2026 年 10 月開幕・敬請期待" with no surgery-specific marketing language live on the site.
