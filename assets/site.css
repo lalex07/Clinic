@@ -101,15 +101,13 @@ body > * { position: relative; z-index: 1; }
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(250, 246, 239, 0.78);
-  backdrop-filter: saturate(140%) blur(12px);
-  -webkit-backdrop-filter: saturate(140%) blur(12px);
+  /* solid opaque cream — no backdrop blur (no aura/frosted-glass effect) */
+  background: var(--bg);
   border-bottom: 1px solid transparent;
-  transition: border-color 0.4s var(--ease), background 0.4s var(--ease);
+  transition: border-color 0.4s var(--ease);
 }
 .site-header.scrolled {
   border-bottom-color: var(--line);
-  background: rgba(250, 246, 239, 0.92);
 }
 .nav {
   display: flex;
@@ -305,7 +303,7 @@ body > * { position: relative; z-index: 1; }
   padding: 0.5rem 1.15rem;
   border: 1px solid var(--primary-soft);
   background: var(--surface);
-  box-shadow: var(--shadow-sm);
+  /* crisp edges — no box-shadow (would read as a soft halo on a small pill) */
   border-radius: 999px;
   margin-bottom: var(--s-4);
 }

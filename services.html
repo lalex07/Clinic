@@ -142,6 +142,9 @@
   .svc-chip--soon:hover { background: var(--bg-2); border-color: var(--line-strong); transform: none; }
 
   /* ============ 中山 surgery-centre teaser ============ */
+  /* symmetric vertical breathing: the mint teaser box floats with equal space
+     above (from .svc-list padding-bottom) and below before the next band */
+  .svc-soon-sec { padding-bottom: var(--s-7); }
   .svc-soon {
     background: var(--primary-soft);
     border: 1px solid var(--primary-soft);
@@ -495,7 +498,7 @@
   </section>
 
   <!-- ===================== 中山手術中心 teaser ===================== -->
-  <section aria-label="中山手術中心">
+  <section class="svc-soon-sec" aria-label="中山手術中心">
     <div class="wrap">
       <div class="svc-soon reveal" id="zhongshan">
         <div class="svc-soon__top">

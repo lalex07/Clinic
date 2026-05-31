@@ -25,7 +25,9 @@ Use the frontend-design skill in `.claude/skills/frontend-design/` for all UI wo
 
 ## Design rules (apply to every page, every component)
 
-**No glows, halos, or "glare" effects.** Dots, pills, badges, and status indicators are flat solid shapes. No box-shadow blur on dots, no radial-gradient halos, no soft outer glows. A colored dot is just a colored circle.
+**No glows, halos, auras, or blurred light effects.** Zero tolerance. Every pill, badge, eyebrow, dot, button, card, and decorative element has crisp hard edges. Shadows are allowed only as grounded layered depth tokens (`--shadow-sm`, `--shadow-md`, `--shadow-lg`) which simulate object weight, not light emission. If a shadow's blur is producing a "glow" appearance rather than a "sitting on a surface" appearance, it's wrong. No `backdrop-filter: blur` (frosted/aura effect), no `filter: blur` / `filter: drop-shadow` as decoration. A colored dot is just a colored circle.
+
+**Symmetric vertical breathing on hero/intro blocks.** Any hero box, intro callout, or feature panel must have equal vertical space above and below before the next content section starts. Don't let intro blocks sit flush against the next section — it reads as falling off the page.
 
 **No gradients.** Linear-gradient and radial-gradient are not used anywhere in the design system, except possibly as page-level body background (single flat color preferred even there). Cards, pills, badges, heroes, callouts, and section backgrounds use solid colors only. Depth comes from layered shadows, spacing, and typography — never from gradient accents. This applies regardless of how subtle the gradient appears.
 
