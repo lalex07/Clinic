@@ -68,9 +68,12 @@ _Last updated: 2026-05-31_
 
 ## ⏭️ NEXT SESSION (start here)
 
-1. **Verify today's changes rendered correctly** — a mid-session API crash may have left partial state (it didn't, but confirm). Preview locally and check: hero slogan reads **新店・文山在地深耕**; all 5 QR cards show clean squares with **no baked-in clinic-name text**; inter-section gaps are tighter (esp. About hero→發展歷程). All committed in `e009bcc`.
-2. ~~Build 醫療團隊 / Team~~ ✅ **Done** (2026-05-31 session 2 — see top of file). Next candidates: **預約掛號 / Contact** (§八), **全院區門診總表** (§十一, needs schedule data), or apply approved items from `design-review.md`.
-3. **Review `design-review.md` with 院長** — decide which restraint-pass simplifications to apply to Services / Locations / About.
+1. **Resolve the 林諄儒 vs 林雅芳 name question** (blocking — see Open questions). The roster currently treats them as **two distinct doctors** (林諄儒 = 新店, full credentials provided; 林雅芳 = 木柵, 2019 founder, still 〔待補〕). Confirm with 院長 whether both are real, or one is a transcription error, then adjust the roster + doctor total (7 → 6 if they're one person).
+2. **Build 預約掛號 / 聯絡 page** (§八) — booking + contact (電話 / LINE / 線上掛號 CTAs). This is the last major remaining content page.
+3. **Optionally build 衛教專欄 / Blog** (§七) if 院長 wants it — SEO article topics listed in spec, no bodies yet.
+4. **Collect remaining doctor credentials** for **蔡彥群, 廖學森, 蕭仁豪, 李順源, 林雅芳** (林雅芳 only if confirmed as a separate doctor). Cards/spec entries for these are still 〔待補〕 or draft.
+5. **Wait on 院長 for 中山院區** — address + phone + confirmed opening date (still presented as "2026 年 10 月開幕・敬請期待").
+6. ~~Build 醫療團隊 / Team~~ ✅ **Done** (session 2). Also consider applying approved items from `design-review.md` (review with 院長 first).
 
 **Live site:** GitHub Pages live → **https://lalex07.github.io/Clinic/** (deploys from the default branch, no build step). 院長 (Alex's dad) has **approved the design direction** (palette, tone, layout) — build the rest on this foundation.
 
@@ -80,6 +83,8 @@ _Last updated: 2026-05-31_
 
 These are the `〔待補〕` items that need his input before pages can be finalised:
 
+- **⚠️ 林諄儒 vs 林雅芳 — name verification needed.** The codebase currently has **two distinct doctor entries**: **林諄儒** (新店總院, with the full credentials 院長 sent — 中國醫藥大學, 北醫附醫總醫師/主治, 香港中文大學 + 新加坡樟宜綜合醫院 國際手術進修) and **林雅芳** (木柵分院, 2019 共同創辦, still 〔待補〕). Need 院長 to confirm whether these are **two real, different doctors**, or whether **one of the names is a transcription error**. Nothing was auto-merged. If they turn out to be the same person, the doctor total should change from 7 → 6.
+- **Facebook banner — designer/Canva vs current draft?** A self-contained SVG banner + PNG preview were generated (`brand_assets/facebook-cover.svg` / `-preview.png`). It's an SVG composition, not photographic. Confirm whether 院長 wants to commission a polished banner from a designer/Canva, or use the current SVG-generated draft.
 - **Slogan refinement** — confirm/adjust the hero slogan (currently §二 slogan B).
 - **Doctor data** — confirm each doctor's **credentials, specialties, and clinic schedules** (§五 bios are "待確認"; 醫師 × 院區 × 時段 table §十一 is blank).
 - **中山院區** — **address, phone, and confirmed opening date** (currently all `待補`; presented as "2026 年 10 月開幕・敬請期待").
