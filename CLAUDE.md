@@ -27,7 +27,9 @@ Use the frontend-design skill in `.claude/skills/frontend-design/` for all UI wo
 
 **No glows, halos, or "glare" effects.** Dots, pills, badges, and status indicators are flat solid shapes. No box-shadow blur on dots, no radial-gradient halos, no soft outer glows. A colored dot is just a colored circle.
 
-**No multi-color gradient accents.** Cards, sections, and components do not use teal-to-terracotta or any other gradient as decoration — no gradient top bars, no gradient borders, no gradient hover states. Solid colors only. Linear gradients are permitted only for very subtle single-hue background washes (e.g. cream to slightly-darker cream) when used for depth, never as a color accent.
+**No gradients.** Linear-gradient and radial-gradient are not used anywhere in the design system, except possibly as page-level body background (single flat color preferred even there). Cards, pills, badges, heroes, callouts, and section backgrounds use solid colors only. Depth comes from layered shadows, spacing, and typography — never from gradient accents. This applies regardless of how subtle the gradient appears.
+
+**No multi-color gradient accents.** Cards, sections, and components do not use teal-to-terracotta or any other gradient as decoration — no gradient top bars, no gradient borders, no gradient hover states. Solid colors only. (Superseded by the stricter "No gradients" rule above — kept for emphasis on the multi-color case.)
 
 **Hover state for cards = lift, not color.** Interactive cards translate up 4–6px on hover and deepen their shadow slightly. They do not change color, gain gradient bars, or shift hue. Transition transform and box-shadow only — never use `transition-all`.
 

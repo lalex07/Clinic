@@ -278,20 +278,7 @@ body > * { position: relative; z-index: 1; }
 
 /* ============ Interior page banner ============ */
 .page-head {
-  position: relative;
   padding: var(--s-7) 0 var(--s-6);
-  overflow: hidden;
-}
-.page-head::before {
-  content: "";
-  position: absolute;
-  inset: -30% -10% auto -10%;
-  height: 150%;
-  z-index: -1;
-  /* single-hue ambient depth (teal + cream) — no multi-color accent, per Design rules */
-  background:
-    radial-gradient(48% 52% at 80% 0%, rgba(22, 99, 91, 0.08), transparent 70%),
-    radial-gradient(70% 60% at 50% 120%, rgba(227, 239, 236, 0.55), transparent 70%);
 }
 .breadcrumb {
   display: flex;
@@ -317,7 +304,7 @@ body > * { position: relative; z-index: 1; }
   font-weight: 600;
   padding: 0.5rem 1.15rem;
   border: 1px solid var(--primary-soft);
-  background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(227,239,236,0.55));
+  background: var(--surface);
   box-shadow: var(--shadow-sm);
   border-radius: 999px;
   margin-bottom: var(--s-4);

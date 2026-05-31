@@ -27,7 +27,7 @@
 }
 .loc-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
 .loc-card:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
-.loc-card--soon { background: linear-gradient(180deg, #fff, var(--bg-2)); }
+.loc-card--soon { background: var(--bg-2); }
 
 .loc-card__head {
   display: flex;
@@ -82,8 +82,7 @@
 
 /* schedule call-out band */
 .sched-band {
-  background:
-    linear-gradient(180deg, transparent, rgba(242, 234, 221, 0.6) 14%, rgba(242, 234, 221, 0.6) 86%, transparent);
+  background: var(--bg-2);
   padding: var(--s-7) 0;
 }
 .sched-card {
@@ -277,8 +276,7 @@
   min-height: 13rem;
   border: 1px dashed var(--line-strong);
   border-radius: var(--radius-lg);
-  background:
-    repeating-linear-gradient(45deg, var(--bg-2), var(--bg-2) 12px, rgba(242,234,221,0.5) 12px, rgba(242,234,221,0.5) 24px);
+  background: var(--bg-2);
   color: var(--ink-faint);
   padding: var(--s-5);
 }
@@ -291,7 +289,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--s-3) var(--s-4);
-  background: linear-gradient(180deg, var(--primary-soft), #fff);
+  background: var(--primary-soft);
   border: 1px solid var(--primary-soft);
   border-radius: var(--radius-lg);
   padding: var(--s-4) var(--s-5);
