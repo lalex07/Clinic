@@ -33,6 +33,16 @@ Use the frontend-design skill in `.claude/skills/frontend-design/` for all UI wo
 
 **Shadows are layered and tinted, not glowy.** Per the frontend-design skill: shadows use the established tinted-shadow tokens (`--shadow-sm`, `--shadow-md`, `--shadow-lg`). They suggest depth and physical layering, not light emission.
 
+**Restraint over density.** Inspired by cureclinictw.com (which 院長 specifically prefers — he found Caringlink and HomePro overpowering on information). Each section presents one clear focal idea, not a feature list. Whitespace is a feature, not wasted space. When in doubt between adding more information and removing some, remove.
+
+Goals:
+- Generous vertical breathing room between sections
+- Short paragraphs (2-4 sentences max in body copy)
+- Section content that fits on one screen without scrolling whenever possible
+- Avoid grid-of-many-feature-cards patterns; prefer 3-6 considered items
+- Photography and illustration carry weight rather than dense text blocks
+- Calm trust over busy energy
+
 ## Technical
 
 - Plain HTML, CSS, and JavaScript — no build step, hostable on GitHub Pages

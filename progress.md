@@ -4,6 +4,19 @@ Orientation note for the next session. See `site-spec.md` for the full content b
 
 _Last updated: 2026-05-31_
 
+## 🗓️ 2026-05-31 (session 2) — Team page + restraint principle
+
+- **醫療團隊 `team.html` built** — 7 doctors from the **updated site-spec §五 roster**, grouped by 院區 with each location's 院長 leading: 新店（蔡彥群院長・2010共創 → 廖學森・2010共創 → 林諄儒）→ 木柵（蕭仁豪院長・2019 → 林雅芳・2019）→ 興隆（李順源院長・2025 → 巫靚穎 小兒專科・2025）. CureClinic-inspired card IA (portrait → name+role → trimmed 4–5 credential bullets), adapted entirely to Dafeng's own design system (palette, serif headings, tinted shadows, lift-only hover). **創辦院長 (2010)** surfaced as an accent badge on 蔡彥群 & 廖學森, visible at first glance.
+- **Real doctor portraits in `assets/doctors/`** (resized from `brand_assets/`, originals untouched): **廖學森** `liao-hsueh-sen.jpg`, **蕭仁豪** `hsiao-jen-hao.jpg`, **巫靚穎** `wu-ching-ying.jpg`, **林諄儒** `lin-chun-ju.jpg`. Uniform rounded-square container (4:5, object-fit cover, faint warm overlay) so real photos + placeholders read as one coherent set.
+  - ⚠️ **Filename character mismatches** flagged for 院長 in site-spec §五: photo files were named `廖學生`(→學森) and `巫婧穎`(→靚穎) — confirm correct characters.
+  - **Still using shared placeholder cards** (family-name char on primary-soft, `<!-- TODO -->`): **蔡彥群, 林雅芳, 李順源** — awaiting their photos.
+  - **小兒專科 identity resolved**: 巫靚穎 = the "1 位小兒專科醫師" referenced site-wide. (Task prompt's roster was pre-update; site-spec §五 7-doctor roster is the truth and added 林諄儒.)
+- **EN stub** `en/team.html` added (coming-soon pattern, 中文｜EN toggle), matching existing `/en/` placeholders.
+- **"Restraint over density" added to CLAUDE.md** design rules (inspired by cureclinictw.com, which 院長 prefers; Caringlink/HomePro felt overpowering). One focal idea per section, short paragraphs, whitespace as a feature, prefer 3–6 considered items over grids-of-many.
+- **Design review saved to `design-review.md`** — specific, actionable proposals (not applied yet) for Services / Locations / About against the new principle, with per-item impact ratings + a priority table. Awaiting 院長 review before applying.
+- **Verified**: compliance scan clean (no 保證/最/根治/唯一/第一); desktop/tablet/mobile screenshots in `temporary screenshots/team-*`; per-row card heights uniform; founder badges legible. Specialties all marked 「待醫師確認」, §十一 schedule still blank.
+- **Still awaiting from 院長**: photos for 蔡彥群/林雅芳/李順源; confirmed specialties + clinic schedules; the two filename-character confirmations.
+
 ## 🗓️ 2026-05-31 — today's work
 
 - **Slogan reordered → 新店・文山 first** (`新店・文山在地深耕…`). 新店 now leads because it is the founding location (2010); 文山 came with 木柵 (2019) + 興隆 (2025). Applied to `index.html` hero, `about.html` (title / meta description / hero lead), and the canonical slogan in `site-spec.md` §二-B.
@@ -24,7 +37,8 @@ _Last updated: 2026-05-31_
 ## ⏭️ NEXT SESSION (start here)
 
 1. **Verify today's changes rendered correctly** — a mid-session API crash may have left partial state (it didn't, but confirm). Preview locally and check: hero slogan reads **新店・文山在地深耕**; all 5 QR cards show clean squares with **no baked-in clinic-name text**; inter-section gaps are tighter (esp. About hero→發展歷程). All committed in `e009bcc`.
-2. **Then build 醫療團隊 / Team** (`team.html`, §五) — use the **updated 7-doctor roster** in `site-spec.md`. Bios marked **建議專長（待確認）** → present as "pending confirmation", don't state as final. Founding roles: 廖學森/蔡彥群 = 2010; +蕭仁豪/**林雅芳** = 2019 木柵; 李順源/**巫靚穎** = 2025 興隆. Lead 廖學森 with his **萬芳醫學中心 + 兒童睡眠手術** experience (institutional differentiator).
+2. ~~Build 醫療團隊 / Team~~ ✅ **Done** (2026-05-31 session 2 — see top of file). Next candidates: **預約掛號 / Contact** (§八), **全院區門診總表** (§十一, needs schedule data), or apply approved items from `design-review.md`.
+3. **Review `design-review.md` with 院長** — decide which restraint-pass simplifications to apply to Services / Locations / About.
 
 **Live site:** GitHub Pages live → **https://lalex07.github.io/Clinic/** (deploys from the default branch, no build step). 院長 (Alex's dad) has **approved the design direction** (palette, tone, layout) — build the rest on this foundation.
 
@@ -82,7 +96,6 @@ Applied site-wide:
 ---
 
 ## ⬜ Pages not yet built
-- **醫療團隊 / Team** (§五) — next up. 7 doctors, bios "待確認".
 - **全院區門診總表 / Weekly schedule** (§十一) — 醫師 × 院區 × 時段 table; data blank `待補`. Hub already links to it.
 - **預約掛號 / 聯絡我們 / Contact** (§八) — 電話 / LINE / 線上掛號 CTAs.
 - **衛教專欄 / Blog** (§七) — SEO articles; topics listed, no bodies yet.
