@@ -19,30 +19,30 @@
   <!-- so the bottom-left profile-picture zone stays clear           -->
   <!-- ============================================================= -->
 
-  <!-- eyebrow -->
-  <rect x="405" y="66" width="52" height="6" rx="3" fill="#CC7A45"/>
-  <text class="sans" x="469" y="80" font-size="24" font-weight="700" fill="#E3EFEC" letter-spacing="0.14em">專業診療項目</text>
+  <!-- eyebrow (aligned to centered icon cluster) -->
+  <rect x="220" y="66" width="52" height="6" rx="3" fill="#CC7A45"/>
+  <text class="sans" x="284" y="80" font-size="24" font-weight="700" fill="#E3EFEC" letter-spacing="0.14em">專業診療項目</text>
 
-  <!-- 4 specialty icons (boxes #0E4A44, white line icons) -->
+  <!-- 4 specialty icons (boxes #0E4A44, white line icons) — centered in teal panel -->
   <!-- icon 1 — 一般耳鼻喉 -->
-  <rect x="405" y="112" width="104" height="104" rx="28" fill="#0E4A44"/>
-  <g transform="translate(431,138) scale(2.1667)" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A1 1 0 0 0 3 3v3a6 6 0 0 0 12 0V3a1 1 0 0 0-1.8-.7"/><path d="M9 14v2a5 5 0 0 0 10 0v-1"/><circle cx="20" cy="10" r="2"/></g>
-  <text class="sans" x="457" y="252" text-anchor="middle" font-size="24" font-weight="500" fill="#FFFFFF">一般耳鼻喉</text>
+  <rect x="220" y="112" width="104" height="104" rx="28" fill="#0E4A44"/>
+  <g transform="translate(246,138) scale(2.1667)" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A1 1 0 0 0 3 3v3a6 6 0 0 0 12 0V3a1 1 0 0 0-1.8-.7"/><path d="M9 14v2a5 5 0 0 0 10 0v-1"/><circle cx="20" cy="10" r="2"/></g>
+  <text class="sans" x="272" y="252" text-anchor="middle" font-size="24" font-weight="500" fill="#FFFFFF">一般耳鼻喉</text>
 
   <!-- icon 2 — 睡眠呼吸中止 -->
-  <rect x="557" y="112" width="104" height="104" rx="28" fill="#0E4A44"/>
-  <g transform="translate(583,138) scale(2.1667)" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></g>
-  <text class="sans" x="609" y="252" text-anchor="middle" font-size="24" font-weight="500" fill="#FFFFFF">睡眠呼吸中止</text>
+  <rect x="372" y="112" width="104" height="104" rx="28" fill="#0E4A44"/>
+  <g transform="translate(398,138) scale(2.1667)" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></g>
+  <text class="sans" x="424" y="252" text-anchor="middle" font-size="24" font-weight="500" fill="#FFFFFF">睡眠呼吸中止</text>
 
   <!-- icon 3 — 眩暈 -->
-  <rect x="709" y="112" width="104" height="104" rx="28" fill="#0E4A44"/>
-  <g transform="translate(735,138) scale(2.1667)" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0"/><path d="M12 12a5 5 0 0 1 5-5 7 7 0 0 1 0 14H8a6 6 0 0 1 0-12"/></g>
-  <text class="sans" x="761" y="252" text-anchor="middle" font-size="24" font-weight="500" fill="#FFFFFF">眩暈</text>
+  <rect x="524" y="112" width="104" height="104" rx="28" fill="#0E4A44"/>
+  <g transform="translate(550,138) scale(2.1667)" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0"/><path d="M12 12a5 5 0 0 1 5-5 7 7 0 0 1 0 14H8a6 6 0 0 1 0-12"/></g>
+  <text class="sans" x="576" y="252" text-anchor="middle" font-size="24" font-weight="500" fill="#FFFFFF">眩暈</text>
 
   <!-- icon 4 — 頭頸部 -->
-  <rect x="861" y="112" width="104" height="104" rx="28" fill="#0E4A44"/>
-  <g transform="translate(887,138) scale(2.1667)" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></g>
-  <text class="sans" x="913" y="252" text-anchor="middle" font-size="24" font-weight="500" fill="#FFFFFF">頭頸部</text>
+  <rect x="676" y="112" width="104" height="104" rx="28" fill="#0E4A44"/>
+  <g transform="translate(702,138) scale(2.1667)" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></g>
+  <text class="sans" x="728" y="252" text-anchor="middle" font-size="24" font-weight="500" fill="#FFFFFF">頭頸部</text>
 
   <!-- tagline (lower-right of teal panel, clear of bottom-left) -->
   <rect x="405" y="406" width="68" height="6" rx="3" fill="#CC7A45"/>
