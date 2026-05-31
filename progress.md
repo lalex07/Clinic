@@ -4,6 +4,15 @@ Orientation note for the next session. See `site-spec.md` for the full content b
 
 _Last updated: 2026-05-31_
 
+## 🗓️ 2026-05-31 (session 6) — Doctor credentials + stricter glow/gradient sweep
+
+- **巫靚穎 credentials added** (team.html card + site-spec.md, **appended** not replacing): 學歷 台北醫學大學醫學系；經歷 雙和醫院兒科總醫師、北醫附醫住院醫師；認證/學會 中華民國兒科專科醫師＋肥胖醫學會・肥胖研究醫學會・美容醫學醫學會（3 學會壓成一行以維持克制）. **✅ 小兒專科身分確認**：巫靚穎＝中華民國兒科專科醫師＝site 所稱「1 位小兒專科醫師」；§五 TODO 的「待確認」已移除並改為已確認。
+- **林諄儒 credentials added** (team.html card + site-spec.md, appended): 北醫附醫耳鼻喉科總醫師、主治醫師；**香港中文大學・新加坡樟宜綜合醫院 國際手術進修**（差異化，卡片上以兩行明顯呈現）；台灣耳鼻喉頭頸外科專科醫師. 卡片移除未經證實的「胸腔內科」敘述（site-spec 原欄位保留未刪，並加 ⚠️ 待院長確認註記）.
+- **⚠️ 林諄儒 vs 林雅芳 — flagged, NOT auto-merged**: 本任務假設兩者為同一人（木柵醫師），但現有 roster 是**兩位不同醫師**（林諄儒＝新店第3位、林雅芳＝木柵第5位 2019 創辦）. 未做任何合併/搬移/取代，以免誤刪真實醫師；已在 site-spec §五 加顯著 TODO 請院長確認 (a) 兩人皆實際存在？或 (b) 其一為誤植。**醫師總數 7（6 耳鼻喉＋1 小兒）暫定**，若兩人實為一人則應改為 6。
+- **Doctor counts verified consistent**: team hero「六位耳鼻喉科專科醫師與一位小兒專科醫師」✓、所有頁尾「6＋1」✓、首頁 hero lead「6＋1」✓. 首頁 stat bubble「7 位專科醫師」與 title「七位醫師」皆為總數 7，準確（7 位皆為專科醫師，未宣稱全為耳鼻喉），保留未改。
+- **Stricter glow sweep (Task 3)**: 首頁 `.hero__badge`（圓形 logo 盤）由 `--shadow-lg`＋inset 白環 → `--shadow-sm`（大柔影在圓形上會像光暈）；`.hero__chip` 浮動小卡由 `--shadow-md` → `--shadow-sm`. 移除唯一的 inset 環。其餘 box-shadow 全為接地 `--shadow-*` token（向下偏移、alpha ≤ 0.12，無 0-0 模糊、無外擴 spread）. 螢幕截圖確認 logo 盤光暈消失。
+- **Gradient sweep (Task 4)**: 已是 ZERO（session 4 清乾淨）；本次再次確認 `linear/radial/conic-gradient` 全站 0 筆。`backdrop-filter`、`filter: blur/drop-shadow` 皆 0；唯一 `filter:` 為醫師照片色彩正規化（允許）。
+
 ## 🗓️ 2026-05-31 (session 5) — Facebook cover banner (marketing asset)
 
 - **`brand_assets/facebook-cover.svg`** — 820×312 FB cover, self-contained SVG. Two-panel composition in Dafeng's design language: LEFT teal (`--primary`) panel with 4 line-icon specialties (一般耳鼻喉／睡眠呼吸中止／眩暈／頭頸部, reusing the site's icon paths) + the slogan "新店・文山在地深耕 / 三院區守護全家人的呼吸與睡眠"; a crisp terracotta seam; RIGHT cream panel with the **logo embedded inline as base64** (512px, from the 1200px `assets/logo.png`) + 大豐耳鼻喉科聯合診所 / DAFENG ENT CLINIC / 四院區 wordmark. Fully vector except the logo (11 `<text>`, 17 shapes, 1 raster). Solid blocks only — no gradients, no glows (verified). Fonts via Noto `@import` + CJK fallback stack (true CJK font-binary embedding is multi-MB, impractical).
