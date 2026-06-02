@@ -67,6 +67,18 @@
   }
   .svc__intro { color: var(--ink-soft); margin: 0.4rem 0 var(--s-4); font-size: 1rem; }
 
+  /* specialty lead row: contextual equipment/exam photo beside the intro text */
+  .svc__lead {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: var(--s-5);
+    align-items: center;
+    margin: 0.4rem 0 var(--s-4);
+  }
+  .svc__lead .svc__intro { margin: 0; }
+  .svc__photo { width: 100%; }
+  @media (max-width: 760px) { .svc__lead { grid-template-columns: 1fr; } }
+
   .svc__grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-5); }
   .svc__col h3 {
     font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
@@ -267,7 +279,15 @@
             <h2 class="svc__title">一般耳鼻喉診療</h2>
           </div>
         </div>
-        <p class="svc__intro">從感冒、過敏到反覆發作的老毛病，都是我們的日常。無論大人小孩，常見的耳鼻喉問題都能在大豐就近看診。</p>
+        <div class="svc__lead">
+          <figure class="photo-zone photo-zone--4x3 svc__photo">
+            <span class="photo-zone__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </span>
+            <p class="photo-zone__label"><strong>一般耳鼻喉 情境照片 · Context photo</strong>建議：耳鏡／鼻內視鏡／喉頭內視鏡操作畫面（不需露臉）<br />1:1 或 4:3</p>
+          </figure>
+          <p class="svc__intro">從感冒、過敏到反覆發作的老毛病，都是我們的日常。無論大人小孩，常見的耳鼻喉問題都能在大豐就近看診。</p>
+        </div>
 
         <div class="svc__grid">
           <div class="svc__col">
@@ -334,7 +354,15 @@
             <h2 class="svc__title">睡眠呼吸中止症<span class="svc-tag">特色門診</span></h2>
           </div>
         </div>
-        <p class="svc__intro">長期打鼾、睡不飽、白天嗜睡，可能不只是累，而是睡眠呼吸中止症在影響您的健康。</p>
+        <div class="svc__lead">
+          <figure class="photo-zone photo-zone--4x3 svc__photo">
+            <span class="photo-zone__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </span>
+            <p class="photo-zone__label"><strong>睡眠呼吸中止 情境照片 · Context photo</strong>建議：居家睡眠檢測儀器、止鼾牙套樣品（不需露臉）<br />1:1 或 4:3</p>
+          </figure>
+          <p class="svc__intro">長期打鼾、睡不飽、白天嗜睡，可能不只是累，而是睡眠呼吸中止症在影響您的健康。</p>
+        </div>
 
         <div class="svc__grid">
           <div class="svc__col">
@@ -394,7 +422,15 @@
             <h2 class="svc__title">眩暈評估<span class="svc-tag">特色門診</span></h2>
           </div>
         </div>
-        <p class="svc__intro">天旋地轉、走路飄、姿勢一變就頭暈 —— 眩暈的成因很多，找對原因才能對症處理。</p>
+        <div class="svc__lead">
+          <figure class="photo-zone photo-zone--4x3 svc__photo">
+            <span class="photo-zone__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </span>
+            <p class="photo-zone__label"><strong>眩暈評估 情境照片 · Context photo</strong>建議：平衡功能檢查儀、眩暈姿勢圖（不需露臉）<br />1:1 或 4:3</p>
+          </figure>
+          <p class="svc__intro">天旋地轉、走路飄、姿勢一變就頭暈 —— 眩暈的成因很多，找對原因才能對症處理。</p>
+        </div>
 
         <div class="svc__grid">
           <div class="svc__col">
@@ -450,7 +486,15 @@
             <h2 class="svc__title">頭頸部腫瘤<span class="svc-tag">特色門診</span></h2>
           </div>
         </div>
-        <p class="svc__intro">摸到脖子上的腫塊、長期不消，別自己嚇自己，也別輕忽 —— 交給專業評估更安心。</p>
+        <div class="svc__lead">
+          <figure class="photo-zone photo-zone--4x3 svc__photo">
+            <span class="photo-zone__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </span>
+            <p class="photo-zone__label"><strong>頭頸部腫瘤 情境照片 · Context photo</strong>建議：超音波探頭、頭頸部觸診畫面（無臉）<br />1:1 或 4:3</p>
+          </figure>
+          <p class="svc__intro">摸到脖子上的腫塊、長期不消，別自己嚇自己，也別輕忽 —— 交給專業評估更安心。</p>
+        </div>
 
         <div class="svc__grid">
           <div class="svc__col">

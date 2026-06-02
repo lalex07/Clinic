@@ -55,11 +55,20 @@
   .tl-item--future::after { background: var(--accent); }
 
   .tl-content {
+    display: grid;
+    grid-template-columns: 152px 1fr;
+    gap: var(--s-5);
+    align-items: start;
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     padding: var(--s-5);
+  }
+  .tl-photo { width: 100%; }
+  @media (max-width: 600px) {
+    .tl-content { grid-template-columns: 1fr; }
+    .tl-photo { max-width: 200px; }
   }
   .tl-year {
     display: block;
@@ -223,7 +232,7 @@
   <section class="about-intro" aria-label="診所理念">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="kicker">我們的起點</span>
+        <span class="kicker"><span class="kicker__en">Our Story</span>我們的起點</span>
         <h2>社區巷口的耳鼻喉照護</h2>
       </div>
       <p class="about-intro__lead reveal">「大豐」之名，取「醫者大愛、健康豐盛」之意。我們相信好的耳鼻喉照護，不該只在大醫院，更應該在您每天經過的社區巷口。</p>
@@ -235,7 +244,7 @@
   <section class="timeline-sec" aria-label="大豐的發展歷程">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="kicker">發展歷程</span>
+        <span class="kicker"><span class="kicker__en">Milestones</span>發展歷程</span>
         <h2>從新店一間診所，到四大院區</h2>
         <p>2010 至今，大豐一步一腳印，把耳鼻喉照護帶到社區的更多角落。</p>
       </div>
@@ -243,33 +252,65 @@
       <ol class="timeline">
         <li class="tl-item reveal">
           <div class="tl-content">
-            <span class="tl-year">2010</span>
-            <h3 class="tl-title">新店建國路 — 大豐起點</h3>
-            <p>大豐診所於 2010 年在新店建國路開始營運，由蔡彥群醫師與廖學森醫師共同看診。兩位醫師專注於基層耳鼻喉科疾病的診治，以及成人與兒童睡眠呼吸中止症的診斷與治療，為大豐奠定基礎。</p>
+            <figure class="photo-zone photo-zone--1x1 photo-zone--sm tl-photo">
+              <span class="photo-zone__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              </span>
+              <p class="photo-zone__label"><strong>2010 院區照片</strong>開幕合影／外觀／代表空間<br />1:1 或 4:5</p>
+            </figure>
+            <div class="tl-body">
+              <span class="tl-year">2010</span>
+              <h3 class="tl-title">新店建國路 — 大豐起點</h3>
+              <p>大豐診所於 2010 年在新店建國路開始營運，由蔡彥群醫師與廖學森醫師共同看診。兩位醫師專注於基層耳鼻喉科疾病的診治，以及成人與兒童睡眠呼吸中止症的診斷與治療，為大豐奠定基礎。</p>
+            </div>
           </div>
         </li>
 
         <li class="tl-item reveal">
           <div class="tl-content">
-            <span class="tl-year">2019</span>
-            <h3 class="tl-title">木柵院區成立</h3>
-            <p>2019 年，蔡彥群醫師、廖學森醫師偕同蕭仁豪醫師與林雅芳醫師，共同成立木柵大豐耳鼻喉科診所，把耳鼻喉照護帶進文山區。</p>
+            <figure class="photo-zone photo-zone--1x1 photo-zone--sm tl-photo">
+              <span class="photo-zone__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              </span>
+              <p class="photo-zone__label"><strong>2019 院區照片</strong>開幕合影／外觀／代表空間<br />1:1 或 4:5</p>
+            </figure>
+            <div class="tl-body">
+              <span class="tl-year">2019</span>
+              <h3 class="tl-title">木柵院區成立</h3>
+              <p>2019 年，蔡彥群醫師、廖學森醫師偕同蕭仁豪醫師與林雅芳醫師，共同成立木柵大豐耳鼻喉科診所，把耳鼻喉照護帶進文山區。</p>
+            </div>
           </div>
         </li>
 
         <li class="tl-item reveal">
           <div class="tl-content">
-            <span class="tl-year">2025</span>
-            <h3 class="tl-title">興隆院區開幕</h3>
-            <p>2025 年 7 月，團隊再與李順源醫師、巫靚穎醫師攜手，開設興隆大豐耳鼻喉科診所，於文山興隆深化在地門診，並加入小兒專科的照護。</p>
+            <figure class="photo-zone photo-zone--1x1 photo-zone--sm tl-photo">
+              <span class="photo-zone__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              </span>
+              <p class="photo-zone__label"><strong>2025 院區照片</strong>開幕合影／外觀／代表空間<br />1:1 或 4:5</p>
+            </figure>
+            <div class="tl-body">
+              <span class="tl-year">2025</span>
+              <h3 class="tl-title">興隆院區開幕</h3>
+              <p>2025 年 7 月，團隊再與李順源醫師、巫靚穎醫師攜手，開設興隆大豐耳鼻喉科診所，於文山興隆深化在地門診，並加入小兒專科的照護。</p>
+            </div>
           </div>
         </li>
 
         <li class="tl-item tl-item--future reveal">
           <div class="tl-content">
-            <span class="tl-year">2026 <span class="tl-soon">預計 10 月開幕</span></span>
-            <h3 class="tl-title">中山旗艦手術中心</h3>
-            <p>廖學森醫師、蔡彥群醫師與蕭仁豪醫師，預計於 2026 年 10 月在台北市中山區開設大豐耳鼻喉科診所附設手術中心。確切開幕日期與服務內容將陸續公布，敬請期待。</p>
+            <figure class="photo-zone photo-zone--1x1 photo-zone--sm tl-photo">
+              <span class="photo-zone__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M19.1 4.9l-2.8 2.8M7.7 16.3l-2.8 2.8"/></svg>
+              </span>
+              <p class="photo-zone__label"><strong>中山院區開幕後補上</strong>Photo pending — clinic opens 2026/10</p>
+            </figure>
+            <div class="tl-body">
+              <span class="tl-year">2026 <span class="tl-soon">預計 10 月開幕</span></span>
+              <h3 class="tl-title">中山旗艦手術中心</h3>
+              <p>廖學森醫師、蔡彥群醫師與蕭仁豪醫師，預計於 2026 年 10 月在台北市中山區開設大豐耳鼻喉科診所附設手術中心。確切開幕日期與服務內容將陸續公布，敬請期待。</p>
+            </div>
           </div>
         </li>
       </ol>
@@ -296,7 +337,7 @@
   <section class="values" aria-label="社區承諾">
     <div class="wrap">
       <div class="values__inner reveal">
-        <span class="kicker">陪伴社區每一個家庭</span>
+        <span class="kicker"><span class="kicker__en">Our Promise</span>陪伴社區每一個家庭</span>
         <p>從新店到文山，從孩子的中耳炎、過敏，到成人的鼻竇炎、眩暈與睡眠問題，大豐以一致的專業與親切，照顧每一個家庭、每一個階段，成為您家附近就近、可信賴的耳鼻喉科。</p>
       </div>
     </div>

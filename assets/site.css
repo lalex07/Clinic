@@ -12,7 +12,9 @@
   --ink:         #2B2A26;
   --ink-soft:    #5E584E;
   --ink-faint:   #918A7C;
-  --primary:     #16635B;
+  /* --primary nudged one step toward muted grey-green (was #16635B) for a
+     calmer, more premium feel — CureClinic-leaning. Palette otherwise unchanged. */
+  --primary:     #28645C;
   --primary-deep:#0E4A44;
   --primary-soft:#E3EFEC;
   --accent:      #CC7A45;
@@ -27,9 +29,9 @@
 
   /* spacing scale */
   --s-1: 0.5rem;  --s-2: 0.75rem; --s-3: 1rem;  --s-4: 1.5rem;
-  /* --s-7/--s-8 drive inter-section vertical rhythm; tightened one step down
-     (4.5→3.5, 6.5→5) for a calmer, less cavernous gap between sections */
-  --s-5: 2rem;    --s-6: 3rem;    --s-7: 3.5rem; --s-8: 5rem;
+  /* --s-7/--s-8 drive inter-section vertical rhythm. Nudged up a touch
+     (3.5→4, 5→5.5) toward CureClinic's airier breathing, still not cavernous */
+  --s-5: 2rem;    --s-6: 3rem;    --s-7: 4rem;   --s-8: 5.5rem;
 
   --maxw: 1140px;
   --radius:   14px;
@@ -46,7 +48,9 @@ body {
   font-family: "Noto Sans TC", system-ui, sans-serif;
   color: var(--ink);
   background: var(--bg);
-  line-height: 1.8;
+  /* lighter weight + looser leading for a calmer, premium CureClinic feel */
+  font-weight: 400;
+  line-height: 1.9;
   font-size: 16px;
   letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
@@ -271,7 +275,17 @@ body > * { position: relative; z-index: 1; }
   width: 22px; height: 2px; border-radius: 2px;
   background: var(--accent);
 }
-.sec-head h2 { font-size: clamp(1.7rem, 3.6vw, 2.4rem); font-weight: 700; }
+/* bilingual eyebrow: small italic English caption beside the Chinese kicker
+   (CureClinic-style). English is muted/italic; Chinese stays accent-weighted. */
+.kicker__en {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--ink-faint);
+  letter-spacing: 0.06em;
+  text-transform: none;
+  margin-right: 0.15rem;
+}
+.sec-head h2 { font-size: clamp(1.7rem, 3.6vw, 2.4rem); font-weight: 600; }
 .sec-head p { color: var(--ink-soft); margin: var(--s-3) 0 0; font-size: 1.02rem; }
 
 /* ============ Interior page banner ============ */
@@ -314,7 +328,7 @@ body > * { position: relative; z-index: 1; }
 }
 .page-head h1 {
   font-size: clamp(2rem, 4.8vw, 3rem);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.3;
   color: var(--primary-deep);
@@ -352,6 +366,65 @@ body > * { position: relative; z-index: 1; }
   line-height: 1.5;
 }
 .tbd::before { content: "✎"; font-size: 0.9em; }
+
+/* ============ Photo zone (smart placeholder + shot list) ============ */
+/* One shared component used for every photo slot across the site. It looks
+   intentional (designer annotation, not a broken image) and embeds the shot
+   list as its label, so it doubles as a brief for the commissioned photographer.
+   Only the inner label text varies between zones; the visual treatment is shared.
+   Crisp hard edges, solid --bg-2 fill, dashed --line-strong border — no glow. */
+.photo-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-3);
+  text-align: center;
+  background: var(--bg-2);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--s-5);
+  color: var(--ink-soft);
+  overflow: hidden;
+}
+.photo-zone__icon {
+  width: 38px; height: 38px;
+  flex-shrink: 0;
+  color: var(--primary);
+}
+.photo-zone__icon svg { width: 100%; height: 100%; }
+.photo-zone__label {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.85;
+  color: var(--ink-soft);
+  max-width: 48ch;
+}
+.photo-zone__label strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: var(--primary-deep);
+}
+.photo-zone__label .avoid { color: var(--ink-faint); }
+
+/* aspect-ratio modifiers — the box previews the target crop */
+.photo-zone--16x9 { aspect-ratio: 16 / 9; }
+.photo-zone--4x3  { aspect-ratio: 4 / 3; }
+.photo-zone--1x1  { aspect-ratio: 1 / 1; }
+.photo-zone--4x5  { aspect-ratio: 4 / 5; }
+
+/* compact variant for small slots (timeline milestones, hub cards) */
+.photo-zone--sm { gap: var(--s-2); padding: var(--s-4); }
+.photo-zone--sm .photo-zone__icon { width: 26px; height: 26px; }
+.photo-zone--sm .photo-zone__label { font-size: 0.76rem; line-height: 1.7; }
+.photo-zone--sm .photo-zone__label strong { font-size: 0.82rem; margin-bottom: 0.2rem; }
+
+@media (max-width: 760px) {
+  /* tall portraits/large ratios become unwieldy on phones — let content set height */
+  .photo-zone--4x5 { aspect-ratio: 4 / 3; }
+}
 
 /* ============ Footer ============ */
 .site-footer {

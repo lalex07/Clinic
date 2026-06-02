@@ -2,7 +2,37 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-02 (session 2)_
+_Last updated: 2026-06-02 (session 3)_
+
+## 🗓️ 2026-06-02 (session 3) — 設計精修：照片區 + CureClinic 風格微調
+
+院長核准朝 **cureclinictw.com** 美學精修（沉穩、premium-but-warm、補上目前缺乏的人味）。非重新設計，僅視覺精修。
+
+### Part 1 — 5 個照片區（共用「智慧佔位框」元件）
+- 新增共用元件 **`.photo-zone`**（`assets/site.css`）：solid `--bg-2` 底、dashed `--line-strong` 邊框、單線相機圖示、內嵌「拍攝建議」標籤——看起來像設計稿註記而非破圖，且**佔位框本身就是 shot list**，院長委拍時直接照著拍。比例 modifier：`--16x9 / --4x3 / --1x1 / --4x5`，另有 `--sm` 精簡變體。所有佔位框視覺一致，只有內層標籤文字不同。
+  1. **首頁 hero**（`index.html`）：**移除原「呼吸環＋卡通醫師頭像 badge＋浮動 chip」裝飾**，改為單欄 hero 文案 ＋ 下方寬幅 **16:9** 照片區。卡通頭像僅保留於 header logo。
+  2. **關於頁・時間軸**（`about.html`）：4 個里程碑各加 **1:1** 方形佔位（`.tl-content` 改為 photo｜text 兩欄）。中山（2026）為「開幕後補上 / Photo pending」變體。
+  3. **院區詳細頁**（4 頁）：頁首加 **4:3** 外觀照 banner（`.loc-hero`，max-height 22rem 避免過高）。中山為 pending 變體。
+  4. **診療項目**（`services.html`）：4 大特色各加 **4:3** 情境照（`.svc__lead` photo｜intro 兩欄），標籤強調「設備/檢查環境、不露臉」。
+  5. **院區總覽卡片**（`locations.html`）：4 張卡片各加 **4:3** 卡片照。
+- **未**引入任何實際外部圖片；全部為佔位框。完整 shot list 另寫入 `site-spec.md` 新增**第十三節**（攝影師 brief）。
+
+### Part 2 — 字體與色調微調（朝 CureClinic）
+- **內文**：明確 `font-weight: 400`、`line-height: 1.8 → 1.9`（更輕、更透氣）。
+- **標題減重**：`.sec-head h2`、`.page-head h1` 由 700 → 600；首頁 hero h1 **加大且減重**（clamp 上限 3.35→3.55rem、weight 700→**500**），confident scale + delicate weight。
+- **雙語小標**：`.sec-head .kicker` 加義式英文前綴（`.kicker__en`，italic／`--ink-faint`）——首頁 About、關於頁 Our Story／Milestones／Our Promise。（team 無 sec-head kicker，page-head eyebrow 維持原樣；services/locations 用 page-head eyebrow 亦維持。）
+- **--primary 一階去飽和**：`#16635B → #28645C`（muted grey-green，更 premium）。其餘 palette token 不動；白字對比 6.8:1，無障礙合格。before/after 對照圖：`temporary screenshots/ref-primary-before-after.png`。
+- **間距**：`--s-7 3.5→4rem`、`--s-8 5→5.5rem`，略增 section 呼吸感（仍不至於空洞）。
+
+### 驗證
+- 截圖（hard refresh，Chrome headless）：`temporary screenshots/ref-home-hero.png`、`ref-home-desktop.png`、`ref-about-timeline.png`、`ref-loc-xindian.png`、`ref-services.png`、`ref-locations-hub.png`、`ref-primary-before-after.png`。所有佔位框視覺一致、僅標籤不同；字體變輕、雙語小標、間距到位。
+- `linear/radial/conic-gradient` 全站 **0**；`backdrop-filter`／`filter: blur`／`drop-shadow` **0**；無 `0 0` 模糊 glow box-shadow；無殘留 `breath-rings/hero__badge/hero__chip/hero__grid/hero__visual`。
+- **未動**：palette 其餘 token、元件形狀（卡片/pill/按鈕）、頁面結構/導覽/URL、團隊頁醫師照處理、header 卡通 logo、合規文字與 〔待補〕。
+
+---
+
+### ⏭️ 後續可選
+- 院長委拍後，把各 `.photo-zone` figure 換成 `<img>`（沿用相同 aspect-ratio class，版位已預留）。詳見 `site-spec.md` 第十三節技術備註。
 
 ## 🗓️ 2026-06-02 (session 2) — 套用院長 Q1/Q3 修訂 + 以院長語氣重寫 Q2, Q4–Q7
 

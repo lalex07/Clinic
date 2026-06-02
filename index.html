@@ -39,22 +39,18 @@
   }
 
   /* ============ Hero ============ */
+  /* Single-column hero: confident, lighter-weight headline, then a wide 16:9
+     photo zone for the human factor (replaces the old rings + logo-badge decoration). */
   .hero {
     position: relative;
-    padding: var(--s-8) 0 var(--s-4);
-    overflow: hidden;
-  }
-  .hero__grid {
-    display: grid;
-    grid-template-columns: 1.4fr 0.72fr;
-    gap: var(--s-8);
-    align-items: center;
+    padding: var(--s-8) 0 var(--s-7);
   }
   .hero h1 {
-    font-size: clamp(2.1rem, 5.2vw, 3.35rem);
-    font-weight: 700;
+    font-size: clamp(2.2rem, 5.2vw, 3.55rem);
+    /* larger AND lighter — confident scale, delicate serif weight */
+    font-weight: 500;
     letter-spacing: -0.02em;
-    line-height: 1.32;
+    line-height: 1.34;
     color: var(--primary-deep);
   }
   .hero h1 .hl {
@@ -64,10 +60,10 @@
   }
   .hero__lead {
     margin-top: var(--s-4);
-    font-size: 1.05rem;
+    font-size: 1.08rem;
     line-height: 2;
     color: var(--ink-soft);
-    max-width: 38ch;
+    max-width: 46ch;
   }
   .hero__cta {
     margin-top: var(--s-5);
@@ -75,66 +71,8 @@
     flex-wrap: wrap;
     gap: 0.85rem;
   }
-
-  /* hero visual: breathing badge with concentric "respiration" rings */
-  .hero__visual {
-    position: relative;
-    display: grid;
-    place-items: center;
-    aspect-ratio: 1 / 1;
-    width: 75%;
-    justify-self: end;
-  }
-  .breath-rings {
-    position: absolute;
-    inset: 0;
-    margin: auto;
-    width: 100%;
-    height: 100%;
-  }
-  .breath-rings circle {
-    fill: none;
-    stroke: var(--primary);
-    stroke-width: 1;
-    opacity: 0.18;
-    transform-origin: center;
-    animation: breathe 6s var(--ease) infinite;
-  }
-  .breath-rings circle:nth-child(2) { animation-delay: 1s; opacity: 0.13; }
-  .breath-rings circle:nth-child(3) { animation-delay: 2s; opacity: 0.08; stroke: var(--accent); }
-  @keyframes breathe {
-    0%, 100% { transform: scale(0.92); opacity: 0.05; }
-    50%      { transform: scale(1.04); opacity: 0.22; }
-  }
-  .hero__badge {
-    position: relative;
-    width: 64%;
-    aspect-ratio: 1/1;
-    border-radius: 50%;
-    background: var(--surface);
-    /* tight grounded shadow only — large soft shadow on a circle reads as a halo */
-    box-shadow: var(--shadow-sm);
-    display: grid;
-    place-items: center;
-    padding: 6%;
-  }
-  .hero__badge img { width: 100%; border-radius: 50%; }
-  .hero__chip {
-    position: absolute;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow-sm);
-    border-radius: 14px;
-    padding: 0.6rem 0.95rem;
-    font-size: 0.86rem;
-    font-weight: 500;
-    color: var(--primary-deep);
-    display: flex; align-items: center; gap: 0.5rem;
-  }
-  .hero__chip b { font-family: "Noto Serif TC", serif; font-size: 1.1rem; }
-  .hero__chip--a { top: 6%; right: -8%; }
-  .hero__chip--b { bottom: 14%; left: -10%; }
-  .hero__chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  /* wide hero photo zone */
+  .hero__photo { margin-top: var(--s-7); }
 
   /* ============ Quick entry cards ============ */
   .quick { padding: var(--s-2) 0 var(--s-6); }
@@ -227,19 +165,13 @@
 
   /* ============ Homepage responsive ============ */
   @media (max-width: 900px) {
-    .hero__grid { grid-template-columns: 1fr; gap: var(--s-5); }
-    .hero__visual { width: 62%; max-width: 320px; margin-inline: auto; justify-self: center; order: -1; }
     .hero { padding-top: var(--s-6); }
+    .hero__photo { margin-top: var(--s-6); }
   }
   @media (max-width: 760px) {
     .quick__grid { grid-template-columns: 1fr; }
     .features__grid { grid-template-columns: 1fr; }
     .feature, .feature:nth-child(4), .feature:nth-child(5) { grid-column: 1 / -1; }
-    .hero__chip--a { right: 0; }
-    .hero__chip--b { left: 0; }
-  }
-  @media (max-width: 420px) {
-    .hero__chip { font-size: 0.78rem; padding: 0.5rem 0.7rem; }
   }
 </style>
 </head>
@@ -286,7 +218,7 @@
 <main id="main">
   <!-- ===================== Hero ===================== -->
   <section class="hero">
-    <div class="wrap hero__grid">
+    <div class="wrap">
       <div class="hero__copy">
         <span class="eyebrow reveal in">新店 ・ 木柵 ・ 興隆 ・ 中山</span>
         <h1 class="reveal in d1">新店・文山在地深耕，<br /><span class="hl">三院區</span>守護全家人的<br />呼吸與睡眠</h1>
@@ -299,18 +231,17 @@
         </div>
       </div>
 
-      <div class="hero__visual reveal in d2">
-        <svg class="breath-rings" viewBox="0 0 200 200" aria-hidden="true">
-          <circle cx="100" cy="100" r="96" />
-          <circle cx="100" cy="100" r="80" />
-          <circle cx="100" cy="100" r="64" />
-        </svg>
-        <div class="hero__badge">
-          <img src="assets/logo.png" alt="大豐耳鼻喉科聯合診所 醫師標誌" />
-        </div>
-        <div class="hero__chip hero__chip--a"><span class="dot"></span>7 位專科醫師</div>
-        <div class="hero__chip hero__chip--b"><b>4</b> 大院區・好就近</div>
-      </div>
+      <figure class="photo-zone photo-zone--16x9 hero__photo reveal in d3">
+        <span class="photo-zone__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </span>
+        <p class="photo-zone__label">
+          <strong>首頁主視覺照片建議 · Homepage hero photo</strong>
+          建議拍攝：診間自然光、安靜的等候區，或醫師與病患輕鬆對話的廣角畫面<br />
+          比例：16:9 橫式，建議解析度 2400×1350 以上<br />
+          <span class="avoid">避免：擺拍感過重的微笑團隊照、stock-photo 風格的握手照</span>
+        </p>
+      </figure>
     </div>
   </section>
 
@@ -356,7 +287,7 @@
   <section class="features" id="about">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="kicker">關於大豐</span>
+        <span class="kicker"><span class="kicker__en">About</span>關於大豐</span>
         <h2>社區巷口的耳鼻喉照護，<br />一致的專業與親切</h2>
         <p>從孩子的中耳炎、過敏性鼻炎，到成人的鼻竇炎、睡眠打鼾與頭頸部評估，陪伴社區每一個家庭。</p>
       </div>

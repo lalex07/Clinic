@@ -29,6 +29,18 @@
 .loc-card:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
 .loc-card--soon { background: var(--bg-2); }
 
+/* hub card cover photo (zone 5) — sits at the top of each card */
+.loc-card__photo { aspect-ratio: 4 / 3; }
+
+/* detail-page header photo (zone 3) — wide exterior banner above the address */
+.loc-hero {
+  padding: 0 0 var(--s-2);
+}
+.loc-hero-photo {
+  aspect-ratio: 4 / 3;
+  max-height: 22rem;
+}
+
 .loc-card__head {
   display: flex;
   align-items: center;
