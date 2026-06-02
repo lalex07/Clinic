@@ -2,7 +2,30 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-02 (session 3)_
+_Last updated: 2026-06-02 (session 4)_
+
+## 🗓️ 2026-06-02 (session 4) — FAQ 上線 + 設計精修收尾 + 全站 nav 連結
+
+### FAQ 系統正式上線
+- **`faq.html` 發布** — 7 篇**院長核准**衛教文章（Q1–Q7）正式上線。先前僅為 `faq.md` 草稿（未發布、無頁面、無 nav）；本次院長通過 Q2、Q4–Q7（先前 Q1/Q3 已通過），7 篇全數核准，建立 `faq.html` 衛教專欄頁面。
+- **`en/faq.html`** stub 一併建立（coming-soon 樣式，中文｜EN 切換，沿用既有 `/en/` placeholder 模式）。
+- **`faq.md` review workflow 維持** — 持續作為院長醫療內容審閱的工作文件：草稿 → 院長審閱／修訂／核准 → 才上線至 `faq.html`。Q8–Q17 後續沿用此流程。
+
+### 設計精修收尾（兩個 agent 平行完成、已 commit）
+- **首頁 hero 呼吸環視覺還原** — 復原 homepage hero 的 breathing-rings 視覺。
+- **照片佔位框重疊修正** — 修正 `about.html` 等頁面 photo placeholder 的版位重疊問題。
+
+### 全站 nav 連結（本次 session 收尾）
+- **「衛教專欄」nav 連結全站接上 `faq.html`** — 先前各頁 header nav 的衛教專欄連結指向尚未建立的 `blog.html`；本次全數改指向已發布的 `faq.html`（10 個中文頁：index / about / services / team / locations / 4 個 location 詳細頁 / faq）。faq.html 自身的 nav 連結加 `aria-current="page"`。nav 順序維持 關於大豐／診療項目／醫療團隊／院區・門診／衛教專欄。
+- **`/en/` 未加 nav 連結** — `/en/` 各頁仍為 coming-soon stub，header 僅有 brand ＋ 語言切換、**無主選單**，無對應 nav 可加「Health Education」連結；en/faq.html stub 自身已可由 en 頁面語言切換／既有連結到達。待 `/en/` 建置完整選單時再補。
+
+### ⏭️ 下一個 session 待辦
+- **(a) 巫婧穎 vs 巫靚穎 名字用字確認**（blocking）— **FAQ 用「婧」、team.html 用「靚」**，兩處不一致，需院長確認正確用字後統一全站（含 team.html、site-spec §五、照片檔名）。
+- **(b) FAQ Q8–Q17 撰寫** — 以院長語氣沿用 Q1–Q7 範本（17 題標題已備齊）。
+- **(c) 照片區仍待實拍** — 院長委拍攝影師後補上 4 個剩餘 photo zone：關於頁時間軸、院區詳細頁、診療項目特色、院區總覽卡片。
+- **(d) 收集剩餘醫師學經歷**（蔡彥群／廖學森／蕭仁豪／李順源／林雅芳）。
+- **(e) 等院長提供中山院區 地址／電話／確認開幕日期**。
+- **(f) 評估是否建置 預約掛號／聯絡 頁**。
 
 ## 🗓️ 2026-06-02 (session 3) — 設計精修：照片區 + CureClinic 風格微調
 
