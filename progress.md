@@ -2,7 +2,29 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-05-31_
+_Last updated: 2026-06-02_
+
+## 🗓️ 2026-06-02 — FAQ 睡眠呼吸中止症群組草擬（Q2, Q4–Q7）
+
+- **Q1、Q3 經院長審閱通過。** 院長確認 Q1（鼻過敏與睡眠品質）、Q3（兒童腺樣體增生與睡眠呼吸中止）的語氣、長度、結構、保留性用語（hedging）、配圖占位做法與 §九 合規處理皆可用，定為其餘 FAQ 的範本。`faq.md` 兩篇狀態由「草稿（待院長審閱）」更新為「**已通過院長審閱（待發布）**」。
+- **新草擬 5 篇（睡眠呼吸中止症臨床群組），待院長審閱：**
+  - **Q2** 鼻過敏與睡眠呼吸中止有相關嗎？
+  - **Q4** 兒童睡眠呼吸中止症與生長曲線（小兒；提及巫靚穎醫師兒科共同評估）
+  - **Q5** 兒童睡眠呼吸中止與面容變化（小兒；腺樣體面容，相關非因果）
+  - **Q6** 兒童睡眠呼吸中止症與注意力不集中、過動的相關關係（小兒）
+  - **Q7** 打鼾與鼻中隔彎曲的相關關係（鼻腔結構橋接）
+  - 每篇 ~650–660 字，嚴格沿用 Q1/Q3 範本（開場框架 → 機制粗體小標 → 辨識徵兆 → 日常／家長可做 → 軟性導向門診 → 📷 配圖建議占位）。保留性用語一致（目前研究顯示／有相關性／因人而異／相關而非因果）。
+- **§九 合規掃描通過**：5 篇正文無 保證／最／根治／唯一／第一／必須／一定要；無費用、無藥品品牌、無療效承諾、無診斷，相關 vs. 因果皆明確標示。
+- **17 題主題標題全數填入 `faq.md` 表格**（院長已提供完整清單，取代原 〔待補主題〕）。Q1/Q3＝已通過；Q2/Q4–Q7＝草稿待審；Q8–Q17＝待撰寫。
+- **仍為草稿文件** — 未發布、未建立 `faq.html`、未加 nav 連結；配圖僅占位（無實際外部圖片）。
+- **下一批待撰寫：** Q8–Q17（軟顎舌根構造、女性荷爾蒙、止鼾牙套、胃食道逆流×睡眠／中耳炎／耳悶、成人與兒童臨床表現、肥胖、簡易打呼判讀）。
+
+## 🗓️ 2026-05-31 (evening) — FAQ / 衛教專欄 workflow established
+
+- **FAQ workflow established.** Created **`faq.md`** as a **draft-only** document for medical content review — it lives in the repo as 院長's working document and is **not** published (no `faq.html`, not linked from nav).
+- **Q1 (鼻過敏與睡眠品質) and Q3 (兒童腺樣體增生與睡眠呼吸中止)** drafted as ~600-char samples — both **await 院長 review before any publication**. §九 compliance scan clean on article copy.
+- **Workflow:** 醫療衛教 content drafts go in `faq.md` → 院長 review / edit / approval → only then move to a published `faq.html` page that gets linked from site nav. Medical content is never published unreviewed.
+- Committed `cf1bc55` ("Draft FAQ structure + Q1 & Q3 samples for院長 review").
 
 ## 🗓️ 2026-05-31 (session 6) — Doctor credentials + stricter glow/gradient sweep
 
@@ -73,6 +95,7 @@ _Last updated: 2026-05-31_
 
 ## ⏭️ NEXT SESSION (start here)
 
+1. **FAQ — review 院長's feedback on the Q2, Q4–Q7 batch** (`faq.md`) — apply edits, then **draft Q8–Q17** (all 17 titles now supplied). _(Q1/Q3 approved 2026-06-02; Q2/Q4–Q7 drafted and awaiting review.)_
 1. **Resolve the 林諄儒 vs 林雅芳 name question** (blocking — see Open questions). The roster currently treats them as **two distinct doctors** (林諄儒 = 新店, full credentials provided; 林雅芳 = 木柵, 2019 founder, still 〔待補〕). Confirm with 院長 whether both are real, or one is a transcription error, then adjust the roster + doctor total (7 → 6 if they're one person).
 2. **Pick the Facebook banner variant (A/B/C) + clean up.** Once 院長 chooses, delete the two unused variants and rename the winner back to `brand_assets/facebook-cover.svg` / `-preview.png`.
 3. **Build 預約掛號 / 聯絡 page** (§八) — booking + contact (電話 / LINE / 線上掛號 CTAs). This is the last major remaining content page.
@@ -89,6 +112,8 @@ _Last updated: 2026-05-31_
 
 These are the `〔待補〕` items that need his input before pages can be finalised:
 
+- **院長 review needed on the Q2, Q4–Q7 FAQ drafts** (`faq.md`) — tone, factual accuracy, length, and §九 compliance. Nothing publishes until reviewed. _(Q1/Q3 already approved 2026-06-02; format validated. All 17 topic titles now supplied; Q8–Q17 still to be drafted.)_
+- **FAQ image strategy decision** — SVG illustrations vs licensed stock photos vs anatomical diagrams vs no images. (No stock photos used yet; each draft carries a `📷 配圖建議` placeholder only.)
 - **⚠️ 林諄儒 vs 林雅芳 — name verification needed.** The codebase currently has **two distinct doctor entries**: **林諄儒** (新店總院, with the full credentials 院長 sent — 中國醫藥大學, 北醫附醫總醫師/主治, 香港中文大學 + 新加坡樟宜綜合醫院 國際手術進修) and **林雅芳** (木柵分院, 2019 共同創辦, still 〔待補〕). Need 院長 to confirm whether these are **two real, different doctors**, or whether **one of the names is a transcription error**. Nothing was auto-merged. If they turn out to be the same person, the doctor total should change from 7 → 6.
 - **Facebook banner — which variant (A/B/C), or commission a designer?** Three SVG variants are in `brand_assets/` for comparison: **A** = icons + tagline both shifted right; **B** = icons original/centered + tagline shifted for the profile-picture safe zone; **C** = fully original layout, no safe-zone adjustment (profile pic overlaps tagline). All are SVG compositions, not photographic. Confirm which variant to ship, **or** whether 院長 would rather commission a polished/photo-based banner from a designer/Canva. Once chosen, delete the other two and rename the winner back to `facebook-cover.svg` / `-preview.png`.
 - **Slogan refinement** — confirm/adjust the hero slogan (currently §二 slogan B).
