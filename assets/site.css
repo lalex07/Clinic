@@ -374,6 +374,11 @@ body > * { position: relative; z-index: 1; }
    Only the inner label text varies between zones; the visual treatment is shared.
    Crisp hard edges, solid --bg-2 fill, dashed --line-strong border — no glow. */
 .photo-zone {
+  /* reset the browser-default <figure> margin (1em 40px) — those 40px side
+     margins squeeze the placeholder inside narrow grid columns and make it
+     intrude on / overlap adjacent text. Must be 0 so the box fills its cell. */
+  margin: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -551,4 +556,135 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
 }
 @media (max-width: 420px) {
   .wrap { padding-inline: var(--s-3); }
+}
+
+/* ============================================================================
+   FAQ PAGE / 衛教專欄  ——  Agent 2 scope (faq.html only).
+   All FAQ-specific styles live below this header. Do not edit rules above it.
+   ============================================================================ */
+
+/* hero: bilingual eyebrow (italic English caption + Chinese), CureClinic-style */
+.faq-hero .eyebrow__en {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  margin-right: 0.1rem;
+}
+
+/* ---- article index (table-of-contents) ---- */
+.faq-index { padding: var(--s-2) 0 var(--s-7); }
+.faq-index__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  max-width: 760px;
+}
+.faq-entry {
+  position: relative;
+  display: block;
+  padding: var(--s-4) var(--s-5);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  /* lift-only hover: transform + shadow, never color/transition-all */
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+.faq-entry:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+.faq-entry:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+.faq-entry__num {
+  font-family: "Noto Serif TC", serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+.faq-entry h2 {
+  font-family: "Noto Serif TC", serif;
+  font-size: clamp(1.18rem, 2.6vw, 1.4rem);
+  font-weight: 600;
+  color: var(--primary-deep);
+  line-height: 1.5;
+  margin: 0.3rem 0 0.5rem;
+}
+.faq-entry p {
+  color: var(--ink-soft);
+  font-size: 0.97rem;
+  line-height: 1.85;
+  margin: 0 0 0.7rem;
+  max-width: 60ch;
+}
+.faq-entry__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--primary);
+}
+.faq-entry:hover .faq-entry__more { color: var(--primary-deep); }
+
+/* ---- full articles ---- */
+.faq-articles { padding-bottom: var(--s-7); }
+.faq-article {
+  max-width: 65ch;
+  margin: 0 auto;
+  padding: var(--s-7) 0 var(--s-6);
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 88px;
+}
+.faq-article:first-child { border-top: none; padding-top: var(--s-5); }
+.faq-article__num {
+  font-family: "Noto Serif TC", serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+.faq-article > h2 {
+  font-family: "Noto Serif TC", serif;
+  font-size: clamp(1.55rem, 3.6vw, 2.1rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  color: var(--primary-deep);
+  margin: 0.35rem 0 var(--s-4);
+}
+.faq-article p {
+  color: var(--ink-soft);
+  font-size: 1.04rem;
+  line-height: 1.95;
+  margin: 0 0 var(--s-4);
+}
+/* bold subheading questions — serif, primary-deep, breathing room above */
+.faq-sub {
+  font-family: "Noto Serif TC", serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary-deep);
+  line-height: 1.6;
+  margin: var(--s-5) 0 var(--s-3);
+}
+/* soft article-end CTA — a styled link with an arrow, not a loud button */
+.faq-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: var(--s-3);
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: var(--primary);
+  border-bottom: 1px solid var(--primary-soft);
+  padding-bottom: 0.2rem;
+  transition: color 0.25s var(--ease), border-color 0.25s var(--ease);
+}
+.faq-cta:hover { color: var(--primary-deep); border-color: var(--primary); }
+.faq-cta:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+
+@media (max-width: 760px) {
+  .faq-entry { padding: var(--s-3) var(--s-4); }
+  .faq-article { padding: var(--s-6) 0 var(--s-5); }
+  .faq-article p { font-size: 1.01rem; }
 }
