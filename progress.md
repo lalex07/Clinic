@@ -24,9 +24,12 @@ clinic-audit（report-only）三組全 PASS（§九／設計規則／無障礙�
 - 截圖（Chrome headless 2×，`temporary screenshots/s8-*`）：`faq-grid`（卡片網格不變、連結改指獨立頁）、`faq-q1-article`（banner＋h1＋h2 小標＋CTA）、`faq-q1-mobile`、`backtotop-visible`（實心圓按鈕於右下、無光暈/漸層）。回到頂端可見態截圖以暫時複本 `_btt_q6.html`（強制 `is-visible`）拍攝後刪除。
 - clinic-audit 三組 PASS；`最` 僅 最近／最佳；新頁 disclaimer 齊全。
 
-### Task 3 — git 歷史抹除（**尚未執行，待院長 go-ahead**）
-- 目標：自**所有歷史 commit** 移除 `assets/doctors/lin-chun-ju.jpg` 與 `brand_assets/林諄儒 photo.jpg`（工作樹已乾淨，但舊 commit／已 push 至 GitHub 仍可還原）。
-- 方法：`git filter-repo --invert-paths --path …`（或 BFG fallback）→ 重設並 `git push --force --all/--tags`。**會改寫所有後續 commit SHA、屬破壞性**：其他 clone 失效、GitHub 可能短暫快取舊 blob、fork 可能保留，必要時須聯絡 GitHub support 清快取。**未經明確同意不執行 force-push。**
+### Task 3 — git 歷史抹除（**已執行，經明確同意**）
+- 自**所有歷史 commit** 移除 `assets/doctors/lin-chun-ju.jpg` 與 `brand_assets/林諄儒 photo.jpg`。以官方 standalone `git-filter-repo` 腳本（pip 受 PEP 668 阻擋，改下載單檔腳本以 python3 執行）`--invert-paths --path … --force`。
+- **force-push 前先備份**：`git bundle create ../Clinic-backup-pre-scrub.bundle --all`（33M，含所有 ref，留作唯一還原點）。
+- 重寫後 origin 被 filter-repo 移除→重新加回→`git push origin --force --all`（`a4bd85a…8ee96dd main 強制更新`，無 tag）。
+- **驗證**：兩路徑在所有歷史的 object-list 命中＝0、舊 blob `c04bd80` 不可達；其餘三張醫師照（liao／wu／hsiao）歷史完好；local＝origin main＝`8ee96dd`、remote 歷史亦無痕。
+- ⚠️ **後續注意**：所有 commit SHA 已改寫（前 `7081a3b`→今 `8ee96dd`）。**其他 clone／另一個 Claude session 需重新 clone 或 hard-reset**，勿直接 pull。GitHub 可能短暫快取舊 blob、**既有 fork 仍保有**舊物件；如需徹底清除網頁快取／fork，須聯絡 GitHub Support。備份 bundle 位於專案上層 `Clinic-backup-pre-scrub.bundle`，確認無誤後可刪。
 
 ## 🗓️ 2026-06-04 (session 7) — 兩位醫師匿名化 + 院區交通／地圖 + 木柵院長 label + 衛教專欄改卡片網格
 
