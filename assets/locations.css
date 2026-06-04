@@ -118,7 +118,7 @@
 }
 .sched-card__icon svg { width: 28px; height: 28px; }
 .sched-card__body { flex: 1 1 16rem; }
-.sched-card__body h3 { font-size: 1.3rem; color: var(--primary-deep); margin-bottom: 0.3rem; }
+.sched-card__body h2 { font-size: 1.3rem; color: var(--primary-deep); margin-bottom: 0.3rem; }
 .sched-card__body p { margin: 0; color: var(--ink-soft); font-size: 0.96rem; }
 
 /* ============ Detail: two-column layout ============ */

@@ -110,6 +110,9 @@
     0%, 100% { transform: scale(0.92); opacity: 0.05; }
     50%      { transform: scale(1.04); opacity: 0.22; }
   }
+  @media (prefers-reduced-motion: reduce) {
+    .breath-rings circle { animation: none; }
+  }
   .hero__badge {
     position: relative;
     width: 64%;
@@ -215,7 +218,7 @@
     font-family: "Noto Serif TC", serif;
     font-size: 1rem;
     font-weight: 700;
-    color: var(--accent);
+    color: var(--ink-soft);
     letter-spacing: 0.05em;
   }
   .feature__title {
@@ -277,7 +280,7 @@
     </div>
 
     <a href="contact.html" class="btn nav__cta">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
       立即預約
     </a>
 
@@ -298,7 +301,7 @@
         <div class="hero__cta reveal in d3">
           <a href="locations.html" class="btn btn--ghost">
             查看院區與門診
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>
       </div>
@@ -323,34 +326,34 @@
     <div class="wrap quick__grid">
       <a href="locations.html" class="qcard reveal">
         <span class="qcard__icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-4 7 4v13"/><path d="M9 21v-6h6v6"/><path d="M12 4v3"/></svg>
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-4 7 4v13"/><path d="M9 21v-6h6v6"/><path d="M12 4v3"/></svg>
         </span>
         <h3>四大院區・門診時間</h3>
         <p>找離您最近的大豐（中山院區 2026/10 開幕）</p>
         <span class="qcard__more">查看院區
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>
       </a>
 
       <a href="services.html" class="qcard reveal d1">
         <span class="qcard__icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A1 1 0 0 0 3 3v3a6 6 0 0 0 12 0V3a1 1 0 0 0-1.8-.7"/><path d="M9 14v2a5 5 0 0 0 10 0v-1"/><circle cx="20" cy="10" r="2"/></svg>
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A1 1 0 0 0 3 3v3a6 6 0 0 0 12 0V3a1 1 0 0 0-1.8-.7"/><path d="M9 14v2a5 5 0 0 0 10 0v-1"/><circle cx="20" cy="10" r="2"/></svg>
         </span>
         <h3>診療項目</h3>
         <p>耳・鼻・喉・頭頸一次照顧</p>
         <span class="qcard__more">了解診療
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>
       </a>
 
       <a href="contact.html" class="qcard reveal d2">
         <span class="qcard__icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
         </span>
         <h3>立即預約</h3>
         <p>電話 / LINE / 線上掛號</p>
         <span class="qcard__more">前往預約
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>
       </a>
     </div>
@@ -369,7 +372,7 @@
         <article class="feature reveal">
           <span class="feature__num">01</span>
           <h3 class="feature__title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-10a7 7 0 0 1 14 0c0 4.8-7 10-7 10z"/><circle cx="12" cy="11" r="2.4"/></svg>
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-10a7 7 0 0 1 14 0c0 4.8-7 10-7 10z"/><circle cx="12" cy="11" r="2.4"/></svg>
             四院區・好就近
           </h3>
           <p>新店、木柵、興隆三處看診，中山旗艦院區 2026/10 開幕，住家或上班路上都方便。</p>
@@ -378,7 +381,7 @@
         <article class="feature reveal d1">
           <span class="feature__num">02</span>
           <h3 class="feature__title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13A4 4 0 0 1 16 11"/></svg>
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13A4 4 0 0 1 16 11"/></svg>
             陣容堅強・分工細
           </h3>
           <p>七位醫師各有專長，睡眠、眩暈、頭頸部皆有專責評估門診。</p>
@@ -387,7 +390,7 @@
         <article class="feature reveal d2">
           <span class="feature__num">03</span>
           <h3 class="feature__title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.2"/><path d="M3 20v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1"/><path d="M15.5 20v-.5a4 4 0 0 1 4-4 3 3 0 0 1 3 3v1.5"/></svg>
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.2"/><path d="M3 20v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1"/><path d="M15.5 20v-.5a4 4 0 0 1 4-4 3 3 0 0 1 3 3v1.5"/></svg>
             大人小孩・一起顧
           </h3>
           <p>設有小兒專科醫師，全家大小的耳鼻喉問題一次解決。</p>
@@ -396,7 +399,7 @@
         <article class="feature reveal">
           <span class="feature__num">04</span>
           <h3 class="feature__title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a8 8 0 0 1 16 0"/><path d="M4 11v3a3 3 0 0 0 3 3h0a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H4z"/><path d="M20 11v3a3 3 0 0 1-3 3h-2"/><circle cx="13" cy="20" r="1"/></svg>
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a8 8 0 0 1 16 0"/><path d="M4 11v3a3 3 0 0 0 3 3h0a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H4z"/><path d="M20 11v3a3 3 0 0 1-3 3h-2"/><circle cx="13" cy="20" r="1"/></svg>
             儀器完善・看得清楚
           </h3>
           <p>配備鼻咽喉內視鏡、聽力檢查與頭頸部超音波等檢測<span class="review-note">（請依實際設備調整）</span>，讓診斷更精準。</p>
@@ -405,7 +408,7 @@
         <article class="feature reveal d1">
           <span class="feature__num">05</span>
           <h3 class="feature__title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 5 4-12 2 7h6"/></svg>
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 5 4-12 2 7h6"/></svg>
             看診到手術・一條龍
           </h3>
           <p>中山旗艦院區設完整開刀房，鼻中隔、軟齶手術與睡眠、鼻過敏的一站式評估到治療，不必在多家院所間奔波。</p>

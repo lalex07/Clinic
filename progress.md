@@ -2,7 +2,21 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-02 (session 4)_
+_Last updated: 2026-06-04 (session 5)_
+
+## 🗓️ 2026-06-04 (session 5) — 無障礙修正（review-2026-06-02 的 4 項）
+
+套用 `review-2026-06-02.md` 的 4 個 accessibility 發現，**僅做修正所需的最小變更，無其他視覺改動**。合規（§九）與設計規則在本次 review 已是 PASS，未動。
+
+1. **Reduced-motion guard（`index.html`）** — hero `.breath-rings circle` 的 `breathe 6s infinite` 先前不受任何 `prefers-reduced-motion` 保護（既有 guard 在 `site.css` 只處理 `.reveal`）。在 `index.html` `<style>` 內 `@keyframes breathe` 後新增 `@media (prefers-reduced-motion: reduce){ .breath-rings circle{ animation:none } }`。WCAG 2.3.3。
+2. **裝飾性 SVG `aria-hidden` 全站掃描** — 為所有缺漏的純裝飾 inline `<svg>` 補上 `aria-hidden="true" focusable="false"`，共 **134** 個（10 中文頁 + 4 個 `/en/` stub）。全部 SVG 皆為 24×24 線圖示且旁邊有文字標籤（nav／卡片標題／chip／info-row／breadcrumb／footer／地圖佔位／en 返回箭頭），無任何「不靠鄰近文字即傳達獨特資訊」者，故全數可隱藏；連結內的 chevron 一併隱藏以保持連結 accessible name 乾淨。既有 `aria-hidden` 的 breath-rings 未重複加。掃描後 0 個 SVG 仍缺 `aria-hidden`、無重複屬性。
+3. **文字對比（`assets/site.css` + 用處）** — `--ink-faint` `#918A7C`（cream 上 3.18:1）**加深為 `#736C5E`**（cream 4.83:1、white 5.2:1，雙雙過 AA 4.5:1）；token 沿用故 team 卡片 bio／QR 說明／eyebrow 等小字一次到位。`--accent` `#CC7A45`（3.03:1）**值不變**（仍用於圖示填色／大字，3:1 可接受），但把 6 處**小字**的 `color:var(--accent)` 改為 `--ink-soft`（`#5E584E`，6.5:1）：`.sec-head .kicker`、`.faq-entry__num`、`.faq-article__num`（`site.css`）、`.values__inner .kicker`（`about.html`）、`.feature__num`（`index.html`）、`.svc__num`（`services.html`）。大字 accent（`.tl-year` clamp 1.6–2.1rem）與裝飾短線／圖示 accent 維持不動。
+4. **標題階層（`locations.html`）** — 原 `<h1>`→`<h3>` 跳級。`全院區門診總表` 由 `<h3>` 升為 `<h2>`（CSS 選擇器 `.sched-card__body h3`→`h2` 同步，外觀不變）；4 張院區卡片標題 `新店／興隆／木柵／中山大豐` 由 `<span class="loc-card__name">` 改為 `<h2 class="loc-card__name">`（class 沿用，顏色／字級／字重不變，base `h1,h2,h3` 已 `margin:0`）。主內容大綱現為 h1 → h2(×4 卡片) → h2(門診總表)，無跳級。footer 的 `<h4>` 為全站共用、不在本次範圍，未動。
+
+### 驗證
+- **§九 合規**：保證／根治／唯一／第一／必須／一定要 全站 0；`最` 僅 最近（地理）＋ 最佳（攝影佔位標籤，pre-existing）；14 頁皆有頁尾法定免責聲明。**無新增違規。**
+- **設計規則**：`linear/radial/conic-gradient` 0、`backdrop-filter`／`filter:blur`／`drop-shadow` 0（唯一 `filter:` 為 team 醫師照色彩正規化，pre-existing）、`transition:all` 0、`0 0` glow shadow 0。**未引入任何違規。**
+- **截圖**（Chrome headless 2×，`temporary screenshots/a11y-{index,services,team,locations}.png`）：四頁版位與外觀與修正前一致；卡片標題改 heading 後樣式不變；小字對比微調幾乎不可察。
 
 ## 🗓️ 2026-06-02 (session 4) — FAQ 上線 + 設計精修收尾 + 全站 nav 連結
 

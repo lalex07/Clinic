@@ -11,7 +11,7 @@
   --surface:     #FFFFFF;
   --ink:         #2B2A26;
   --ink-soft:    #5E584E;
-  --ink-faint:   #918A7C;
+  --ink-faint:   #736C5E;
   /* --primary nudged one step toward muted grey-green (was #16635B) for a
      calmer, more premium feel — CureClinic-leaning. Palette otherwise unchanged. */
   --primary:     #28645C;
@@ -263,7 +263,7 @@ body > * { position: relative; z-index: 1; }
 .sec-head .kicker {
   font-size: 0.92rem;
   letter-spacing: 0.14em;
-  color: var(--accent);
+  color: var(--ink-soft);
   font-weight: 700;
   display: inline-flex;
   align-items: center;
@@ -599,7 +599,7 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   font-weight: 700;
   font-size: 0.9rem;
   letter-spacing: 0.06em;
-  color: var(--accent);
+  color: var(--ink-soft);
 }
 .faq-entry h2 {
   font-family: "Noto Serif TC", serif;
@@ -641,7 +641,7 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   font-weight: 700;
   font-size: 0.92rem;
   letter-spacing: 0.06em;
-  color: var(--accent);
+  color: var(--ink-soft);
 }
 .faq-article > h2 {
   font-family: "Noto Serif TC", serif;
