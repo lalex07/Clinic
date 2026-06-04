@@ -58,6 +58,10 @@ Goals:
 
 Taiwan medical advertising rules apply. See section 九 in `site-spec.md` for the do-not-use word list (no 保證, 最, 根治, 唯一, etc.) and the required footer disclaimer. Treat that section as hard constraints.
 
+## Pre-commit audit
+
+Before committing any change, run the `clinic-audit` skill in `.claude/skills/clinic-audit/`. It checks §九 compliance, the design rules above, and accessibility (WCAG AA) in one pass, and knows this project's known-good exceptions. Report-only by default; pass "audit and fix" to apply fixes.
+
 ## Bilingual
 
 The site is bilingual. Chinese (Traditional) is the default and lives at the project root (`/`). English lives under `/en/`.
