@@ -295,6 +295,60 @@
 .placeholder-panel svg { width: 34px; height: 34px; opacity: 0.7; }
 .placeholder-panel p { margin: 0; font-size: 0.92rem; }
 
+/* transit list (交通方式) — concise, solid card, hard edges, no glow */
+.transit-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.transit-list li {
+  display: flex;
+  gap: var(--s-3);
+  padding: var(--s-4) var(--s-5);
+  border-bottom: 1px solid var(--line);
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--ink-soft);
+}
+.transit-list li:last-child { border-bottom: none; }
+.transit-list svg {
+  width: 22px; height: 22px;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  color: var(--primary);
+}
+.transit-list strong {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+}
+.transit-list .tbd { font-style: normal; }
+
+/* embedded Google map — matches card radius + shadow tokens */
+.loc-map {
+  display: block;
+  width: 100%;
+  border: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  background: var(--bg-2);
+}
+.map-addr {
+  margin: var(--s-3) 0 0;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+
 /* "opening soon" banner for 中山 */
 .soon-banner {
   display: flex;

@@ -88,6 +88,17 @@
     line-height: 1;
   }
 
+  /* anonymous silhouette avatar — for doctors who prefer no photo online.
+     Same container/crop/footprint as the other cards; a neutral person glyph
+     (Instagram-style), NOT a family-name monogram. Solid fill, hard edges,
+     no glow/gradient. Semantically distinct from the "照片待提供" monograms. */
+  .doc__ph--anon { background: var(--bg-2); }
+  .doc__ph--anon svg {
+    width: 44%;
+    height: auto;
+    color: var(--ink-faint);
+  }
+
   /* card body */
   .doc__body {
     display: flex;
@@ -321,10 +332,12 @@
           </div>
         </article>
 
-        <!-- 3. 林諄儒 — 新店總院 主治醫師 -->
+        <!-- 3. 林諄儒 — 新店總院 主治醫師（依醫師意願不提供照片，採匿名剪影） -->
         <article class="doc reveal d2">
           <div class="doc__photo">
-            <img src="assets/doctors/lin-chun-ju.jpg" alt="林諄儒醫師" loading="lazy" />
+            <div class="doc__ph doc__ph--anon" role="img" aria-label="林諄儒醫師（不提供照片）">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8.5" r="4"/><path d="M4 20c0-4.2 3.6-7 8-7s8 2.8 8 7v1H4z"/></svg>
+            </div>
           </div>
           <div class="doc__body">
             <h2 class="doc__name">林諄儒</h2>
@@ -373,11 +386,12 @@
           </div>
         </article>
 
-        <!-- 5. 林雅芳 — 主治醫師・2019 木柵創辦 -->
+        <!-- 5. 林雅芳 — 主治醫師・2019 木柵創辦（依醫師意願不提供照片，採匿名剪影） -->
         <article class="doc reveal d1">
           <div class="doc__photo">
-            <!-- TODO: replace with real portrait when provided -->
-            <div class="doc__ph" role="img" aria-label="林雅芳醫師（照片待提供）"><span>林</span></div>
+            <div class="doc__ph doc__ph--anon" role="img" aria-label="林雅芳醫師（不提供照片）">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8.5" r="4"/><path d="M4 20c0-4.2 3.6-7 8-7s8 2.8 8 7v1H4z"/></svg>
+            </div>
           </div>
           <div class="doc__body">
             <h2 class="doc__name">林雅芳</h2>

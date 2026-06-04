@@ -2,7 +2,52 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-04 (session 5)_
+_Last updated: 2026-06-04 (session 7)_
+
+## 🗓️ 2026-06-04 (session 7) — 兩位醫師匿名化 + 院區交通／地圖 + 木柵院長 label + 衛教專欄改卡片網格
+
+四項任務，全程未違反設計規則（無漸層／光暈／backdrop-filter／filter-blur、hover=lift、無 transition:all、僅用 tinted shadow token）與 §九（無 保證／根治／唯一／第一／最〔僅最近・最佳〕／必須／一定要、無費用、頁尾免責聲明完整）。
+
+### Task 1 — 林諄儒・林雅芳 匿名化（隱私，兩位醫師不願露面）
+- 新增 `.doc__ph--anon` modifier（`team.html` `<style>`）：沿用 `.doc__photo` 容器（同 4:5 crop／footprint），solid `--bg-2` 底 ＋ 置中 Instagram 式**中性人形剪影** inline SVG（`--ink-faint`，`fill:currentColor`），硬邊、純色、無漸層／光暈。容器加 `role="img"` ＋ `aria-label="〇〇〇醫師（不提供照片）"`，內層 svg `aria-hidden`。
+- **林諄儒**：原 `<img src="assets/doctors/lin-chun-ju.jpg">` → 匿名剪影。**林雅芳**：原 `.doc__ph` 單字「林」占位 → 同款匿名剪影。
+- **未動** 蔡彥群／李順源 的家族字監名占位（語意不同＝「照片待提供」，仍為綠底 `.doc__ph` 單字）。
+- **隱私清檔**：`git rm` 刪除 `assets/doctors/lin-chun-ju.jpg` 與 `brand_assets/林諄儒 photo.jpg`（非僅 unlink，避免仍可由 GitHub Pages 取得）。`site-spec.md` §五 對應更新。⚠️ **git 歷史仍保有 blob**——若需徹底抹除須另跑 history scrub（如 `git filter-repo`），本次未做，列為選用後續。
+- 林雅芳原本就無照片檔，無檔可刪。
+
+### Task 2 — 三間營運院區補上 交通方式 ＋ 地圖位置（取代 placeholder-panel）
+- 兩個共用元件加進 `assets/locations.css`：`.transit-list`（白卡、tinted `--shadow-sm`、硬邊、每列 icon＋粗體 label）與 `.loc-map`（keyless Google Maps `?q=…&output=embed` iframe，`loading=lazy`、`referrerpolicy`、`aspect-ratio:16/9`、`--radius-lg`＋`--shadow-sm`，附 `.map-addr` 地址 caption）。schema.org 資料未動、仍正確。
+- **交通事實來源與信心度（請院長核對）：**
+  - **興隆（興隆路二段118號）— 高信心**：公車「興德國小」站就在診所同側門口（taiwanhelper TPE14555 明列 118號站牌往東向），路線：羅斯福路幹線・棕2・棕6・棕11・671・673・236區・0南・109・530・606・676；捷運松山新店線「萬隆站」或文湖線「萬芳醫院站」下車轉乘（文山區戶政景美辦事處〔興隆路二段160號，與診所同段〕官方交通指引）。停車＝〔待確認〕。
+  - **新店總院（建國路161、163號）— 中信心**：最近捷運＝松山新店線・環狀線「大坪林站」，步行約 10 分鐘（措辭加「約／以現場為準」hedge；網路資料對精確分鐘有出入：建國路民權路口距1號出口約5分鐘、大豐路約8分鐘、大豐國小路線約21分鐘）。公車路線、停車＝〔待確認〕。
+  - **木柵（木新路三段220號）— 低信心**：聚合平台（Moovit）把新店／木柵兩家診所交通資料混在一起（兩者都標「大坪林1分鐘」明顯錯誤），故**最近捷運站與步行時間、鄰近公車站名與路線全列〔待確認〕**；維基證實木新路三段西接新店寶橋路，但 220 號實際最近站無法可靠判定，不臆測。停車＝〔待確認〕。
+- 三頁地圖 iframe 的 `q` 皆用「診所名＋地址」字串，讓 pin 落在實際診所。
+- ⚠️ 所有 `〔待確認〕` 以站上既有 `.tbd`（✎ 標記 pill）呈現，院長確認後可直接替換。
+
+### Task 3 — 木柵院長 label
+- `location-muzha.html` 側欄「院長」由 `蕭仁豪 醫師（SINCE 2019）` → `蕭仁豪 醫師`（移除誤植的英文 SINCE 後綴）。其餘三院區頁面掃描確認無相同贅綴。
+
+### Task 4 — 衛教專欄（faq.html）改為雜誌式卡片網格
+- 參考 HomePro 的卡片網格**結構**（每卡：頂部主圖＋分類標籤＋標題＋摘要），但**以大豐自己的設計語言呈現**（留白、沉穩、硬邊、lift-on-hover），刻意避開 HomePro 的資訊密度（院長曾覺其 overpowering）。
+- 頂部 `.faq-index` 的 `.faq-entry` 直列清單 → `.faq-grid`（桌機 3 欄／平板 2 欄／手機 1 欄）；7 篇（Q1–Q7）各成一張 `.faq-card`：`.photo-zone--16x9--sm` 智慧占位（內含逐篇配圖建議 shot brief）＋分類 pill＋標題＋1–2 行摘要＋「閱讀全文 →」，連結至既有 `#q1…#q7` 錨點。
+- 分類標籤：鼻過敏・睡眠（Q1,Q2）／兒童睡眠呼吸中止（Q3–Q6）／鼻部結構・打鼾（Q7）。可選的分類 filter bar **未做**（僅 7 篇，且為避免非必要 JS／維持克制；卡片分類 pill 已足夠表達分群）。
+- **下方完整文章（`.faq-articles`）一字未改**；院長核准的內文與 `#q1…#q7` 錨點原樣保留。`en/faq.html` 維持 stub、頁尾免責聲明完整。CSS：移除已無用的 `.faq-entry*`／`.faq-index__list` 規則，改為 `.faq-card*`／`.faq-grid`。
+
+### 驗證
+- 截圖（Chrome headless 2×，`temporary screenshots/s6-*`）：team（兩剪影 vs 兩監名占位清楚可辨）、faq 桌機＋手機（3→1 欄）、三院區頁（交通卡片＋地圖實際嵌入成功渲染、木柵院長已修正）。
+- §九 與設計規則 grep 全數 clean；`最` 僅 最近／最佳（pre-existing 占位）。
+
+### ⏭️ 待院長
+- 確認三院區交通的 `〔待確認〕` 項（尤其木柵全部、新店公車／停車、各院區停車）。
+- 衛教專欄卡片配圖：院長決定插圖策略後，把各 `.photo-zone` 換成實際插圖（版位已預留）。
+
+## 🗓️ 2026-06-04 (session 6) — 醫師姓名用字統一（巫靚穎）+ .gitignore
+
+- **巫靚穎 用字確認並統一全站**：院長確認正確用字為「巫靚穎」（先前 faq 誤用「婧」）。修正 `faq.html`（已發布，3 處）與 `faq.md`（草稿，3 處）的「巫婧穎」→「巫靚穎」。team.html 本即正確。`site-spec.md` §五 與本檔 blocking item (a) 標為已解決。`brand_assets/巫婧穎 photo.jpeg` 原始檔名依規則保留未動（已 romanize 為 `wu-ching-ying.jpg` 服務於站上，不受影響）。
+- **`.gitignore`**：新增 `.claude/settings.local.json`（Claude Code 本機設定，先前為 untracked）。
+- ✅ **林諄儒 vs 林雅芳 已確認**：院長確認為**兩位不同醫師**，皆為實際醫師（非誤植）。醫師總數維持 **7（6 耳鼻喉＋1 小兒）**，roster 無需調整——全站既有內容本即正確，無需修改。
+- ✅ **廖學森 用字已確認**：院長確認正確用字為「廖學森」（原始照片檔名「廖學生」為誤植）。各頁本即使用「廖學森」，無需修改；`brand_assets/` 原始檔名保留未動。
+- **本次三項姓名疑問（巫靚穎／林諄儒vs林雅芳／廖學森）全數確認結案**，site-spec §五 TODO 已對應更新。
 
 ## 🗓️ 2026-06-04 (session 5) — 無障礙修正（review-2026-06-02 的 4 項）
 
@@ -34,7 +79,7 @@ _Last updated: 2026-06-04 (session 5)_
 - **`/en/` 未加 nav 連結** — `/en/` 各頁仍為 coming-soon stub，header 僅有 brand ＋ 語言切換、**無主選單**，無對應 nav 可加「Health Education」連結；en/faq.html stub 自身已可由 en 頁面語言切換／既有連結到達。待 `/en/` 建置完整選單時再補。
 
 ### ⏭️ 下一個 session 待辦
-- **(a) 巫婧穎 vs 巫靚穎 名字用字確認**（blocking）— **FAQ 用「婧」、team.html 用「靚」**，兩處不一致，需院長確認正確用字後統一全站（含 team.html、site-spec §五、照片檔名）。
+- ~~**(a) 巫婧穎 vs 巫靚穎 名字用字確認**（blocking）~~ ✅ **已解決（2026-06-04）**：院長確認正確用字為**巫靚穎**。faq.html（3 處）＋ faq.md（3 處）的「婧」已統一為「靚」；team.html 本即為「靚」；site-spec §五 註記已更新。`brand_assets/` 原始照片檔名（巫婧穎 photo.jpeg）保留未動。
 - **(b) FAQ Q8–Q17 撰寫** — 以院長語氣沿用 Q1–Q7 範本（17 題標題已備齊）。
 - **(c) 照片區仍待實拍** — 院長委拍攝影師後補上 4 個剩餘 photo zone：關於頁時間軸、院區詳細頁、診療項目特色、院區總覽卡片。
 - **(d) 收集剩餘醫師學經歷**（蔡彥群／廖學森／蕭仁豪／李順源／林雅芳）。
@@ -179,7 +224,7 @@ _Last updated: 2026-06-04 (session 5)_
 ## ⏭️ NEXT SESSION (start here)
 
 1. **FAQ — review 院長's feedback on the Q2, Q4–Q7 batch** (`faq.md`) — apply edits, then **draft Q8–Q17** (all 17 titles now supplied). _(Q1/Q3 approved 2026-06-02; Q2/Q4–Q7 drafted and awaiting review.)_
-1. **Resolve the 林諄儒 vs 林雅芳 name question** (blocking — see Open questions). The roster currently treats them as **two distinct doctors** (林諄儒 = 新店, full credentials provided; 林雅芳 = 木柵, 2019 founder, still 〔待補〕). Confirm with 院長 whether both are real, or one is a transcription error, then adjust the roster + doctor total (7 → 6 if they're one person).
+1. ~~**Resolve the 林諄儒 vs 林雅芳 name question**~~ ✅ **Resolved 2026-06-04** — 院長 confirmed they are **two different, real doctors** (林諄儒 = 新店 #3; 林雅芳 = 木柵 #5, 2019 founder). Doctor total stays **7**; no roster change. (林雅芳's full credentials are still 〔待補〕 — see credential list below.)
 2. **Pick the Facebook banner variant (A/B/C) + clean up.** Once 院長 chooses, delete the two unused variants and rename the winner back to `brand_assets/facebook-cover.svg` / `-preview.png`.
 3. **Build 預約掛號 / 聯絡 page** (§八) — booking + contact (電話 / LINE / 線上掛號 CTAs). This is the last major remaining content page.
 4. **Optionally build 衛教專欄 / Blog** (§七) if 院長 wants it — SEO article topics listed in spec, no bodies yet.
@@ -197,7 +242,7 @@ These are the `〔待補〕` items that need his input before pages can be final
 
 - **院長 review needed on the Q2, Q4–Q7 FAQ drafts** (`faq.md`) — tone, factual accuracy, length, and §九 compliance. Nothing publishes until reviewed. _(Q1/Q3 already approved 2026-06-02; format validated. All 17 topic titles now supplied; Q8–Q17 still to be drafted.)_
 - **FAQ image strategy decision** — SVG illustrations vs licensed stock photos vs anatomical diagrams vs no images. (No stock photos used yet; each draft carries a `📷 配圖建議` placeholder only.)
-- **⚠️ 林諄儒 vs 林雅芳 — name verification needed.** The codebase currently has **two distinct doctor entries**: **林諄儒** (新店總院, with the full credentials 院長 sent — 中國醫藥大學, 北醫附醫總醫師/主治, 香港中文大學 + 新加坡樟宜綜合醫院 國際手術進修) and **林雅芳** (木柵分院, 2019 共同創辦, still 〔待補〕). Need 院長 to confirm whether these are **two real, different doctors**, or whether **one of the names is a transcription error**. Nothing was auto-merged. If they turn out to be the same person, the doctor total should change from 7 → 6.
+- ✅ **林諄儒 vs 林雅芳 — RESOLVED 2026-06-04.** 院長 confirmed these are **two real, different doctors**: **林諄儒** (新店總院 #3, full credentials provided — 中國醫藥大學, 北醫附醫總醫師/主治, 香港中文大學 + 新加坡樟宜綜合醫院 國際手術進修) and **林雅芳** (木柵分院 #5, 2019 共同創辦, credentials still 〔待補〕). Not a transcription error, nothing merged. Doctor total stays **7 (6 ENT + 1 pediatric)**.
 - **Facebook banner — which variant (A/B/C), or commission a designer?** Three SVG variants are in `brand_assets/` for comparison: **A** = icons + tagline both shifted right; **B** = icons original/centered + tagline shifted for the profile-picture safe zone; **C** = fully original layout, no safe-zone adjustment (profile pic overlaps tagline). All are SVG compositions, not photographic. Confirm which variant to ship, **or** whether 院長 would rather commission a polished/photo-based banner from a designer/Canva. Once chosen, delete the other two and rename the winner back to `facebook-cover.svg` / `-preview.png`.
 - **Slogan refinement** — confirm/adjust the hero slogan (currently §二 slogan B).
 - **Remaining doctor credentials still 〔待補〕** — **蔡彥群, 廖學森, 蕭仁豪, 李順源, 林雅芳** (林雅芳 only if confirmed as a separate doctor). 巫靚穎 + 林諄儒 are now done. Also still need every doctor's confirmed **specialties + clinic schedules** (§五 bios "待確認"; 醫師 × 院區 × 時段 table §十一 is blank).

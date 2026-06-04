@@ -129,11 +129,20 @@
             <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M5 12l4-7h6l4 7M5 12v6a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1M19 12v6a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg>
             交通方式
           </h2>
-          <p>捷運、公車與停車資訊整理中。</p>
-          <div class="placeholder-panel">
-            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/></svg>
-            <p>捷運站名・出口・步行分鐘、公車路線與停車資訊待補。</p>
-          </div>
+          <ul class="transit-list">
+            <li>
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="16" rx="2"/><path d="M4 11h16"/><circle cx="8.5" cy="15" r="1"/><circle cx="15.5" cy="15" r="1"/><path d="M8 19l-2 2M16 19l2 2"/></svg>
+              <div><strong>捷運</strong>松山新店線「萬隆站」或文湖線「萬芳醫院站」下車後，轉乘公車至「興德國小」站即達。</div>
+            </li>
+            <li>
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M5 12l4-7h6l4 7M5 12v6a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1M19 12v6a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg>
+              <div><strong>公車</strong>「興德國小」站就在診所同側（興隆路二段 118 號），行經路線：羅斯福路幹線、棕2、棕6、棕11、671、673、236區、0南、109、530、606、676。</div>
+            </li>
+            <li>
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l1.6-4.8A2 2 0 0 1 8.5 7h7a2 2 0 0 1 1.9 1.2L19 13v5a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z"/><circle cx="8" cy="15.5" r="1"/><circle cx="16" cy="15.5" r="1"/></svg>
+              <div><strong>開車・停車</strong>診所未設專屬停車場，<span class="tbd">周邊停車資訊待確認</span></div>
+            </li>
+          </ul>
         </div>
 
         <div class="detail-block reveal">
@@ -141,10 +150,8 @@
             <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
             地圖位置
           </h2>
-          <div class="placeholder-panel">
-            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-            <p>Google 地圖將於此嵌入。<br />地址：116 臺北市文山區興安里興隆路二段 118 號</p>
-          </div>
+          <iframe class="loc-map" src="https://www.google.com/maps?q=%E8%88%88%E9%9A%86%E5%A4%A7%E8%B1%90%E8%80%B3%E9%BC%BB%E5%96%89%E7%A7%91%E8%A8%BA%E6%89%80%20%E8%87%BA%E5%8C%97%E5%B8%82%E6%96%87%E5%B1%B1%E5%8D%80%E8%88%88%E9%9A%86%E8%B7%AF%E4%BA%8C%E6%AE%B5118%E8%99%9F&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="興隆大豐耳鼻喉科診所 地圖" allowfullscreen></iframe>
+          <p class="map-addr">地址：116 臺北市文山區興安里興隆路二段 118 號</p>
         </div>
       </div>
 
