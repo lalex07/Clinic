@@ -2,7 +2,31 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-04 (session 7)_
+_Last updated: 2026-06-04 (session 8)_
+
+## 🗓️ 2026-06-04 (session 8) — 衛教專欄拆成獨立文章頁 + 全站回到頂端按鈕
+
+clinic-audit（report-only）三組全 PASS（§九／設計規則／無障礙），含 7 個新文章頁與回到頂端按鈕。
+
+### Task 1 — 衛教專欄改為「一文一頁」（homepro 式）
+- 新增 **7 個根目錄頁** `faq-q1.html … faq-q7.html`（刻意放 ROOT，沿用既有 `assets/`、`index.html` 等相對路徑，無 `../`）。以 script 從 `faq.html` 抽出 header／footer **逐字複製**、各篇 `<article id="qN">` 內文**逐字搬移**（院長核准內文一字未改，連 Q1 原稿「流鼻水，鼻塞」的標點都原樣保留）。
+- 每頁：獨立 `<title>`、`<meta description>`（依各篇開場改寫、§九-clean）、breadcrumb（首頁／衛教專欄／文章標題）、頂部 `.photo-zone` 配圖 banner（沿用該卡片的 shot brief）、`.faq-cta` 保留、輕量 schema.org `Article`。
+- **無障礙**：文章標題由 `<h2>` 升為頁面唯一 `<h1>`；`.faq-sub` 由 `<h3>` 升為 `<h2>`（消除 h1→h3 跳級）。每頁 1 個 h1、3 個 h2、0 個 h3。
+- `faq.html`：7 張卡片 `href` 由 `#qN` 改為 `faq-qN.html`；**刪除**已冗餘的整段 inline `.faq-articles`（保留 hero／卡片網格／header／footer／免責聲明）。`en/faq.html` 維持 stub，無 EN 文章頁。
+- CSS（`site.css`）：`.faq-article > h2` 選擇器改為 `> h1`（標題樣式跟著搬到 h1，且避免誤套到現為 h2 的 `.faq-sub`）；新增 `.faq-article--solo`（單篇頁去除分隔線 border-top）與 `.faq-article__media`（banner 對齊 65ch 文欄）。
+
+### Task 2 — 全站「回到頂端」浮動按鈕（cureclinic 式）
+- 於共用檔一次實作、全站（含新 faq-qN 頁）自動出現，無需逐頁 markup：`assets/site.js` 建立 `<button class="back-to-top">` append 到 `<body>`；`assets/site.css` 加樣式。
+- 行為：捲動 > 400px 才顯示（`is-visible` class 切換）；點擊平滑捲回頂端；`prefers-reduced-motion` 時改 instant scroll、且 CSS 關閉顯示/lift 過場動畫。
+- 樣式（合設計規則）：實心圓、`--primary` 底、白色上箭頭、硬邊、接地 `--shadow-md`；hover＝上移 3px＋加深陰影＋底色轉 `--primary-deep`（按鈕變色允許，非卡片）。`aria-label="回到頂端"`、可鍵盤聚焦、`:focus-visible` 外框、內層 svg `aria-hidden`；隱藏時 `visibility:hidden` 故不可聚焦。
+
+### 驗證
+- 截圖（Chrome headless 2×，`temporary screenshots/s8-*`）：`faq-grid`（卡片網格不變、連結改指獨立頁）、`faq-q1-article`（banner＋h1＋h2 小標＋CTA）、`faq-q1-mobile`、`backtotop-visible`（實心圓按鈕於右下、無光暈/漸層）。回到頂端可見態截圖以暫時複本 `_btt_q6.html`（強制 `is-visible`）拍攝後刪除。
+- clinic-audit 三組 PASS；`最` 僅 最近／最佳；新頁 disclaimer 齊全。
+
+### Task 3 — git 歷史抹除（**尚未執行，待院長 go-ahead**）
+- 目標：自**所有歷史 commit** 移除 `assets/doctors/lin-chun-ju.jpg` 與 `brand_assets/林諄儒 photo.jpg`（工作樹已乾淨，但舊 commit／已 push 至 GitHub 仍可還原）。
+- 方法：`git filter-repo --invert-paths --path …`（或 BFG fallback）→ 重設並 `git push --force --all/--tags`。**會改寫所有後續 commit SHA、屬破壞性**：其他 clone 失效、GitHub 可能短暫快取舊 blob、fork 可能保留，必要時須聯絡 GitHub support 清快取。**未經明確同意不執行 force-push。**
 
 ## 🗓️ 2026-06-04 (session 7) — 兩位醫師匿名化 + 院區交通／地圖 + 木柵院長 label + 衛教專欄改卡片網格
 

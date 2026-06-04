@@ -655,6 +655,9 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   scroll-margin-top: 88px;
 }
 .faq-article:first-child { border-top: none; padding-top: var(--s-5); }
+/* standalone article page (faq-qN.html): one article, no divider rule, and the
+   title is the page <h1> */
+.faq-article--solo { border-top: none; padding-top: var(--s-5); }
 .faq-article__num {
   font-family: "Noto Serif TC", serif;
   font-weight: 700;
@@ -662,7 +665,7 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   letter-spacing: 0.06em;
   color: var(--ink-soft);
 }
-.faq-article > h2 {
+.faq-article > h1 {
   font-family: "Noto Serif TC", serif;
   font-size: clamp(1.55rem, 3.6vw, 2.1rem);
   font-weight: 600;
@@ -670,6 +673,12 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   line-height: 1.4;
   color: var(--primary-deep);
   margin: 0.35rem 0 var(--s-4);
+}
+/* featured-image banner on a standalone article page — reuses .photo-zone,
+   aligned to the article text column */
+.faq-article__media {
+  max-width: 65ch;
+  margin: 0 auto var(--s-6);
 }
 .faq-article p {
   color: var(--ink-soft);
@@ -709,4 +718,56 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   .faq-grid { grid-template-columns: 1fr; gap: var(--s-4); }
   .faq-article { padding: var(--s-6) 0 var(--s-5); }
   .faq-article p { font-size: 1.01rem; }
+}
+
+/* ============================================================================
+   Back-to-top button — fixed bottom-right, appears after scrolling down.
+   Solid circle, --primary fill, white arrow, hard edges, grounded shadow.
+   No glow / no gradient / no backdrop-filter. Hover = lift + deeper shadow.
+   Injected site-wide by assets/site.js (no per-page markup).
+   ============================================================================ */
+.back-to-top {
+  position: fixed;
+  right: clamp(1rem, 4vw, 2rem);
+  bottom: clamp(1rem, 4vw, 2rem);
+  z-index: 60;
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  /* hidden until scrolled: not focusable / not clickable while hidden */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.25s var(--ease), transform 0.25s var(--ease), box-shadow 0.25s var(--ease), background 0.25s var(--ease);
+}
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.back-to-top:hover {
+  background: var(--primary-deep);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+.back-to-top:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+.back-to-top svg { width: 22px; height: 22px; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* no animated reveal/lift for motion-sensitive users — just show/hide */
+  .back-to-top { transition: none; transform: none; }
+  .back-to-top.is-visible { transform: none; }
+  .back-to-top:hover { transform: none; }
 }
