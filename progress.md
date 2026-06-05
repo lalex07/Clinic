@@ -2,7 +2,21 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-05 (session 9)_
+_Last updated: 2026-06-05 (session 10)_
+
+## 🗓️ 2026-06-05 (session 10) — FAQ Q8–Q17 草擬併入 + 首頁團隊合照占位 + 院區順序 + 頁面標題簡化
+
+多 agent 平行作業，本 agent 負責整併與唯一 commit。clinic-audit（report-only）三組全 PASS。
+
+- **FAQ Q8–Q17 草擬，併入 `faq.md`（仍為草稿・待院長審閱，未發布）。** 10 篇（Q8 軟顎舌根／Q9 女性荷爾蒙／Q10 止鼾牙套／Q11 胃食道逆流×睡眠／Q12 成人臨床表現／Q13 兒童臨床表現／Q14 逆流×中耳炎／Q15 逆流×耳悶／Q16 肥胖／Q17 簡易打呼判讀）各約 650 字，嚴格沿用 Q1–Q7 範本（開場框架→機制粗體小標→辨識徵兆→日常可做→軟性「至門診評估」收尾→📷 配圖建議）。狀態統一為「草稿（待院長審閱）」，文章列表表格與註記同步更新。涉手術主題（Q8、Q10）以中山院區「2026 年 10 月開幕」未來式帶過。**未發布至 `faq.html`，未建立 `faq-qN.html` 文章頁**——延續既有 workflow，等院長審閱通過才上線。草稿暫存檔 `faq-draft-q8-q12.md`、`faq-draft-q13-q17.md` 併入後刪除。
+- **首頁團隊合照占位**（`index.html`）— 新增 `.home-teamshot` 區塊，16:9 `.photo-zone` 智慧占位（內含 shot brief：全體醫師白袍合影、1920×1080+），院長委拍後可直接換成 `<img>`。沿用既有占位元件，無實際外部圖片。
+- **院區順序統一為 新店→木柵→興隆→中山**（依創立年序 2010→2019→2025→2026）。`locations.html` 四張卡片與相關清單已對齊此序。
+- **頁面 `<title>` 簡化** — 各頁標題改為精簡品牌式（關於大豐／診療項目／醫療團隊／院區・門診／衛教專欄／木柵大豐…），FAQ 文章頁則用各篇主題標題。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：保證／根治／唯一／第一／必須／一定要／最權威＝0；`最` 僅 最佳×3（photo-zone 標籤）＋最近×5（地理）；無費用；21 頁頁尾免責聲明齊全（`%` grep 命中皆為 CSS 寬度／keyframes／地圖 URL 編碼，非療效宣稱）。
+- **設計規則**：gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow shadow／`transition:all` 全 0（grep 命中兩處皆註解文字，唯一 `filter:` 為 team 醫師照色彩正規化＝既知例外）。
+- **無障礙**：html lang 21/21、img alt 全齊、SVG 全 `aria-hidden`、skip-link 21/21；標題順序全頁 ok（含 index.html、locations.html 無跳級，各頁恰 1 個 h1）。
 
 ## 🗓️ 2026-06-05 (session 9) — 兩項無障礙修正 + clinic-audit 補強（標題順序＋背景對比）
 
