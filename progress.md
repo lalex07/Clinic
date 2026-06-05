@@ -2,7 +2,19 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 13)_
+_Last updated: 2026-06-06 (session 14)_
+
+## 🗓️ 2026-06-06 (session 14) — 衛教專欄列表分頁（每頁 6 篇）+ 搜尋 overlay 背幕加深
+
+多 agent 平行作業；本 agent 負責整併與唯一 commit。clinic-audit（report-only）三組全 PASS，無回歸。
+
+- **衛教專欄列表分頁：每頁 6 張卡片。** `faq.html` 卡片網格（現 12 篇 Q1–Q12）以 client-side JS 分為每頁 6 篇、共 2 頁。分頁列為 `<nav class="faq-pagination" aria-label="衛教專欄分頁">`，含「上一頁／下一頁」箭頭（端點時 `is-disabled`＋`aria-disabled`）、頁碼（目前頁 `aria-current="page"`）、首尾恆顯＋中間以單一 `…` 省略；控制項皆為可鍵盤聚焦的 `<a>`，`:focus-visible` 外框。支援 `?page=N`（可分享、`history.replaceState` 更新網址，亦讀 `#page-N`），切頁後平滑捲動回列表頂端並尊重 `prefers-reduced-motion`。樣式為實心硬邊、無漸層／光暈；hover 變色僅作用於「控制項」（非卡片，符合設計規則）。`totalPages<=1` 時整列 `hidden`。**header 未更動**（分頁位於 `<main>`），桌機單行不受影響。
+- **搜尋 overlay 背幕加深。** `assets/site.css` `.search-overlay__backdrop` 由 `rgba(14,74,68,.42)`（primary-deep 半透明）改為 `rgba(0,0,0,.5)`（實心半透明黑），明確壓暗整個頁面、聚焦搜尋卡片；仍**無 `backdrop-filter`／模糊**，符合「無光暈／模糊」設計規則。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：faq.html 無 保證／根治／唯一／第一／必須／一定要／最〔上級〕、無費用、無療效百分比，頁尾免責聲明齊全；全站 `最` 僅 最新／最近／最佳（既知例外）。
+- **設計規則**：changed files 內 gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow／`transition:all` 全 0（grep 命中 2 筆皆為 CSS 註解說明文字）；背幕實心無模糊；分頁 hover 變色僅作用於控制項。
+- **無障礙**：分頁 nav `aria-label`、目前頁 `aria-current`、端點箭頭 `aria-disabled`、`:focus-visible` 外框、reduced-motion 尊重、控制項皆可鍵盤操作；faq.html 標題順序 ok（1 h1、無跳級）、img alt 全齊、SVG 15/15 `aria-hidden`、html lang zh-Hant。對比度：分頁各狀態（resting 7.04／active 白字on primary 6.85／hover 7.46／disabled 5.20／省略號 4.83）與加深後背幕皆通過 WCAG AA。
 
 ## 🗓️ 2026-06-06 (session 13) — 發布 FAQ Q8–Q12（院長核准）+ SEO/社群 meta・schema・sitemap/robots + 首頁最新消息 teaser
 

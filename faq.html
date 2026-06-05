@@ -24,6 +24,72 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet" />
 
 <link rel="stylesheet" href="assets/site.css" />
+<style>
+  /* ============ 衛教專欄 listing pagination (faq.html only) ============ */
+  .faq-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: var(--s-7);
+  }
+  .faq-pagination[hidden] { display: none; }
+  .faq-pagination__item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 42px;
+    padding: 0 0.6rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--surface);
+    /* solid, hard-edged; no gradient, no glow */
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s var(--ease), background-color 0.2s var(--ease), border-color 0.2s var(--ease);
+  }
+  .faq-pagination__item svg { width: 18px; height: 18px; }
+  /* hover on a control (link/button) may change color — this is not a card */
+  .faq-pagination__item:hover {
+    color: var(--primary-deep);
+    background: var(--primary-soft);
+    border-color: var(--primary-soft);
+  }
+  .faq-pagination__item:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+  /* active page — solid primary, clear current-page state */
+  .faq-pagination__item[aria-current="page"],
+  .faq-pagination__item[aria-current="page"]:hover {
+    color: #fff;
+    background: var(--primary);
+    border-color: var(--primary);
+    cursor: default;
+  }
+  /* disabled prev/next at the ends */
+  .faq-pagination__item.is-disabled {
+    color: var(--ink-faint);
+    background: var(--surface);
+    border-color: var(--line);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .faq-pagination__ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 42px;
+    color: var(--ink-faint);
+    font-weight: 600;
+  }
+</style>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -368,6 +434,8 @@
         </a>
 
       </div>
+
+      <nav class="faq-pagination" id="faqPagination" aria-label="衛教專欄分頁" hidden></nav>
     </div>
   </section>
 
@@ -424,5 +492,98 @@
 <script src="assets/search-index.js" defer></script>
 <script src="assets/search.js" defer></script>
 <script src="assets/site.js"></script>
+<script>
+  /* ===== 衛教專欄 listing pagination — 6 cards/page, ?page=N shareable ===== */
+  (function () {
+    var grid = document.querySelector('.faq-index .faq-grid');
+    var nav = document.getElementById('faqPagination');
+    if (!grid || !nav) return;
+
+    var cards = Array.prototype.slice.call(grid.querySelectorAll('.faq-card'));
+    var PER = 6;
+    var totalPages = Math.ceil(cards.length / PER);
+    var section = document.querySelector('.faq-index');
+    var current = 1;
+
+    function clamp(n) { return Math.max(1, Math.min(totalPages, n)); }
+
+    function readInitial() {
+      var q = new URLSearchParams(location.search).get('page');
+      var n = parseInt(q, 10);
+      if (!n) {
+        var h = (location.hash || '').match(/^#page-(\d+)$/);
+        if (h) n = parseInt(h[1], 10);
+      }
+      return clamp(n || 1);
+    }
+
+    function showPage(n) {
+      cards.forEach(function (card, i) {
+        var on = i >= (n - 1) * PER && i < n * PER;
+        card.style.display = on ? '' : 'none';
+        // ensure the card is reveal-visible even if the scroll observer never fired for it
+        if (on) card.classList.add('in');
+      });
+    }
+
+    // first / last / current±1, with single ellipsis tokens between gaps
+    function pageTokens(cur) {
+      var out = [], win = 1;
+      for (var p = 1; p <= totalPages; p++) {
+        if (p === 1 || p === totalPages || (p >= cur - win && p <= cur + win)) out.push(p);
+        else if (out[out.length - 1] !== '…') out.push('…');
+      }
+      return out;
+    }
+
+    var CHEV_L = '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
+    var CHEV_R = '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
+
+    function arrow(dir, label, target, enabled) {
+      var glyph = dir === 'prev' ? CHEV_L : CHEV_R;
+      if (enabled) {
+        return '<a class="faq-pagination__item faq-pagination__item--arrow" href="?page=' + target +
+          '" data-page="' + target + '" aria-label="' + label + '" rel="' + dir + '">' + glyph + '</a>';
+      }
+      return '<span class="faq-pagination__item faq-pagination__item--arrow is-disabled" aria-disabled="true" aria-label="' +
+        label + '">' + glyph + '</span>';
+    }
+
+    function render() {
+      if (totalPages <= 1) { nav.hidden = true; nav.innerHTML = ''; return; }
+      var html = arrow('prev', '上一頁', current - 1, current > 1);
+      pageTokens(current).forEach(function (t) {
+        if (t === '…') { html += '<span class="faq-pagination__ellipsis" aria-hidden="true">…</span>'; return; }
+        var isCur = t === current;
+        html += '<a class="faq-pagination__item" href="?page=' + t + '" data-page="' + t +
+          '" aria-label="第 ' + t + ' 頁"' + (isCur ? ' aria-current="page"' : '') + '>' + t + '</a>';
+      });
+      html += arrow('next', '下一頁', current + 1, current < totalPages);
+      nav.innerHTML = html;
+      nav.hidden = false;
+    }
+
+    function go(n, userInitiated) {
+      current = clamp(n);
+      showPage(current);
+      render();
+      var url = current === 1 ? location.pathname : location.pathname + '?page=' + current;
+      try { history.replaceState(null, '', url); } catch (e) { /* file:// etc. */ }
+      if (userInitiated && section && section.scrollIntoView) {
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        section.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      }
+    }
+
+    nav.addEventListener('click', function (e) {
+      var a = e.target.closest('a[data-page]');
+      if (!a) return;
+      e.preventDefault();
+      go(parseInt(a.getAttribute('data-page'), 10), true);
+    });
+
+    go(readInitial(), false);
+  })();
+</script>
 </body>
 </html>
