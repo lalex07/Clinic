@@ -3,8 +3,20 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>大豐耳鼻喉科</title>
+<title>大豐耳鼻喉科聯合診所｜新店・木柵・興隆 三院區</title>
 <meta name="description" content="大豐耳鼻喉科由七位醫師組成，於新店、木柵、文山興隆三院區提供成人與兒童耳鼻喉診療，並設睡眠呼吸中止、眩暈、頭頸部專業評估門診。可電話與 LINE 預約。" />
+<link rel="canonical" href="https://lalex07.github.io/Clinic/" />
+<meta property="og:site_name" content="大豐耳鼻喉科聯合診所" />
+<meta property="og:locale" content="zh_TW" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="大豐耳鼻喉科聯合診所｜新店・木柵・興隆 三院區" />
+<meta property="og:description" content="大豐耳鼻喉科由七位醫師組成，於新店、木柵、文山興隆三院區提供成人與兒童耳鼻喉診療，並設睡眠呼吸中止、眩暈、頭頸部專業評估門診。可電話與 LINE 預約。" />
+<meta property="og:url" content="https://lalex07.github.io/Clinic/" />
+<meta property="og:image" content="https://lalex07.github.io/Clinic/assets/logo.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="大豐耳鼻喉科聯合診所｜新店・木柵・興隆 三院區" />
+<meta name="twitter:description" content="大豐耳鼻喉科由七位醫師組成，於新店、木柵、文山興隆三院區提供成人與兒童耳鼻喉診療，並設睡眠呼吸中止、眩暈、頭頸部專業評估門診。可電話與 LINE 預約。" />
+<meta name="twitter:image" content="https://lalex07.github.io/Clinic/assets/logo.png" />
 <link rel="icon" type="image/png" href="assets/favicon.png" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -236,6 +248,55 @@
   .feature__title svg { width: 24px; height: 24px; color: var(--primary); flex-shrink: 0; }
   .feature p { margin: 0; color: var(--ink-soft); font-size: 0.96rem; line-height: 1.85; }
 
+  /* ============ 最新消息 teaser ============ */
+  .home-news { padding: var(--s-8) 0; }
+  .home-news__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin-bottom: var(--s-5);
+  }
+  .home-news__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--primary);
+    font-weight: 500;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+  .home-news__more svg { width: 16px; height: 16px; transition: transform 0.3s var(--ease); }
+  .home-news__more:hover svg { transform: translateX(4px); }
+  /* featured announcement card — reuses .qcard (solid, lift-on-hover, no glow/gradient) */
+  .home-news__card { max-width: 760px; }
+  .home-news__meta { display: flex; align-items: center; gap: var(--s-2); }
+  .home-news__date {
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+  .home-news__tag {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    color: var(--primary-deep);
+    background: var(--primary-soft);
+    border-radius: 999px;
+    padding: 0.2rem 0.65rem;
+  }
+  .home-news__card h3 {
+    font-family: "Noto Serif TC", serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-deep);
+    line-height: 1.5;
+    margin: 0.2rem 0 0;
+  }
+
   /* ============ Homepage responsive ============ */
   @media (max-width: 900px) {
     .hero__grid { grid-template-columns: 1fr; gap: var(--s-5); }
@@ -253,6 +314,49 @@
     .hero__chip { font-size: 0.78rem; padding: 0.5rem 0.7rem; }
   }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": [
+    "Organization",
+    "MedicalBusiness"
+  ],
+  "name": "大豐耳鼻喉科聯合診所",
+  "url": "https://lalex07.github.io/Clinic/",
+  "logo": "https://lalex07.github.io/Clinic/assets/logo.png",
+  "image": "https://lalex07.github.io/Clinic/assets/logo.png",
+  "medicalSpecialty": "Otolaryngologic",
+  "telephone": "+886-2-2219-3122",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "明德里建國路161、163號1樓",
+    "addressLocality": "新店區",
+    "addressRegion": "新北市",
+    "postalCode": "231",
+    "addressCountry": "TW"
+  },
+  "department": [
+    {
+      "@type": "MedicalClinic",
+      "name": "新店大豐耳鼻喉科診所",
+      "telephone": "+886-2-2219-3122",
+      "url": "https://lalex07.github.io/Clinic/location-xindian.html"
+    },
+    {
+      "@type": "MedicalClinic",
+      "name": "興隆大豐耳鼻喉科診所",
+      "telephone": "+886-2-2933-6969",
+      "url": "https://lalex07.github.io/Clinic/location-xinglong.html"
+    },
+    {
+      "@type": "MedicalClinic",
+      "name": "木柵大豐耳鼻喉科診所",
+      "telephone": "+886-2-2937-1299",
+      "url": "https://lalex07.github.io/Clinic/location-muzha.html"
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -431,6 +535,33 @@
           <p>中山旗艦院區設完整開刀房，鼻中隔、軟齶手術與睡眠、鼻過敏的一站式評估到治療，不必在多家院所間奔波。</p>
         </article>
       </div>
+    </div>
+  </section>
+
+  <!-- ===================== 最新消息 teaser ===================== -->
+  <section class="home-news" aria-labelledby="homeNewsHeading">
+    <div class="wrap">
+      <div class="home-news__head">
+        <div class="sec-head" style="margin-bottom:0">
+          <span class="kicker"><span class="kicker__en">News</span>最新消息</span>
+          <h2 id="homeNewsHeading">院區公告與最新動態</h2>
+        </div>
+        <a class="home-news__more" href="news.html">查看更多最新消息
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+
+      <a class="qcard home-news__card reveal" href="news.html">
+        <div class="home-news__meta">
+          <time class="home-news__date" datetime="2026-06-01">2026.06.01</time>
+          <span class="home-news__tag">中山</span>
+        </div>
+        <h3>中山大豐院區・2026 年 10 月開幕・敬請期待</h3>
+        <p>大豐耳鼻喉科第四個據點——中山大豐院區，預計於 2026 年 10 月在臺北市中山區開幕。我們將延續一貫的耳鼻喉與睡眠健康照護，陪伴更多家庭。</p>
+        <span class="qcard__more">閱讀詳情
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
     </div>
   </section>
 </main>

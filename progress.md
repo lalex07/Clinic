@@ -2,7 +2,32 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 12)_
+_Last updated: 2026-06-06 (session 13)_
+
+## 🗓️ 2026-06-06 (session 13) — 發布 FAQ Q8–Q12（院長核准）+ SEO/社群 meta・schema・sitemap/robots + 首頁最新消息 teaser
+
+多 agent 平行作業；本 agent 負責整併 faq.html 與唯一 commit。clinic-audit（report-only）三組全 PASS。
+
+- **Agent 1：全站 SEO／社群中繼資料 + schema + 標題還原 + 首頁最新消息 teaser。**
+  - 每頁補上 `<link rel="canonical">`、Open Graph（og:title／description／url／image／site_name／locale／type）與 Twitter card（summary_large_image），圖片用 `assets/logo.png`。
+  - 結構化資料：首頁 `MedicalClinic`＋`PostalAddress`；FAQ 文章頁 `Article`＋`MedicalClinic`／`Organization`／`WebPage`；faq.html `FAQPage`。
+  - **頁面 `<title>` 還原為完整品牌式**（session 10 曾簡化為「大豐耳鼻喉科」等；現為「大豐耳鼻喉科聯合診所｜新店・木柵・興隆 三院區」「<主題>｜衛教專欄｜大豐耳鼻喉科聯合診所」等，利於 SEO 與分享）。
+  - **首頁新增「最新消息」teaser 區塊**（`.home-news`，連向 news.html 的最新一則公告），hover 僅箭頭位移、無變色，符合設計規則。
+- **FAQ Q8–Q12 經院長核准、正式發布。**
+  - `faq.md`：Q8–Q12 狀態由「草稿」更新為「已審閱／可發布」（院長親修微調，如 Q8 補「小下巴／鼻腔溝造狹窄／體重過重」等用字）。Q13–Q17 維持草稿（待院長審閱）。
+  - 5 個文章頁 `faq-q8…q12.html`（由 Q8–Q12 agent 建立，本 agent 確認）：各 1 個 h1＋3 個 h2、breadcrumb、`.photo-zone` 占位 banner（受框約束未溢出）、canonical、Article schema、頁尾免責聲明、最新消息 nav、搜尋圖示（無舊內嵌搜尋框）。
+  - **faq.html 卡片網格新增 Q8–Q12 五張卡**（沿用 Q1–Q7 markup：`.photo-zone` 占位＋該題 `配圖建議`＋分類 tag＋標題＋1–2 行摘要＋「閱讀全文 →」連向各文章頁）。網格現 12 張（Q1–Q12）；Q13–Q17 未發布。分類 tag：成人睡眠呼吸中止（Q8,Q12）／女性・睡眠健康（Q9）／打鼾・止鼾裝置（Q10）／睡眠・胃食道逆流（Q11）。
+  - **FAQPage JSON-LD 擴充至 Q1–Q12**（12 題 Question／Answer，排除 Q13–Q17）；JSON 解析驗證通過。
+- **新增 `sitemap.xml`（根目錄）＋ `robots.txt`。**
+  - sitemap：28 個 URL，列出每個 served 頁面（含 `faq-q8…q12.html`），URL 取自各頁 canonical（首頁＝`https://lalex07.github.io/Clinic/`），含 lastmod 2026-06-06／changefreq／priority；`/en/` 5 個 stub 也列入（priority 0.3）。排除尚未建立的 Q13–Q17。XML 驗證通過、namespace 正確。
+  - robots.txt：`User-agent: *` / `Allow: /`，並 `Sitemap:` 指向 sitemap.xml。
+- **仍待辦：** Q13–Q17 仍為草稿（待院長審閱）；**健保特約 badge**、**門診時間表（§十一 醫師×院區×時段）**、**預約掛號／聯絡頁（contact.html，header CTA「立即預約」目前指向尚未建立的此頁）** 皆待補。首頁病人回饋（patient-feedback）仍 HELD，待院長 §九 合規簽核。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：Q8–Q12 頁面與 faq.html 無 保證／根治／唯一／第一／必須／一定要／最〔上級〕；全站 `最` 僅 最新（最新消息 nav）＋最近（地理「最近捷運／離您最近」）＋最佳（photo-zone 標籤）；無費用、無療效百分比；5 個新頁頁尾免責聲明齊全；中山維持「2026 年 10 月開幕・敬請期待」。
+- **設計規則**：gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow／`transition:all` 全 0；新卡片與文章 banner 的 `.photo-zone` 占位皆受框約束未溢出；header 單行。
+- **無障礙**：faq.html＝1 h1＋12 h2（無跳級）；faq-q8…q12 各 1 h1＋3 h2；img alt 全齊、html lang zh-Hant、skip-link、最新消息 nav 齊備。
+- **連結／渲染**：本機 server 對 faq.html、faq-q8…q12.html、sitemap.xml、robots.txt 皆 200；截圖 `temporary screenshots/s13-faq-grid`（12 卡網格）、`s13-faq-q8`（文章頁占位 banner 受框）確認。
 
 ## 🗓️ 2026-06-06 (session 12) — 搜尋改圖示+overlay（修 header 溢位）+ FAQ 圖回退占位 + 消息預設公告磚 + CLAUDE.md 規則 + docs/ 整理
 
