@@ -2,7 +2,26 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 11)_
+_Last updated: 2026-06-06 (session 12)_
+
+## 🗓️ 2026-06-06 (session 12) — 搜尋改圖示+overlay（修 header 溢位）+ FAQ 圖回退占位 + 消息預設公告磚 + CLAUDE.md 規則 + docs/ 整理
+
+多 agent 平行作業；本 agent 負責整併 header／共用檔與唯一 commit。clinic-audit（report-only）三組全 PASS。
+
+- **搜尋重新設計為「放大鏡圖示 + 點擊開啟 overlay」，修正 header 溢位。** 上一版（session 11）每頁 header 內嵌搜尋輸入框，在桌機寬度把 nav 擠到第二行／溢出。本次：`assets/search.js` 改為載入時於 header（`.lang-toggle` 之前）注入一顆放大鏡按鈕，並於 `<body>` 末建立隱藏 overlay（`role="dialog" aria-modal="true"`、aria-labelledby、focus-trap、Esc／點背幕關閉、關閉後焦點回按鈕、尊重 prefers-reduced-motion；背幕為實心 `rgba(14,74,68,.42)` 無模糊；卡片含大輸入框＋「熱門搜尋」chip＋即時結果）。`assets/site.css` 以 `.search-trigger`／`.search-overlay`／`.search-modal` 取代舊 `.site-search` 規則（0 殘留）。**我把每頁 header 內殘留的舊 `.site-search` 內嵌 markup 全數刪除**（18 頁，各 1 段；search.js 另有執行期防衛去重，但原始碼一併清乾淨避免重複 id／閃爍）。`search-index.js`／`search.js`／`site.css` 三者每頁皆已連結。**桌機 header 已回到單行**（1280／1024px 截圖確認，nav 不換行不溢出）。
+- **FAQ Higgsfield 占位插圖移除、回退為 `.photo-zone` 占位**（agent 3 已回退頁面 body；本 agent 確認）。原因：生成圖未受占位框約束、尺寸溢出版面。`assets/faq/q1–q7.jpg` 7 檔刪除；`faq.html` 7 張卡片與各 `faq-qN.html` banner 回到 camera-icon「配圖建議」占位（faq.html：0 個 `<img>`、7 個 figure 占位；各文章頁 1 個 figure 占位）。院長確定插圖策略後再以**受框約束**的方式重做。
+- **最新消息：預設「公告／Announcement」磚。** 無圖片的公告卡顯示實心預設磚（喇叭圖示＋公告／ANNOUNCEMENT 標籤，硬邊、無漸層光暈），整塊 `aria-hidden="true"`（標題＋內文承載語意）；範例中山開幕公告即用此磚。news.html 內附「日後新增公告」範本註解（有圖走 `.news-card__img` object-fit:cover、無圖走預設磚）。
+- **CLAUDE.md 新增兩條設計規則 + 一節「File organization」：**
+  - 設計規則：① **header/nav 桌機永遠單行**，任何 header 新增物都須維持單行（不換行、不溢出）；放不下就收成圖示／overlay，別讓 header 換行（本次溢位即教訓）。② **占位框內的圖片永遠受框約束**（固定 aspect-ratio 內 object-fit:cover、100% 填滿並裁切，絕不溢出／撐大版面）——對應本次 FAQ 圖回退的原因。
+  - 「File organization」節：無建置 GitHub Pages，**served 頁面（`*.html`）與 `assets/` 一律平鋪 repo 根目錄**（絕不把 served HTML 巢狀進子資料夾，會破壞 URL）；`/en/` 為唯一刻意巢狀（鏡像中文結構）；`brand_assets/`＝原始素材；`docs/`＝不 served 的工作／歷史文件；`.claude/`＝skills。新檔依此分類預設歸位。
+- **docs/ 整理（不動 live 站）。** 新建 `docs/`，以 `git mv` 移入兩份非 served 的次要文件：`docs/design-review.md`、`docs/review-2026-06-02.md`（無遺留 `faq-draft-*.md`）。**所有 served HTML（含 index.html）與 assets/ 維持根目錄不動**，內部連結與 live URL 不受影響。progress.md 內 3 處引用已更新為 `docs/…` 路徑。根目錄保留：CLAUDE.md（Claude Code 要求）、progress.md、site-spec.md、faq.md、.gitignore。
+- **首頁病人回饋（patient-feedback）仍 HELD**，待院長就醫療廣告（§九）合規簽核後才上線，本次未動。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：保證／根治／唯一／第一／必須／一定要／最權威＝0；`最` 僅 最新×28（最新消息）＋最近×5（地理）＋最佳×3（photo-zone 標籤）；無費用；**23 頁**頁尾免責聲明齊全。中山維持「2026 年 10 月開幕・敬請期待」無手術招攬。
+- **設計規則**：gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow／`transition:all` 全 0（唯一 `filter:` 為 team 醫師照色彩正規化＝既知例外；overlay 背幕實心無模糊；overlay 淡入用 opacity、卡片用 transform，reduced-motion 下關閉）；**header 單行**；news 卡片 hover＝lift（translateY+shadow，不變色）。
+- **無障礙**：html lang 23/23、img alt 全齊、SVG 裝飾全 `aria-hidden`、skip-link 23/23；搜尋 overlay dialog ARIA／focus-trap／reduced-motion 齊備；標題順序全頁 ok（含 news.html h1 h2 h2、各頁恰 1 h1）。（grep 另命中 2 筆皆為誤報：`<img>` 在 HTML 註解的範本文字內、`<svg>` 位於 `aria-hidden="true"` 祖先之下，皆非真實缺失。）
+- **渲染**（Chrome headless 2×，`temporary screenshots/s12-*`）：`header-desktop`(1280) 與 `header-1024` 單行不換行；`news-placeholder` 預設公告磚渲染；`faq-placeholders` 卡片回到 camera-icon 占位。
 
 ## 🗓️ 2026-06-06 (session 11) — 最新消息頁 + 全站搜尋 + FAQ 插圖（Higgsfield）
 
@@ -129,7 +148,7 @@ clinic-audit（report-only）三組全 PASS（§九／設計規則／無障礙�
 
 ## 🗓️ 2026-06-04 (session 5) — 無障礙修正（review-2026-06-02 的 4 項）
 
-套用 `review-2026-06-02.md` 的 4 個 accessibility 發現，**僅做修正所需的最小變更，無其他視覺改動**。合規（§九）與設計規則在本次 review 已是 PASS，未動。
+套用 `docs/review-2026-06-02.md` 的 4 個 accessibility 發現，**僅做修正所需的最小變更，無其他視覺改動**。合規（§九）與設計規則在本次 review 已是 PASS，未動。
 
 1. **Reduced-motion guard（`index.html`）** — hero `.breath-rings circle` 的 `breathe 6s infinite` 先前不受任何 `prefers-reduced-motion` 保護（既有 guard 在 `site.css` 只處理 `.reveal`）。在 `index.html` `<style>` 內 `@keyframes breathe` 後新增 `@media (prefers-reduced-motion: reduce){ .breath-rings circle{ animation:none } }`。WCAG 2.3.3。
 2. **裝飾性 SVG `aria-hidden` 全站掃描** — 為所有缺漏的純裝飾 inline `<svg>` 補上 `aria-hidden="true" focusable="false"`，共 **134** 個（10 中文頁 + 4 個 `/en/` stub）。全部 SVG 皆為 24×24 線圖示且旁邊有文字標籤（nav／卡片標題／chip／info-row／breadcrumb／footer／地圖佔位／en 返回箭頭），無任何「不靠鄰近文字即傳達獨特資訊」者，故全數可隱藏；連結內的 chevron 一併隱藏以保持連結 accessible name 乾淨。既有 `aria-hidden` 的 breath-rings 未重複加。掃描後 0 個 SVG 仍缺 `aria-hidden`、無重複屬性。
@@ -278,7 +297,7 @@ clinic-audit（report-only）三組全 PASS（§九／設計規則／無障礙�
   - **小兒專科 identity resolved**: 巫靚穎 = the "1 位小兒專科醫師" referenced site-wide. (Task prompt's roster was pre-update; site-spec §五 7-doctor roster is the truth and added 林諄儒.)
 - **EN stub** `en/team.html` added (coming-soon pattern, 中文｜EN toggle), matching existing `/en/` placeholders.
 - **"Restraint over density" added to CLAUDE.md** design rules (inspired by cureclinictw.com, which 院長 prefers; Caringlink/HomePro felt overpowering). One focal idea per section, short paragraphs, whitespace as a feature, prefer 3–6 considered items over grids-of-many.
-- **Design review saved to `design-review.md`** — specific, actionable proposals (not applied yet) for Services / Locations / About against the new principle, with per-item impact ratings + a priority table. Awaiting 院長 review before applying.
+- **Design review saved to `docs/design-review.md`** — specific, actionable proposals (not applied yet) for Services / Locations / About against the new principle, with per-item impact ratings + a priority table. Awaiting 院長 review before applying.
 - **Verified**: compliance scan clean (no 保證/最/根治/唯一/第一); desktop/tablet/mobile screenshots in `temporary screenshots/team-*`; per-row card heights uniform; founder badges legible. Specialties all marked 「待醫師確認」, §十一 schedule still blank.
 - **Still awaiting from 院長**: photos for 蔡彥群/林雅芳/李順源; confirmed specialties + clinic schedules; the two filename-character confirmations.
 
@@ -308,7 +327,7 @@ clinic-audit（report-only）三組全 PASS（§九／設計規則／無障礙�
 4. **Optionally build 衛教專欄 / Blog** (§七) if 院長 wants it — SEO article topics listed in spec, no bodies yet.
 5. **Collect remaining doctor credentials** for **蔡彥群, 廖學森, 蕭仁豪, 李順源, 林雅芳** (林雅芳 only if confirmed as a separate doctor). Cards/spec entries for these are still 〔待補〕 or draft.
 6. **Wait on 院長 for 中山院區** — address + phone + confirmed opening date (still presented as "2026 年 10 月開幕・敬請期待").
-7. ~~Build 醫療團隊 / Team~~ ✅ **Done** (session 2). Also consider applying approved items from `design-review.md` (review with 院長 first).
+7. ~~Build 醫療團隊 / Team~~ ✅ **Done** (session 2). Also consider applying approved items from `docs/design-review.md` (review with 院長 first).
 
 **Live site:** GitHub Pages live → **https://lalex07.github.io/Clinic/** (deploys from the default branch, no build step). 院長 (Alex's dad) has **approved the design direction** (palette, tone, layout) — build the rest on this foundation.
 

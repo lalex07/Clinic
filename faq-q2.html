@@ -47,20 +47,6 @@
       <a href="faq.html" aria-current="page">衛教專欄</a>
       <a href="news.html">最新消息</a>
     </nav>
-    <div class="site-search" role="search">
-      <div class="site-search__field">
-        <svg class="site-search__icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path>
-        </svg>
-        <input type="search" class="site-search__input" id="siteSearchInput"
-               role="combobox" aria-expanded="false" aria-controls="siteSearchResults"
-               aria-autocomplete="list" aria-label="搜尋" placeholder="搜尋網站…"
-               autocomplete="off" autocapitalize="off" spellcheck="false" />
-      </div>
-      <ul class="site-search__results" id="siteSearchResults" role="listbox" aria-label="搜尋結果" hidden></ul>
-    </div>
-
     <div class="lang-toggle" aria-label="語言 / Language">
       <span class="lang-toggle__on" lang="zh-Hant" aria-current="true">中文</span>
       <span class="sep" aria-hidden="true">|</span>
@@ -96,7 +82,12 @@
   <section class="faq-articles" aria-label="衛教文章">
     <div class="wrap">
 
-      <img class="photo-zone photo-zone--16x9 faq-article__media reveal" src="assets/faq/q2.jpg" width="1600" height="900" loading="eager" decoding="async" style="width:100%;object-fit:cover;padding:0;border:0;" alt="插圖：上呼吸道與鼻腔氣流示意圖，箭頭表示呼吸氣流通過鼻腔與咽喉，其中一處鼻道較為狹窄" />
+      <figure class="photo-zone photo-zone--16x9 faq-article__media reveal">
+        <span class="photo-zone__icon" aria-hidden="true">
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </span>
+        <p class="photo-zone__label"><strong>配圖建議</strong>上呼吸道氣流／鼻腔阻塞示意插圖</p>
+      </figure>
 
       <article class="faq-article faq-article--solo reveal">
         <span class="faq-article__num">Q2</span>

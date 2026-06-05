@@ -103,11 +103,66 @@
     transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
   }
   .news-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+  /* media box: fixed 16:9 so cards align; real images cover it and never overflow */
   .news-card__media {
+    position: relative;
     width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--bg-2);
     border: none;
-    border-bottom: 1px dashed var(--line-strong);
+    border-bottom: 1px solid var(--line);
     border-radius: 0;
+  }
+  .news-card__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* fill the box, crop the excess — never stretch or overflow */
+  }
+
+  /* default "公告 / ANNOUNCEMENT" tile — shown when an item has no image.
+     Solid 大豐 palette: teal-soft ground, terracotta megaphone, teal-deep label.
+     No glow, no gradient, crisp edges — matches the site's card style. */
+  .news-card__media--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-soft);
+  }
+  .news-card__placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+    padding: var(--s-3);
+  }
+  .news-card__placeholder svg {
+    width: 44px;
+    height: 44px;
+    color: var(--accent); /* terracotta megaphone */
+  }
+  .news-card__placeholder-zh,
+  .news-card__placeholder-en {
+    display: block;
+    text-align: center;
+    line-height: 1.1;
+  }
+  .news-card__placeholder-zh {
+    font-family: "Noto Serif TC", serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-indent: 0.2em; /* offset trailing letter-spacing so it reads optically centered */
+    color: var(--primary-deep);
+  }
+  .news-card__placeholder-en {
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    text-indent: 0.26em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
   }
   .news-card__body {
     display: flex;
@@ -198,20 +253,6 @@
       <a href="faq.html">衛教專欄</a>
       <a href="news.html" aria-current="page">最新消息</a>
     </nav>
-    <div class="site-search" role="search">
-      <div class="site-search__field">
-        <svg class="site-search__icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path>
-        </svg>
-        <input type="search" class="site-search__input" id="siteSearchInput"
-               role="combobox" aria-expanded="false" aria-controls="siteSearchResults"
-               aria-autocomplete="list" aria-label="搜尋" placeholder="搜尋網站…"
-               autocomplete="off" autocapitalize="off" spellcheck="false" />
-      </div>
-      <ul class="site-search__results" id="siteSearchResults" role="listbox" aria-label="搜尋結果" hidden></ul>
-    </div>
-
     <div class="lang-toggle" aria-label="語言 / Language">
       <span class="lang-toggle__on" lang="zh-Hant" aria-current="true">中文</span>
       <span class="sep" aria-hidden="true">|</span>
@@ -268,12 +309,14 @@
 
         <!-- 公告：中山院區開幕（未來式，無手術招攬語） -->
         <article class="news-card reveal in" data-clinic="zhongshan" data-date="2026-06-01">
-          <figure class="photo-zone photo-zone--16x9 photo-zone--sm news-card__media">
-            <span class="photo-zone__icon" aria-hidden="true">
-              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <!-- no image → default 公告 placeholder tile (decorative; the heading + body carry the announcement) -->
+          <div class="news-card__media news-card__media--placeholder" aria-hidden="true">
+            <span class="news-card__placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+              <span class="news-card__placeholder-zh">公告</span>
+              <span class="news-card__placeholder-en">Announcement</span>
             </span>
-            <p class="photo-zone__label"><strong>配圖建議</strong>中山院區開幕主視覺或外觀示意（暫以示意圖呈現）</p>
-          </figure>
+          </div>
           <div class="news-card__body">
             <div class="news-card__meta">
               <time class="news-card__date" datetime="2026-06-01">2026.06.01</time>
@@ -284,7 +327,13 @@
           </div>
         </article>
 
-        <!-- 之後的公告依相同結構新增，並設定 data-clinic 與 data-date -->
+        <!-- 之後的公告依相同結構新增，並設定 data-clinic（xindian｜muzha｜xinglong｜zhongshan）與 data-date（YYYY-MM-DD）。
+             媒體框二選一：
+             ① 有圖片 → 放 <img> 並以 object-fit: cover 裁切、不溢出：
+                <div class="news-card__media">
+                  <img class="news-card__img" src="assets/news/xxx.jpg" alt="公告主視覺說明" loading="lazy" />
+                </div>
+             ② 沒有圖片 → 沿用上方中山卡片的「公告」預設磚 .news-card__media--placeholder（含 aria-hidden）。 -->
 
         <p class="news-empty" id="newsEmpty" hidden>目前沒有此院區的最新消息，請改看「全部」或稍後再回來查看。</p>
       </div>

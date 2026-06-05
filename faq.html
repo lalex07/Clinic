@@ -35,20 +35,6 @@
       <a href="faq.html" aria-current="page">衛教專欄</a>
       <a href="news.html">最新消息</a>
     </nav>
-    <div class="site-search" role="search">
-      <div class="site-search__field">
-        <svg class="site-search__icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path>
-        </svg>
-        <input type="search" class="site-search__input" id="siteSearchInput"
-               role="combobox" aria-expanded="false" aria-controls="siteSearchResults"
-               aria-autocomplete="list" aria-label="搜尋" placeholder="搜尋網站…"
-               autocomplete="off" autocapitalize="off" spellcheck="false" />
-      </div>
-      <ul class="site-search__results" id="siteSearchResults" role="listbox" aria-label="搜尋結果" hidden></ul>
-    </div>
-
     <div class="lang-toggle" aria-label="語言 / Language">
       <span class="lang-toggle__on" lang="zh-Hant" aria-current="true">中文</span>
       <span class="sep" aria-hidden="true">|</span>
@@ -86,7 +72,12 @@
       <div class="faq-grid">
 
         <a class="faq-card reveal" href="faq-q1.html">
-          <img class="photo-zone photo-zone--16x9 photo-zone--sm faq-card__media" src="assets/faq/q1.jpg" width="1600" height="900" loading="lazy" decoding="async" style="width:100%;object-fit:cover;padding:0;border:0;" alt="插圖：夜間鼻塞影響睡眠的情境，畫面有月亮、枕頭與鼻部不適示意" />
+          <figure class="photo-zone photo-zone--16x9 photo-zone--sm faq-card__media">
+            <span class="photo-zone__icon" aria-hidden="true">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </span>
+            <p class="photo-zone__label"><strong>配圖建議</strong>夜間鼻塞影響睡眠的情境插圖（側躺睡眠剪影＋月亮）</p>
+          </figure>
           <div class="faq-card__body">
             <span class="faq-card__tag">鼻過敏・睡眠</span>
             <h2>鼻過敏與睡眠品質的關係</h2>
@@ -96,7 +87,12 @@
         </a>
 
         <a class="faq-card reveal" href="faq-q2.html">
-          <img class="photo-zone photo-zone--16x9 photo-zone--sm faq-card__media" src="assets/faq/q2.jpg" width="1600" height="900" loading="lazy" decoding="async" style="width:100%;object-fit:cover;padding:0;border:0;" alt="插圖：上呼吸道與鼻腔氣流示意圖，箭頭表示呼吸氣流通過鼻腔與咽喉，其中一處鼻道較為狹窄" />
+          <figure class="photo-zone photo-zone--16x9 photo-zone--sm faq-card__media">
+            <span class="photo-zone__icon" aria-hidden="true">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </span>
+            <p class="photo-zone__label"><strong>配圖建議</strong>上呼吸道氣流／鼻腔阻塞示意插圖</p>
+          </figure>
           <div class="faq-card__body">
             <span class="faq-card__tag">鼻過敏・睡眠</span>
             <h2>鼻過敏與睡眠呼吸中止的相關性</h2>
@@ -106,7 +102,12 @@
         </a>
 
         <a class="faq-card reveal" href="faq-q3.html">
-          <img class="photo-zone photo-zone--16x9 photo-zone--sm faq-card__media" src="assets/faq/q3.jpg" width="1600" height="900" loading="lazy" decoding="async" style="width:100%;object-fit:cover;padding:0;border:0;" alt="插圖：上呼吸道解剖示意圖，標示鼻腔後方腺樣體的位置" />
+          <figure class="photo-zone photo-zone--16x9 photo-zone--sm faq-card__media">
+            <span class="photo-zone__icon" aria-hidden="true">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </span>
+            <p class="photo-zone__label"><strong>配圖建議</strong>兒童上呼吸道／腺樣體位置中性解剖示意圖</p>
+          </figure>
           <div class="faq-card__body">
             <span class="faq-card__tag">兒童睡眠呼吸中止</span>
             <h2>兒童腺樣體增生與睡眠呼吸中止</h2>
@@ -116,7 +117,12 @@
         </a>
 
         <a class="faq-card reveal" href="faq-q4.html">
-          <img class="photo-zone photo-zone--16x9 photo-zone--sm faq-card__media" src="assets/faq/q4.jpg" width="1600" height="900" loading="lazy" decoding="async" style="width:100%;object-fit:cover;padding:0;border:0;" alt="插圖：兒童生長曲線示意圖，搭配月亮與枕頭等睡眠元素" />
+          <figure class="photo-zone photo-zone--16x9 photo-zone--sm faq-card__media">
+            <span class="photo-zone__icon" aria-hidden="true">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </span>
+            <p class="photo-zone__label"><strong>配圖建議</strong>兒童生長曲線圖表＋睡眠元素插圖</p>
+          </figure>
           <div class="faq-card__body">
             <span class="faq-card__tag">兒童睡眠呼吸中止</span>
             <h2>兒童睡眠呼吸中止症與生長曲線</h2>
@@ -126,7 +132,12 @@
         </a>
 
         <a class="faq-card reveal" href="faq-q5.html">
-          <img class="photo-zone photo-zone--16x9 photo-zone--sm faq-card__media" src="assets/faq/q5.jpg" width="1600" height="900" loading="lazy" decoding="async" style="width:100%;object-fit:cover;padding:0;border:0;" alt="插圖：臉部側面輪廓線稿，示意臉型與齒列發育，非真實兒童" />
+          <figure class="photo-zone photo-zone--16x9 photo-zone--sm faq-card__media">
+            <span class="photo-zone__icon" aria-hidden="true">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </span>
+            <p class="photo-zone__label"><strong>配圖建議</strong>顏面發育中性線稿（不指涉真實兒童）</p>
+          </figure>
           <div class="faq-card__body">
             <span class="faq-card__tag">兒童睡眠呼吸中止</span>
             <h2>兒童睡眠呼吸中止與面容變化</h2>
@@ -136,7 +147,12 @@
         </a>
 
         <a class="faq-card reveal" href="faq-q6.html">
-          <img class="photo-zone photo-zone--16x9 photo-zone--sm faq-card__media" src="assets/faq/q6.jpg" width="1600" height="900" loading="lazy" decoding="async" style="width:100%;object-fit:cover;padding:0;border:0;" alt="插圖：白天精神不濟、注意力不集中的學童剪影坐在書桌前，未露臉" />
+          <figure class="photo-zone photo-zone--16x9 photo-zone--sm faq-card__media">
+            <span class="photo-zone__icon" aria-hidden="true">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </span>
+            <p class="photo-zone__label"><strong>配圖建議</strong>白天課堂疲倦／恍神的兒童剪影插圖（不露臉）</p>
+          </figure>
           <div class="faq-card__body">
             <span class="faq-card__tag">兒童睡眠呼吸中止</span>
             <h2>兒童睡眠呼吸中止症與注意力不集中、過動的相關關係</h2>
@@ -146,7 +162,12 @@
         </a>
 
         <a class="faq-card reveal" href="faq-q7.html">
-          <img class="photo-zone photo-zone--16x9 photo-zone--sm faq-card__media" src="assets/faq/q7.jpg" width="1600" height="900" loading="lazy" decoding="async" style="width:100%;object-fit:cover;padding:0;border:0;" alt="插圖：鼻中隔與鼻腔結構示意圖，搭配打鼾聲波元素" />
+          <figure class="photo-zone photo-zone--16x9 photo-zone--sm faq-card__media">
+            <span class="photo-zone__icon" aria-hidden="true">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </span>
+            <p class="photo-zone__label"><strong>配圖建議</strong>鼻中隔結構示意插圖＋打鼾聲波元素</p>
+          </figure>
           <div class="faq-card__body">
             <span class="faq-card__tag">鼻部結構・打鼾</span>
             <h2>打鼾與鼻中隔彎曲的相關關係</h2>

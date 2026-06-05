@@ -39,6 +39,10 @@ Use the frontend-design skill in `.claude/skills/frontend-design/` for all UI wo
 
 **Restraint over density.** Inspired by cureclinictw.com (which 院長 specifically prefers — he found Caringlink and HomePro overpowering on information). Each section presents one clear focal idea, not a feature list. Whitespace is a feature, not wasted space. When in doubt between adding more information and removing some, remove.
 
+**Header/nav must always fit on one line at desktop widths.** The site header (brand + nav + search + language toggle + CTA) must never wrap to a second line or overflow horizontally at desktop widths. Any addition to the header (a new nav item, a search control, a badge) has to preserve the single-line fit — verify with a desktop-width screenshot before committing. If something new won't fit, shrink or collapse it (e.g. a click-to-open search overlay behind an icon rather than an inline input), don't let the header wrap. (Learned the hard way: an inline header search box overflowed the nav onto a second line.)
+
+**Images in a placeholder must stay inside the placeholder box.** When a real image replaces a `.photo-zone` (or any fixed aspect-ratio placeholder), it must be constrained to that box — `object-fit: cover` within the placeholder's fixed `aspect-ratio`, width/height 100%, never breaking out, overflowing, or stretching the layout. The placeholder defines the footprint; the image fills it and is clipped to it, never the reverse. Check that a swapped-in image hasn't grown the box or spilled past its rounded corners.
+
 Goals:
 - Generous vertical breathing room between sections
 - Short paragraphs (2-4 sentences max in body copy)
@@ -53,6 +57,19 @@ Goals:
 - Mobile-first (over 70% of patients will visit on phones; see brief section 十)
 - Each location page should include structured data (schema.org MedicalClinic / LocalBusiness) per brief section 十二
 - Preview locally with `python3 -m http.server 8000` from the project root, then open `http://localhost:8000` in the browser. Never test against `file:///` URLs.
+
+## File organization
+
+This is a no-build GitHub Pages site served straight from the repo root by path. Keep the layout flat and predictable so live URLs never break:
+
+- **Served pages (`*.html`) live FLAT at the repo root.** `index.html` is the site root; every other page (`about.html`, `services.html`, `news.html`, `faq.html`, `faq-q*.html`, `location-*.html`, …) sits beside it. **Never nest a served page into a subfolder** — moving `foo.html` to `pages/foo.html` changes its public URL and breaks inbound links, bookmarks, and the search index. English pages are the one intentional nesting: they mirror the Chinese structure under `/en/`.
+- **`assets/`** holds all served CSS/JS/images (`site.css`, `search.js`, `search-index.js`, `qr/`, `doctors/`, …), also flat under the root.
+- **`brand_assets/`** holds source/original brand files (logo PDF, original-resolution QR codes and photos) that are not necessarily served as-is.
+- **`docs/`** holds working/historical documents that are NOT served and NOT part of the build — design reviews, dated audit notes, superseded drafts (e.g. `docs/design-review.md`, `docs/review-2026-06-02.md`). These are reference material for contributors, not pages.
+- **`.claude/`** holds skills (`clinic-audit`, `frontend-design`) and local settings.
+- **Stays at the root by necessity:** `CLAUDE.md` (Claude Code requires it at root), plus the actively-referenced working files `progress.md`, `site-spec.md`, `faq.md`, `.gitignore`, and any `README`.
+
+New files follow this categorization by default: a new patient-facing page → root; a new stylesheet/script/image → `assets/`; a new internal note, review, or draft → `docs/`.
 
 ## Compliance
 

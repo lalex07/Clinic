@@ -772,96 +772,233 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   .back-to-top:hover { transform: none; }
 }
 
-/* ============ 站內搜尋 (site search) ============ */
-.site-search {
-  position: relative;
-  width: 220px;
+/* ============ 站內搜尋 (click-to-open overlay) ============ */
+
+/* header 維持單行：移除上一版內嵌搜尋框後，nav 一律不換行、不溢位。
+   品牌可先壓縮（min-width:0），其餘元件 flex-shrink:0，確保
+   logo · nav · 搜尋鈕 · 中文|EN · 立即預約 永遠落在同一行。 */
+.nav { flex-wrap: nowrap; }
+.nav__links { flex-wrap: nowrap; white-space: nowrap; }
+.brand__text { min-width: 0; }
+
+/* 觸發鈕：header 內的放大鏡圖示按鈕（由 search.js 注入於 .lang-toggle 之前） */
+.search-trigger {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), background-color 0.2s var(--ease), border-color 0.2s var(--ease);
 }
-.site-search__field {
+.search-trigger svg { width: 20px; height: 20px; }
+.search-trigger:hover { color: var(--primary-deep); background: var(--primary-soft); }
+.search-trigger:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* overlay 背幕：實心半透明深色（rgba 變暗），不使用 backdrop-filter／模糊 */
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100; /* 高於 header(50) 與 back-to-top(60) */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(1rem, 8vh, 6rem) var(--s-4) var(--s-4);
+  opacity: 0;
+  transition: opacity 0.22s var(--ease);
+}
+.search-overlay.is-open { opacity: 1; }
+.search-overlay[hidden] { display: none; }
+.search-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(14, 74, 68, 0.42); /* primary-deep 變暗，實心無模糊 */
+}
+
+/* 置中卡片 */
+.search-modal {
   position: relative;
+  width: 100%;
+  max-width: 560px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--s-5);
+  transform: translateY(-8px);
+  transition: transform 0.22s var(--ease);
+}
+.search-overlay.is-open .search-modal { transform: translateY(0); }
+
+.search-modal__close {
+  position: absolute;
+  top: var(--s-3);
+  right: var(--s-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+.search-modal__close svg { width: 20px; height: 20px; }
+.search-modal__close:hover { color: var(--primary-deep); background: var(--primary-soft); }
+.search-modal__close:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.search-modal__title {
+  font-family: "Noto Serif TC", serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--primary-deep);
+  margin: 0 2.5rem var(--s-3) 0; /* 右側留白避免壓到關閉鈕 */
+}
+
+/* 輸入列：大型輸入框 + 搜尋按鈕 */
+.search-modal__form {
+  display: flex;
+  gap: var(--s-2);
+  align-items: stretch;
+}
+.search-modal__field {
+  position: relative;
+  flex: 1;
   display: flex;
   align-items: center;
+  min-width: 0;
 }
-.site-search__icon {
+.search-modal__field-icon {
   position: absolute;
-  left: 0.65rem;
-  width: 16px;
-  height: 16px;
+  left: 0.85rem;
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
   color: var(--ink-faint);
   pointer-events: none;
 }
-.site-search__input {
+.search-modal__field-icon svg { width: 20px; height: 20px; }
+.search-modal__input {
   width: 100%;
-  height: 40px;
-  padding: 0 0.8rem 0 2.1rem;
+  height: 52px;
+  padding: 0 1rem 0 2.7rem;
   font: inherit;
-  font-size: 0.92rem;
+  font-size: 1.05rem;
   color: var(--ink);
   background: var(--surface);
   border: 1px solid var(--line-strong);
-  border-radius: 10px;
-  transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+  border-radius: 12px;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
 }
-.site-search__input::placeholder { color: var(--ink-faint); }
-.site-search__input:hover { border-color: var(--primary); }
-/* 滑鼠點擊：去掉系統外框，改用邊框 + 既有分層陰影（非發光） */
-.site-search__input:focus { outline: none; border-color: var(--primary); box-shadow: var(--shadow-sm); }
-/* 鍵盤聚焦：明確可見的焦點外框 */
-.site-search__input:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.search-modal__input::placeholder { color: var(--ink-faint); }
+.search-modal__input:hover { border-color: var(--primary); }
+.search-modal__input:focus { outline: none; border-color: var(--primary); box-shadow: var(--shadow-sm); }
+.search-modal__input:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
-/* 結果下拉清單 */
-.site-search__results {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  min-width: 300px;
+.search-modal__submit {
+  flex-shrink: 0;
+  height: 52px;
+  padding: 0 1.4rem;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.search-modal__submit:hover { background: var(--primary-deep); border-color: var(--primary-deep); }
+.search-modal__submit:focus-visible { outline: 2px solid var(--primary-deep); outline-offset: 3px; }
+
+/* 熱門搜尋 chip 列 */
+.search-modal__hot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-4);
+}
+.search-modal__hot-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+.search-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
   margin: 0;
-  padding: 4px;
+  padding: 0;
   list-style: none;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  max-height: min(70vh, 460px);
-  overflow-y: auto;
-  z-index: 60; /* 高於 .site-header 的 z-index:50 */
 }
-.site-search__results[hidden] { display: none; }
+.search-chip {
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--primary-deep);
+  background: var(--primary-soft);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), background-color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.search-chip:hover { background: var(--surface); border-color: var(--primary); }
+.search-chip:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
-.site-search__item { margin: 0; }
-.site-search__item > a {
+/* 結果清單（卡片內流式，非絕對下拉） */
+.search-results {
+  margin: var(--s-4) 0 0;
+  padding: var(--s-2) 0 0;
+  list-style: none;
+  max-height: min(48vh, 420px);
+  overflow-y: auto;
+  border-top: 1px solid var(--line);
+}
+.search-results[hidden] { display: none; }
+
+.search-result { margin: 0; }
+.search-result > a {
   display: block;
-  padding: 0.55rem 0.65rem;
+  padding: 0.6rem 0.65rem;
   border-radius: 8px;
   color: var(--ink);
   text-decoration: none;
-  transition: background 0.2s var(--ease);
+  transition: background-color 0.2s var(--ease);
 }
 /* 鍵盤標記中 (aria-selected) 與滑鼠 hover：僅變底色，不變色相 */
-.site-search__item[aria-selected="true"] > a,
-.site-search__item > a:hover { background: var(--primary-soft); }
-
-.site-search__item-title {
+.search-result[aria-selected="true"] > a,
+.search-result > a:hover { background: var(--primary-soft); }
+.search-result__title {
   display: block;
   font-weight: 600;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   color: var(--primary-deep);
   margin-bottom: 0.15rem;
 }
-.site-search__item-snippet {
+.search-result__snippet {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  font-size: 0.82rem;
-  line-height: 1.5;
-  color: var(--ink-faint);
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
 }
 
 /* 命中字標記：實心底色硬邊，非螢光發光 */
-.site-search__results mark {
+.search-results mark {
   background: var(--accent-soft);
   color: var(--ink);
   font-weight: 600;
@@ -870,7 +1007,7 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
 }
 
 /* 分類標籤 */
-.site-search__badge {
+.search-result__badge {
   display: inline-block;
   margin-left: 0.4rem;
   padding: 0.05rem 0.4rem;
@@ -879,23 +1016,29 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   border-radius: 4px;
   vertical-align: middle;
 }
-.site-search__badge--faq { background: var(--primary-soft); color: var(--primary-deep); }
-.site-search__badge--location { background: var(--accent-soft); color: #9a5527; } /* 深一階暖棕，確保對比 */
-.site-search__badge--news { background: var(--bg-2); color: var(--ink-soft); }
+.search-result__badge--faq { background: var(--primary-soft); color: var(--primary-deep); }
+.search-result__badge--location { background: var(--accent-soft); color: #9a5527; } /* 深一階暖棕，確保對比 */
+.search-result__badge--news { background: var(--bg-2); color: var(--ink-soft); }
 
 /* 查無結果 */
-.site-search__empty {
+.search-results__empty {
   padding: 0.9rem 0.7rem;
-  font-size: 0.88rem;
-  color: var(--ink-faint);
+  font-size: 0.9rem;
+  color: var(--ink-soft);
   text-align: center;
 }
 
-/* ---- RWD：≤760px 搜尋列落到 header 第二行、佔滿整列 ----
-   注意：以下三條會「覆寫既有選擇器」(.nav / .nav__links.open)，屬刻意行為。
-   因為這段 CSS 貼在 site.css 既有規則之後，故會勝出。 */
-@media (max-width: 760px) {
-  .nav { flex-wrap: wrap; height: auto; min-height: 72px; row-gap: 0.55rem; padding-bottom: 0.55rem; }
-  .site-search { order: 10; width: 100%; flex-basis: 100%; }
-  .nav__links.open { top: 100%; } /* header 變高時，行動選單仍貼齊 header 下緣 */
+/* RWD：窄螢幕讓搜尋按鈕落到輸入框下方並佔滿 */
+@media (max-width: 520px) {
+  .search-modal { padding: var(--s-4); }
+  .search-modal__form { flex-wrap: wrap; }
+  .search-modal__submit { width: 100%; }
+}
+
+/* reduce-motion：關閉 overlay 過場與位移 */
+@media (prefers-reduced-motion: reduce) {
+  .search-overlay,
+  .search-modal { transition: none; }
+  .search-modal,
+  .search-overlay.is-open .search-modal { transform: none; }
 }
