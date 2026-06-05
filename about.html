@@ -198,7 +198,22 @@
       <a href="team.html">醫療團隊</a>
       <a href="locations.html">院區・門診</a>
       <a href="faq.html">衛教專欄</a>
+      <a href="news.html">最新消息</a>
     </nav>
+    <div class="site-search" role="search">
+      <div class="site-search__field">
+        <svg class="site-search__icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path>
+        </svg>
+        <input type="search" class="site-search__input" id="siteSearchInput"
+               role="combobox" aria-expanded="false" aria-controls="siteSearchResults"
+               aria-autocomplete="list" aria-label="搜尋" placeholder="搜尋網站…"
+               autocomplete="off" autocapitalize="off" spellcheck="false" />
+      </div>
+      <ul class="site-search__results" id="siteSearchResults" role="listbox" aria-label="搜尋結果" hidden></ul>
+    </div>
+
     <div class="lang-toggle" aria-label="語言 / Language">
       <span class="lang-toggle__on" lang="zh-Hant" aria-current="true">中文</span>
       <span class="sep" aria-hidden="true">|</span>
@@ -417,6 +432,8 @@
   </div>
 </footer>
 
+<script src="assets/search-index.js" defer></script>
+<script src="assets/search.js" defer></script>
 <script src="assets/site.js"></script>
 </body>
 </html>

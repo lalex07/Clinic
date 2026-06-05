@@ -2,7 +2,23 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-05 (session 10)_
+_Last updated: 2026-06-06 (session 11)_
+
+## 🗓️ 2026-06-06 (session 11) — 最新消息頁 + 全站搜尋 + FAQ 插圖（Higgsfield）
+
+多 agent 平行作業；本 agent 負責整併共用檔（header／`site.css`／`search-index.js`）與唯一 commit。clinic-audit（report-only）三組全 PASS。
+
+- **最新消息 `news.html` 新增。** 院區公告／門診異動的集中頁：hero ＋ breadcrumb ＋**院區篩選 chip（全部／新店／木柵／興隆）**＋公告卡片網格，client-side 依 `data-date` 由新到舊排序、篩選空狀態有提示。目前一則**範例公告**＝中山旗艦手術中心 2026/10 開幕（占位配圖，未上線手術行銷語，符合中山「敬請期待」狀態）。`en/news.html` 為 coming-soon stub，與 CN 頁以語言切換互連。
+- **全站搜尋上線。** `assets/search-index.js`（手動維護靜態索引，18 筆：6 主要頁＋7 衛教＋4 院區＋1 最新消息）＋ `assets/search.js`（vanilla JS，即時搜尋、ARIA combobox／listbox、鍵盤上下／Enter／Esc、命中字 `<mark>`、分類標籤）。搜尋列插入**每一頁** header（nav 之後、語言切換之前），≤760px 落到 header 第二行佔滿整列。CSS 併入 `assets/site.css`（實心底色、硬邊、無發光／漸層、hover 僅變底色、`:focus-visible` 外框）。新增的搜尋色彩全數通過 WCAG AA（item-title 10.09、snippet 5.20、badge-location #9a5527/accent-soft 4.68、badge-news 5.94…）。**整併時把 news 索引條目的 url 由 `location-zhongshan.html` 改指 `news.html`**（搜尋「最新消息／公告」即可到達新頁），並同步更新 `search-index.js` 內過時的維護備註。交接檔 `search-integration.md` 併入後刪除。
+- **最新消息 nav 連結加到每一頁 header**（順序：關於大豐／診療項目／醫療團隊／院區・門診／衛教專欄／**最新消息**；`news.html` 上 `aria-current="page"`）。`/en/` stub 無主選單，故不加 nav 連結（沿用既有慣例）；CN↔EN 仍以語言切換互連。
+- **FAQ Q1–Q7 占位插圖（Higgsfield 生成）已接上。** 7 張 `assets/faq/q1–q7.jpg`（大豐吉祥物風格、診所色盤、衛教示意，非真實人物／兒童），1600×900，接到 `faq.html` 卡片（`loading=lazy`）與各 `faq-qN.html` 文章 banner（`loading=eager`）。原 `.photo-zone` 占位框已全數移除（faq.html 0 個 figure 占位、7 個 `<img>`；各文章頁 1 個 `<img>`）。alt 文字描述具體且 §九-clean（「插圖：…」「非真實兒童」「未露臉」）。檔案 120–162KB，合理。⚠️ **PENDING 院長視覺審查**——此為占位風格圖，院長確認插圖策略後可替換。
+- **首頁病人回饋（patient-feedback）仍 HELD**，待院長就醫療廣告（§九）合規簽核後才上線，本次未動。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：保證／根治／唯一／第一／必須／一定要／最權威＝0；`最` 僅 最新×28（「最新消息」＝latest news，非臨床最上級，新增之可接受用法）＋最近×5（地理）＋最佳×3（photo-zone 標籤）；無費用；**23 頁**頁尾免責聲明齊全（含 `news.html`、`en/news.html`）。
+- **設計規則**：gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow shadow／`transition:all` 全 0；搜尋列與結果清單 hover 僅變底色、陰影用既有 tinted token。
+- **無障礙**：html lang 23/23、img alt 全齊（含 7 張 FAQ 插圖，alt 描述完整）、SVG 全 `aria-hidden`（含搜尋放大鏡圖示）、skip-link 23/23、搜尋 combobox/listbox ARIA 18/18；標題順序全頁 ok（news.html＝h1 h2 h2，各頁恰 1 個 h1、無跳級）。
+- **渲染驗證**（Chrome headless 2×，`temporary screenshots/s11-*`）：`index`（搜尋列＋最新消息 nav 於 header、無光暈漸層）、`news`（hero＋院區篩選＋中山範例公告）、`faq-mobile`（搜尋列落第二行、FAQ 插圖渲染）。本機 server 各頁與資產（含 `assets/faq/*.jpg`、兩支 search script）皆 200。
 
 ## 🗓️ 2026-06-05 (session 10) — FAQ Q8–Q17 草擬併入 + 首頁團隊合照占位 + 院區順序 + 頁面標題簡化
 
