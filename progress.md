@@ -2,7 +2,28 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-04 (session 8)_
+_Last updated: 2026-06-05 (session 9)_
+
+## 🗓️ 2026-06-05 (session 9) — 兩項無障礙修正 + clinic-audit 補強（標題順序＋背景對比）
+
+源自一次 Impeccable（report-only）交叉稽核：扣除設計規則允許的項目後，剩兩個真正的 a11y 問題。**僅做修正所需最小變更，未改任何視覺設計（院長核准、鎖定）。**
+
+### Fix 1 — 首頁標題階層跳級（h1→h3，零視覺變更）
+- `index.html` 三張 `.qcard` 快速入口（四大院區・門診時間／診療項目／立即預約）原為 `<h3>`，緊接 hero `<h1>` 之後、且在頁面第一個 `<h2>` 之前 → **h1→h3 跳級**（WCAG 1.3.1 / clinic-audit Group C #4）。前幾個 session 修了 `locations.html` 與 FAQ 頁，但漏了首頁這三張卡。
+- 將三個 `<h3>` 升為 `<h2>`，並把 CSS 選擇器 `.qcard h3` → `.qcard h2`（`index.html:178`）。base `h1,h2,h3` 規則對 h2/h3 完全相同（同字體／字重／margin:0），且 `.qcard h2` 仍 `1.2rem/600`，**外觀逐像素不變**（截圖 `temporary screenshots/a11y-index-qcards.png` 確認）。修正後首頁順序：h1 → h2×4 → h3×5（feature），無跳級。
+
+### Fix 2 — 立即預約 CTA 對比（保留赤陶色，加深文字）
+- `team.html:205`（`.team-links__actions .primary`）與 `about.html:166`（`.about-cta__links .primary`）：CTA 底色 `var(--accent)` #CC7A45 + 白字 = **3.27:1，未過 WCAG AA**（hover #b96a38 = 4.05:1 仍不過）。此白底白字未列於 clinic-audit 既有 `--accent` 例外（該例外僅限 icon／大字）。
+- **保留赤陶底色不動**，只把文字色改為深墨 **`#121110`**：實測 resting #CC7A45 = **5.78:1**、hover #b96a38 = **4.65:1**，雙雙過 AA。註：`--ink #2B2A26` 在 accent 上僅 4.40:1 仍不過，故需更深的 `#121110`（暖近黑，不用純冷黑）。CTA 內 SVG 用 `currentColor`，圖示一併轉深、與文字一致。底色／字級／字重皆未動。
+
+### clinic-audit 補強（`.claude/skills/clinic-audit/SKILL.md`）— 讓稽核自身抓得到這兩類問題
+- **(a) 標題「順序」而非僅「數量」**：Group C #4 原本只數 h1/h2/h3 出現次數，所以「頁面後段有 h2、但前段已 h1→h3 跳級」會漏掉（正是首頁這次的情形）。新增一段 python：依**文件順序**讀各頁標題、標記任何跳超過一級者；先 `<footer>` 切掉（頁尾共用 `<h4>` 為既知例外，避免誤判 h2→h4）。
+- **(b) 文字 × 非 cream 背景對比**：對比段原本只查「文字 on cream」。擴充為：凡覆寫背景為色塊的元件（按鈕／chip／callout／teal CTA 帶）都要拿文字對**該元件自身背景**檢查，且**含 `:hover` 背景**。記錄 white-on-#CC7A45 = 3.27:1 為已知 FAIL 範例與站內修法（加深文字或換過關背景）；對比小工具改為可傳第二個 hex 檢查任意背景。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：保證／根治／唯一／第一／必須／一定要／最權威＝0；`最` 僅 最佳×3（photo-zone 標籤）＋最近×5（地理）；無費用；17 頁頁尾免責聲明齊全。
+- **設計規則**：gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow shadow／`transition:all` 全 0（grep 命中的兩處皆為註解文字，唯一 `filter:` 為 team 醫師照色彩正規化＝既知例外）。
+- **無障礙**：html lang 齊、img alt 齊、裝飾 SVG 全 `aria-hidden`、skip-link 17/17、reduced-motion guard 在；**新標題順序檢查全頁 ok**；兩 CTA 對比 5.78／4.65 過 AA。
 
 ## 🗓️ 2026-06-04 (session 8) — 衛教專欄拆成獨立文章頁 + 全站回到頂端按鈕
 

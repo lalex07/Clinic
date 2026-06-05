@@ -110,10 +110,28 @@ Zero-tolerance rules. The whole point is grounded, crisp, calm — no light emis
    for f in *.html; do n=$(grep -c '<svg' "$f"); h=$(grep '<svg' "$f" | grep -c 'aria-hidden'); [ "$n" -gt "$h" ] && echo "$f: $((n-h)) svg(s) without aria-hidden"; done
    ```
 
-4. **Heading hierarchy:** exactly one `<h1>` per page, no skipped levels (don't jump h1→h3). Card/section titles that act as headings should be real headings.
+4. **Heading hierarchy:** exactly one `<h1>` per page, **and no skipped levels in document order** (don't jump h1→h3 before any h2). Card/section titles that act as headings should be real headings.
+   First the per-level counts (quick sanity — a page with h3s but zero h2 is an instant smell):
    ```
    for f in *.html; do printf "%-22s h1=%s h2=%s h3=%s\n" "$f" "$(grep -oc '<h1' $f)" "$(grep -oc '<h2' $f)" "$(grep -oc '<h3' $f)"; done
    ```
+   **Counts alone are not enough** — a page can have an `<h2>` *later* in the source while an earlier section still skips `<h1>→<h3>` (this is exactly how the homepage `.qcard` skip slipped through). So also read the headings **in document order** and flag any jump of more than one level. The footer's shared `<h4>` is the known exception, so the body is split off before the `<footer>` to avoid a false `h2→h4` hit:
+   ```
+   python3 - <<'PY'
+   import re, glob
+   for f in sorted(glob.glob("*.html")):
+       html = open(f, encoding="utf-8").read()
+       body = re.split(r'<footer', html)[0]          # drop footer (shared <h4> is a known exception)
+       levels = [int(m.group(1)) for m in re.finditer(r'<h([1-6])\b', body)]
+       prev, bad = 0, []
+       for lv in levels:
+           if prev and lv > prev + 1: bad.append(f"h{prev}->h{lv}")
+           prev = lv
+       seq = " ".join(f"h{l}" for l in levels) or "(none)"
+       print(f"{f:24} {'SKIP ' + ', '.join(bad) if bad else 'ok':16} [{seq}]")
+   PY
+   ```
+   Any `SKIP` → High. Fix in-system by promoting the deeper heading to the missing level (e.g. `.qcard` titles `<h3>`→`<h2>`) and updating the matching CSS selector (`.qcard h3`→`.qcard h2`) so the visual is unchanged.
 
 5. **Skip link, focus styles, aria-current, mobile nav ARIA** present.
    ```
@@ -132,15 +150,24 @@ Zero-tolerance rules. The whole point is grounded, crisp, calm — no light emis
 7. **Color contrast (WCAG AA = 4.5:1 normal text, 3:1 large/UI).** Re-check whenever a palette token or a text color changes. Background is cream `--bg #FAF6EF` / white `--surface #FFFFFF`.
    Known-good baseline (passes AA): `--ink #2B2A26`, `--ink-soft #5E584E` (6.5:1), `--primary #28645C` (6.35:1), white-on-`--primary` (6.85:1), `--ink-faint #736C5E` (4.83:1 on cream — was darkened from `#918A7C` which FAILED).
    Use-with-care (large text / icons only, ~3:1): `--accent #CC7A45` (3.03:1 on cream) — never use as small body text; for small text use `--ink-soft` or `--primary`.
-   To check a new pair:
+
+   **Don't only check text-on-cream.** Any element that overrides its background to a colored token — buttons, chips, pills, callouts (`.svc-callout`, `.svc-future`), the teal CTA bands — must have its **text checked against that element's own background**, not against cream. And check the **`:hover` background too** (a darker hover can drop a label below 4.5:1 even when the resting state passes). Grep for the override sites, then run each fg/bg pair:
+   ```
+   grep -rn "background:[^;]*var(--accent)\|background:[^;]*var(--primary)\|background: *#" *.html assets/*.css   # find non-cream backgrounds; note the text color + any :hover bg
+   ```
+   **Known FAIL to watch for (regression guard):** white `#FFFFFF` text on `--accent #CC7A45` = **3.27:1 → FAILS** (and on the `#b96a38` hover = 4.05:1, still fails). The 立即預約 CTA on `team.html`/`about.html` hit this. In-system fix: **darken the label** (a near-black like `#121110` clears 4.5:1 on both `#CC7A45` resting and `#b96a38` hover — note `--ink #2B2A26` is only 4.40:1 on accent and **does not** clear it), **or** swap the background to a passing token (white on `--primary` is 6.85:1). Keep the 院長-approved terracotta; change only the text color.
+   To check a pair (defaults to cream bg; pass a second hex to check against any element background, e.g. a button or its hover):
    ```
    python3 - <<'PY'
+   import sys
    def lin(c):
        c/=255; return c/12.92 if c<=0.03928 else ((c+0.055)/1.055)**2.4
    def L(h): return 0.2126*lin(int(h[1:3],16))+0.7152*lin(int(h[3:5],16))+0.0722*lin(int(h[5:7],16))
    def cr(a,b):
        la,lb=L(a),L(b); hi,lo=max(la,lb),min(la,lb); return (hi+0.05)/(lo+0.05)
-   print(round(cr("#XXXXXX","#FAF6EF"),2))  # replace fg; >=4.5 passes AA for normal text
+   fg = sys.argv[1] if len(sys.argv)>1 else "#XXXXXX"   # foreground/text hex
+   bg = sys.argv[2] if len(sys.argv)>2 else "#FAF6EF"   # background hex (cream default; pass a button/hover bg here)
+   r = cr(fg,bg); print(f"{fg} on {bg} = {r:.2f}  -> {'PASS' if r>=4.5 else 'FAIL (normal text; ok only if large/UI ≥3:1)'}")
    PY
    ```
 

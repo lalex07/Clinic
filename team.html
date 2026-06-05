@@ -200,7 +200,9 @@
   .team-links__actions a:hover { background: rgba(255,255,255,0.1); border-color: #fff; transform: translateY(-2px); }
   .team-links__actions a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   .team-links__actions a svg { width: 15px; height: 15px; }
-  .team-links__actions .primary { background: var(--accent); border-color: var(--accent); }
+  /* dark label for AA contrast on the terracotta CTA (white-on-accent was 3.27:1).
+     #121110 clears 4.5:1 on both the resting accent and the #b96a38 hover. */
+  .team-links__actions .primary { background: var(--accent); border-color: var(--accent); color: #121110; }
   .team-links__actions .primary:hover { background: #b96a38; border-color: #b96a38; }
 
   /* ============ Responsive ============ */
