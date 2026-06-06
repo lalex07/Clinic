@@ -96,6 +96,81 @@
     border-color: var(--primary);
   }
 
+  /* right-side controls column: clinic chips on top, date range below */
+  .news-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--s-3);
+  }
+
+  /* date-range filter — solid hard-edged inputs, no glow/gradient */
+  .news-datefilter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  .news-datefilter__label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .news-datefilter__field {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .news-datefilter__field label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-faint);
+  }
+  .news-datefilter__sep {
+    color: var(--ink-faint);
+    font-weight: 600;
+  }
+  .news-dateinput {
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    padding: 0.4rem 0.6rem;
+    transition: border-color 0.2s var(--ease);
+  }
+  .news-dateinput:hover { border-color: var(--primary); }
+  .news-dateinput:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-color: var(--primary);
+  }
+  /* reset button — mirrors the clinic pill (resting state), lift on hover */
+  .news-datereset {
+    font-family: inherit;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 0.4rem 0.95rem;
+    cursor: pointer;
+    transition: color 0.2s var(--ease), background-color 0.2s var(--ease),
+                border-color 0.2s var(--ease), transform 0.2s var(--ease);
+  }
+  .news-datereset:hover {
+    color: var(--primary-deep);
+    background: var(--primary-soft);
+    border-color: var(--primary-soft);
+    transform: translateY(-2px);
+  }
+  .news-datereset:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+  }
+
   /* card grid — mirrors .faq-grid / .faq-card (lift-on-hover, solid, no glow) */
   .news-grid {
     display: grid;
@@ -239,6 +314,7 @@
   }
   @media (max-width: 760px) {
     .news-toolbar { align-items: flex-start; }
+    .news-controls { align-items: flex-start; }
     .news-grid { grid-template-columns: 1fr; gap: var(--s-4); }
   }
 </style>
@@ -306,14 +382,29 @@
           <p>依日期由新到舊排列。可使用右側按鈕，只查看特定院區的消息。</p>
         </div>
 
-        <div class="news-filters" role="group" aria-label="依院區篩選最新消息">
-          <span class="news-filters__label" id="newsFilterLabel">依院區篩選：</span>
-          <button type="button" class="news-filter" data-filter="all" aria-pressed="true">全部</button>
-          <button type="button" class="news-filter" data-filter="xindian" aria-pressed="false">新店</button>
-          <button type="button" class="news-filter" data-filter="muzha" aria-pressed="false">木柵</button>
-          <button type="button" class="news-filter" data-filter="xinglong" aria-pressed="false">興隆</button>
-          <!-- 中山院區於 2026 年 10 月開幕後，於此處加入：
-          <button type="button" class="news-filter" data-filter="zhongshan" aria-pressed="false">中山</button> -->
+        <div class="news-controls">
+          <div class="news-filters" role="group" aria-label="依院區篩選最新消息">
+            <span class="news-filters__label" id="newsFilterLabel">依院區篩選：</span>
+            <button type="button" class="news-filter" data-filter="all" aria-pressed="true">全部</button>
+            <button type="button" class="news-filter" data-filter="xindian" aria-pressed="false">新店</button>
+            <button type="button" class="news-filter" data-filter="muzha" aria-pressed="false">木柵</button>
+            <button type="button" class="news-filter" data-filter="xinglong" aria-pressed="false">興隆</button>
+            <button type="button" class="news-filter" data-filter="zhongshan" aria-pressed="false">中山</button>
+          </div>
+
+          <div class="news-datefilter" role="group" aria-labelledby="newsDateLabel">
+            <span class="news-datefilter__label" id="newsDateLabel">依日期篩選</span>
+            <span class="news-datefilter__field">
+              <label for="newsDateFrom">從</label>
+              <input type="date" id="newsDateFrom" class="news-dateinput" />
+            </span>
+            <span class="news-datefilter__sep" aria-hidden="true">–</span>
+            <span class="news-datefilter__field">
+              <label for="newsDateTo">到</label>
+              <input type="date" id="newsDateTo" class="news-dateinput" />
+            </span>
+            <button type="button" class="news-datereset" id="newsDateReset">全部日期</button>
+          </div>
         </div>
       </div>
 
@@ -347,7 +438,7 @@
                 </div>
              ② 沒有圖片 → 沿用上方中山卡片的「公告」預設磚 .news-card__media--placeholder（含 aria-hidden）。 -->
 
-        <p class="news-empty" id="newsEmpty" hidden>目前沒有此院區的最新消息，請改看「全部」或稍後再回來查看。</p>
+        <p class="news-empty" id="newsEmpty" hidden>查無符合的消息，請調整院區或日期條件，或改看「全部」。</p>
       </div>
 
     </div>
@@ -407,12 +498,18 @@
 <script src="assets/search.js" defer></script>
 <script src="assets/site.js"></script>
 <script>
-  /* ===== 最新消息: client-side sort (newest first) + clinic filter ===== */
+  /* ===== 最新消息: sort (newest first) + clinic filter + date-range filter =====
+     兩種篩選同時作用（AND）：院區 chip 與日期區間都要符合，卡片才顯示。
+     日期區間用 from/到 兩個 <input type="date">，留空＝該側無限制；
+     「全部日期」按鈕清除日期區間。預設：院區=全部、日期=不限。 */
   (function () {
     var grid = document.getElementById('newsGrid');
     if (!grid) return;
     var empty = document.getElementById('newsEmpty');
     var filters = document.querySelectorAll('.news-filter');
+    var dateFrom = document.getElementById('newsDateFrom');
+    var dateTo = document.getElementById('newsDateTo');
+    var dateReset = document.getElementById('newsDateReset');
 
     // sort cards by data-date, newest first (keeps empty-state node last)
     var cards = Array.prototype.slice.call(grid.querySelectorAll('.news-card'));
@@ -421,10 +518,18 @@
     });
     cards.forEach(function (card) { grid.insertBefore(card, empty); });
 
-    function applyFilter(value) {
+    var clinic = 'all';
+
+    // ISO date strings (YYYY-MM-DD) compare correctly with simple string compare.
+    function apply() {
+      var from = dateFrom ? dateFrom.value : '';
+      var to = dateTo ? dateTo.value : '';
       var shown = 0;
       cards.forEach(function (card) {
-        var match = value === 'all' || card.getAttribute('data-clinic') === value;
+        var d = card.getAttribute('data-date') || '';
+        var clinicMatch = clinic === 'all' || card.getAttribute('data-clinic') === clinic;
+        var dateMatch = (!from || d >= from) && (!to || d <= to);
+        var match = clinicMatch && dateMatch;
         card.hidden = !match;
         if (match) shown++;
       });
@@ -434,12 +539,23 @@
     filters.forEach(function (btn) {
       btn.addEventListener('click', function () {
         filters.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
-        applyFilter(btn.getAttribute('data-filter'));
+        clinic = btn.getAttribute('data-filter');
+        apply();
       });
     });
 
-    // default: 全部
-    applyFilter('all');
+    if (dateFrom) dateFrom.addEventListener('change', apply);
+    if (dateTo) dateTo.addEventListener('change', apply);
+    if (dateReset) {
+      dateReset.addEventListener('click', function () {
+        if (dateFrom) dateFrom.value = '';
+        if (dateTo) dateTo.value = '';
+        apply();
+      });
+    }
+
+    // default: 全部院區 + 不限日期
+    apply();
   })();
 </script>
 </body>

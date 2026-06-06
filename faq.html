@@ -569,9 +569,15 @@
       render();
       var url = current === 1 ? location.pathname : location.pathname + '?page=' + current;
       try { history.replaceState(null, '', url); } catch (e) { /* file:// etc. */ }
-      if (userInitiated && section && section.scrollIntoView) {
+      if (userInitiated && section) {
         var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        section.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        // offset the scroll by the sticky header's height (+ a small gap) so the
+        // entire top row lands just below the header instead of being clipped by it
+        var header = document.getElementById('header');
+        var headerH = header ? header.getBoundingClientRect().height : 0;
+        var GAP = 16;
+        var top = section.getBoundingClientRect().top + window.pageYOffset - headerH - GAP;
+        window.scrollTo({ top: Math.max(0, top), behavior: reduce ? 'auto' : 'smooth' });
       }
     }
 

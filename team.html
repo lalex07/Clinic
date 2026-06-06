@@ -76,6 +76,12 @@
        together with the warm palette — no per-photo editing */
     filter: saturate(0.94) brightness(1.015) contrast(1.01);
   }
+  /* Per-photo framing overrides. The 4:5 box is wider than the ~2:3 source
+     photos, so cover crops only vertically — only the Y axis matters here.
+     蕭仁豪's subject sits higher in his source frame; the shared 18% crowds
+     his head against the top edge, so pull the crop up to keep balanced
+     headroom and centre him like the well-framed portraits (e.g. 廖學森). */
+  .doc__photo img[src*="hsiao-jen-hao"] { object-position: center top; }
   /* uniform warm wash to harmonise the slightly different studio backdrops —
      flat single-hue tint, not a glow or gradient accent */
   .doc__photo::after {

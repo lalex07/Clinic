@@ -2,7 +2,22 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 15)_
+_Last updated: 2026-06-06 (session 16)_
+
+## 🗓️ 2026-06-06 (session 16) — 最新消息：中山院區篩選 + 依日期篩選；修正 FAQ 分頁捲動被 sticky header 遮蔽；團隊照重新置中
+
+多 agent 平行作業（A／B／C），本 agent 負責整併與唯一 commit。clinic-audit（report-only）三組全 PASS，無回歸。動到 `news.html`、`faq.html`、`team.html` 三檔。
+
+- **最新消息：中山院區加入篩選器。** `news.html` 院區篩選 chip 由「全部／新店／木柵／興隆」加上 **中山**（先前為 HTML 註解佔位，本次正式啟用 `data-filter="zhongshan"`）。中山目前唯一一則卡片＝既有的「2026 年 10 月開幕・敬請期待」公告（未來式、無手術招攬語，符合中山狀態）。
+- **最新消息：新增「依日期篩選」區間搜尋。** header 右側控制改為直欄 `.news-controls`（院區 chip 在上、日期區間在下）。日期區間用兩個 `<input type="date">`（從／到，各有 `<label for>`，群組 `aria-labelledby="newsDateLabel"`），加一顆「全部日期」reset 按鈕。**院區與日期兩種篩選同時作用（AND）**；ISO 日期字串直接字串比較；留空＝該側無限制。空狀態文案改為「查無符合的消息，請調整院區或日期條件，或改看『全部』。」。日期輸入框與 reset 沿用既有 `.news-filter` 的 `--line-strong` 邊框 token，實心硬邊、無漸層／光暈；hover 變色僅作用於控制項（非卡片）。
+- **修正 FAQ 分頁切頁捲動被 sticky header 遮蔽。** `faq.html` 切頁後原以 `section.scrollIntoView({block:'start'})` 捲到列表頂端，但固定 header 會蓋住最上一排卡片。改為手動計算：`section` 的 top − header 高度（`getElementById('header').getBoundingClientRect().height`）− 16px gap，再 `window.scrollTo`，使整個頂排卡片落在 header 下方完整可見。仍尊重 `prefers-reduced-motion`（reduce 時 `behavior:'auto'`）、`?page=N` 分享網址與 `history.replaceState` 不變。
+- **團隊照重新置中（per-photo object-position）。** `team.html` 共用 4:5 crop 用 `object-position: center 18%`，但 **蕭仁豪** 在原始照中人物位置偏高，18% 會把頭頂擠到上緣；新增 `.doc__photo img[src*="hsiao-jen-hao"] { object-position: center top; }` 單張覆寫，讓其與其他照（如廖學森）一樣有平衡的頭頂留白。其餘照片不受影響。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：三檔無 保證／根治／唯一／第一／必須／一定要／最〔上級〕；`最` 僅 最新；無費用（`%` grep 命中皆為 CSS 寬度）；中山卡片維持未來式無手術招攬；頁尾免責聲明齊全。
+- **設計規則**：三檔 gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow／`transition:all` 全 0（`transition:all` grep 命中 2 筆皆為「never transition-all」註解）；日期輸入框／reset 為實心硬邊、hover 變色僅作用於控制項（非卡片）；header 變更皆在 `<main>` 內，**桌機 header 維持單行**（1280px 截圖 `temporary screenshots/s16-news-desktop` 確認，含新增中山 chip）。
+- **無障礙**：date input 皆有 `<label for>`＋群組 `aria-labelledby`；對比 — input 文字 14.36／日期 label 4.83／datefilter label 6.54／reset 7.04（hover 8.44）／focus border `--primary` 6.85 皆過 AA（resting 1px `--line-strong` 邊框 1.80 為全站既有 token 慣例、與既有 `.news-filter` chip 一致，非本次回歸）。html lang／img alt（news.html:435 的 `<img>` 在 HTML 範本註解內）／標題順序全頁 ok。兩支 inline script `node --check` 通過。截圖 `s16-news-desktop`（中山 chip＋日期控制）、`s16-team-desktop`（照片置中）確認。
+- **承前**：session 15 的搜尋 Enter-key 修正（Enter／「搜尋」鈕不再自動跳第一筆）與 overlay 背幕加深至 `rgba(0,0,0,.65)` 已於上一筆記錄在案，本次未再更動。
 
 ## 🗓️ 2026-06-06 (session 15) — 修正搜尋：Enter 顯示結果而非跳到第一筆 + 背幕續加深至 ~rgba(0,0,0,.65)
 
