@@ -19,6 +19,9 @@
   --primary-soft:#E3EFEC;
   --accent:      #CC7A45;
   --accent-soft: #F6E7D7;
+  /* LINE 預約按鈕用綠：較品牌綠 (#06C755) 加深，白字達 WCAG AA（resting 5.43:1、hover 7.1:1） */
+  --line-green:      #117A38;
+  --line-green-deep: #0C6630;
   --line:        rgba(43, 42, 38, 0.10);
   --line-strong: rgba(43, 42, 38, 0.16);
 
@@ -1041,4 +1044,158 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   .search-modal { transition: none; }
   .search-modal,
   .search-overlay.is-open .search-modal { transform: none; }
+}
+
+/* =====================================================================
+   線上預約掛號 modal（popup）— 沿用搜尋 overlay 的可及對話框模式與深色背幕。
+   實心 cream/white 卡、硬邊、grounded shadow，無光暈／漸層／backdrop-filter。
+   亦供 contact.html 的預約區塊共用 .booking-list / .booking-row / .booking-line。
+   ===================================================================== */
+.booking-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100; /* 與搜尋 overlay 同層，高於 header(50)／back-to-top(60) */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(1rem, 8vh, 6rem) var(--s-4) var(--s-4);
+  opacity: 0;
+  transition: opacity 0.22s var(--ease);
+}
+.booking-overlay.is-open { opacity: 1; }
+.booking-overlay[hidden] { display: none; }
+.booking-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65); /* 與搜尋 overlay 相同的實心深色背幕，無模糊 */
+}
+
+.booking-modal {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--s-5);
+  transform: translateY(-8px);
+  transition: transform 0.22s var(--ease);
+}
+.booking-overlay.is-open .booking-modal { transform: translateY(0); }
+.booking-modal:focus { outline: none; } /* dialog 開啟時聚焦容器，不顯示焦點框（內部元素才需要） */
+
+.booking-modal__close {
+  position: absolute;
+  top: var(--s-3);
+  right: var(--s-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+.booking-modal__close svg { width: 20px; height: 20px; }
+.booking-modal__close:hover { color: var(--primary-deep); background: var(--primary-soft); }
+.booking-modal__close:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.booking-modal__title {
+  font-family: "Noto Serif TC", serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--primary-deep);
+  margin: 0 2.5rem 0.35rem 0; /* 右側留白避免壓到關閉鈕 */
+}
+.booking-modal__lead {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  margin: 0 0 var(--s-4);
+}
+
+/* 預約分組（門診／手術）+ 院區列 — 同樣供 contact.html 共用 */
+.booking-group { margin-top: var(--s-4); }
+.booking-group:first-of-type { margin-top: 0; }
+.booking-group__label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  margin: 0 0 var(--s-2);
+}
+.booking-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.booking-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: 0.7rem 0.9rem;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.booking-row__name { font-weight: 600; color: var(--ink); }
+.booking-row__soon { font-size: 0.85rem; color: var(--ink-faint); }
+.booking-row--soon { background: var(--surface); border-style: dashed; border-color: var(--line-strong); }
+
+/* LINE 預約按鈕 — LINE 綠底白字（加深以達 WCAG AA），實心硬邊、無光暈 */
+.booking-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: none;
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #fff;
+  background: var(--line-green);
+  border: 1px solid var(--line-green);
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.booking-line:hover {
+  background: var(--line-green-deep);
+  border-color: var(--line-green-deep);
+  transform: translateY(-2px);
+}
+.booking-line:focus-visible { outline: 2px solid var(--primary-deep); outline-offset: 3px; }
+.booking-line__icon { width: 18px; height: 18px; flex: none; }
+
+/* contact.html 的預約區塊容器（窄欄、置中、舒適行距） */
+.booking-page {
+  max-width: 640px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  padding-bottom: var(--s-7);
+}
+
+@media (max-width: 480px) {
+  .booking-row { flex-direction: column; align-items: stretch; gap: var(--s-2); }
+  .booking-line { justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .booking-overlay,
+  .booking-modal,
+  .booking-line { transition: none; }
+  .booking-modal,
+  .booking-overlay.is-open .booking-modal { transform: none; }
 }
