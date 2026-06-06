@@ -2,7 +2,19 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 26)_
+_Last updated: 2026-06-07 (session 27)_
+
+## 🗓️ 2026-06-07 (session 27) — 發布 FAQ Q13–Q17（院長核准）— 全 17 篇衛教文章上線
+
+院長核准的 Q13–Q17 內容（狀態：已審閱／可發布）經 Agent A 寫入 `faq.md` 並建立 `faq-q13.html`…`faq-q17.html`（逐字、無編號樣式、單一 `<h1>`、OG/canonical/Article schema、`.photo-zone` 占位 banner、faq-cta、§九 頁尾免責聲明）。本 synthesis 將其整合上線：
+
+- **`faq.html` 卡片網格新增 Q13–Q17 五張卡**（沿用現有無編號卡片樣式：`.photo-zone` 占位＋分類 tag＋標題 `<h2>`＋1–2 行摘要＋「閱讀全文 →」連到各 `faq-qN.html`，無 Q 編號）。網格現為 **17 張（Q1–Q17）**；client-side 分頁（每頁 6 張）自動延伸為 **3 頁**——CDP 實測：第 1 頁 6 張＋頁碼 1 2 3；第 3 頁顯示最後 5 張（Q13–Q17）、目前頁＝3、控制項正確更新。
+- **FAQPage JSON-LD 擴充為全 17 題**（Q1–Q17 Question/Answer，Answer 文字沿用各文章 meta description）。Python `json.loads` 驗證通過（17 題、無 §九 違規詞）。
+- **`sitemap.xml`** 新增 `faq-q13`…`faq-q17`（lastmod 2026-06-07、monthly、0.6）；XML 格式驗證通過。
+- **Q13 stray-asterisk artifact**：全面掃描 `faq.md`（無奇數星號行）、`faq-q*.html`（無任何字面星號）、`faq.html`（星號僅出現在 CSS 註解）——確認已清除乾淨，無殘留。
+- **clinic-audit（report-only）三組全 PASS**：§九（無 保證／根治／唯一／第一／必須／一定要／最〔上級，僅最新〕，6 頁皆有免責聲明，相關 vs 因果明確陳述，無費用——`50%` 為 CSS border-radius）；設計（沿用卡片樣式、無漸層／光暈／backdrop-filter／drop-shadow／0 0 glow／transition:all、占位框未溢出）；無障礙（每篇單一 h1、h1→h2 無跳級、無可見 Q 編號、img 皆有 alt、header 單行 72px、分頁可鍵盤操作含 aria-current）。
+
+**全 17 篇 FAQ 衛教文章現已全部上線。**
 
 ## 🗓️ 2026-06-06 (session 26) — 移除手機自訂下拉重新整理（恢復原生捲動／重新整理）
 
