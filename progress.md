@@ -2,7 +2,20 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 17)_
+_Last updated: 2026-06-06 (session 18)_
+
+## 🗓️ 2026-06-06 (session 18) — 最新消息：日期篩選改為自製可及性日曆 date picker（取代原生 input）
+
+只動 `news.html`（日期控制元件 + inline 篩選 JS/CSS）。clinic-audit（report-only）三組全 PASS，無回歸。
+
+- **以純 vanilla 自製日曆取代原生 `<input type="date">`。** 無套件、無相依、無建置步驟，全部內嵌於 `news.html`。
+  - **觸發鈕**：精簡「日期」欄位鈕，顯示已選日期（如「2026年6月1日」）或佔位字「選擇日期」，附小 chevron（開啟時旋轉 180°）。`aria-haspopup="dialog"`、`aria-expanded` 反映開合、`aria-label="依日期篩選，選擇日期"`。點擊或 Enter/Space 開啟下方日曆。
+  - **日曆彈窗**：`role="dialog" aria-modal="true"`，由月份標題（`aria-labelledby`）標示。實心白卡、`--primary`／硬邊、grounded `--shadow-md`，**無光暈／漸層／backdrop-filter**。位於觸發鈕下方；若會超出視窗右緣則翻面（`.news-cal--right`，JS 量測 `getBoundingClientRect` 後切換），手機不溢出（390px 實測 left56/right360）。
+  - **內容**：月份標題「2026 年 6 月」+ ‹ › 上下月鈕；星期列（日 一 二 三 四 五 六）；6 列日格。**已選日**＝實心 `--primary` 底白字；**今天**＝`--primary` 細框（ring，非填滿）；**鄰月日**淡化（`--ink-faint`）。footer：清除 / 今天。
+  - **鍵盤／ARIA**：日格 `role="grid"`／`row`／`gridcell`，每格 `aria-label` 為完整日期、已選日 `aria-selected`。方向鍵逐日移動（跨週、跨月），Enter/Space 選取，**Esc 關閉並把焦點還給觸發鈕**，PageUp/PageDown 換月，Home/End 移到該週首尾；**roving tabindex**（僅作用日可 Tab）；**焦點鎖在彈窗內**；點外面關閉；月份改變以 `aria-live="polite"` 標題播報；尊重 `prefers-reduced-motion`（開合過場在 reduce 下關閉）。
+  - **篩選**：選日 → 以卡片 `data-date`（`YYYY-MM-DD`）精確比對，**與院區 chip 同時作用（AND）**。預設不限日期；footer「清除」與外部「全部日期」皆重設。無符合 → 既有「查無符合的消息」空狀態。
+- **驗證**：以 Chrome DevTools Protocol（headless）實際開合、選日、跨篩選與鍵盤操作確認：開啟（標題 2026 年 6 月）✓；選 2026-06-01 → 觸發鈕顯示「2026年6月1日」、列表剩 1 張（中山，全部院區下）✓；2026-06-01＋新店 → 0 張、空狀態 ✓；手機彈窗不溢出 ✓；焦點在今天（2026年6月6日）按 ArrowRight → roving 焦點移到 2026年6月7日 ✓。桌機／手機截圖確認樣式與定位、header 仍單行。
+- **對比度（WCAG AA）**：已選白字 on `--primary` 6.85；鄰月 `--ink-faint` on 白 5.20；日數字 `--ink`／星期 `--ink-soft` on 白皆 ≥4.5；今天 ring 為 `--primary` UI 邊框（≥3:1）。
 
 ## 🗓️ 2026-06-06 (session 17) — 最新消息：日期篩選改單一「日期」選擇器 + 修正院區篩選 bug；衛教專欄分頁改圓形
 

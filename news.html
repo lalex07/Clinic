@@ -104,7 +104,7 @@
     gap: var(--s-3);
   }
 
-  /* single 日期 picker — one compact native date control, solid hard edges, no glow/gradient */
+  /* 日期 filter — custom vanilla calendar (no native input), solid hard edges, no glow/gradient */
   .news-datefilter {
     display: flex;
     flex-wrap: wrap;
@@ -116,9 +116,18 @@
     font-weight: 600;
     color: var(--ink-soft);
   }
-  .news-dateinput {
+
+  /* trigger field/button: shows selected date (or 選擇日期) + chevron */
+  .news-datepicker { position: relative; }
+  .news-datetrigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 9.5rem;
+    justify-content: space-between;
     font-family: inherit;
     font-size: 0.85rem;
+    font-weight: 600;
     color: var(--ink);
     background: var(--surface);
     border: 1px solid var(--line-strong);
@@ -127,9 +136,141 @@
     cursor: pointer;
     transition: border-color 0.2s var(--ease);
   }
-  /* nudge the native calendar picker indicator to the brand ink tone */
-  .news-dateinput::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.65; }
-  .news-dateinput:hover::-webkit-calendar-picker-indicator { opacity: 1; }
+  .news-datetrigger:hover { border-color: var(--primary); }
+  .news-datetrigger:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-color: var(--primary);
+  }
+  .news-datetrigger__value.is-placeholder { color: var(--ink-faint); font-weight: 500; }
+  .news-datetrigger__chev {
+    width: 16px; height: 16px;
+    color: var(--ink-faint);
+    flex: none;
+    transition: transform 0.2s var(--ease);
+  }
+  .news-datetrigger[aria-expanded="true"] .news-datetrigger__chev { transform: rotate(180deg); }
+
+  /* calendar popover card */
+  .news-cal {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    z-index: 50;
+    width: 19rem;
+    max-width: calc(100vw - 2rem);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--s-3);
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.16s var(--ease), transform 0.16s var(--ease);
+  }
+  .news-cal.is-open { opacity: 1; transform: translateY(0); }
+  .news-cal[hidden] { display: none; }
+  .news-cal--right { left: auto; right: 0; } /* flipped when it would overflow the viewport */
+
+  .news-cal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-2);
+    margin-bottom: var(--s-2);
+  }
+  .news-cal__title {
+    font-family: "Noto Serif TC", serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-deep);
+  }
+  .news-cal__nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    color: var(--primary-deep);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
+  }
+  .news-cal__nav:hover { background: var(--primary-soft); border-color: var(--primary-soft); }
+  .news-cal__nav:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .news-cal__nav svg { width: 16px; height: 16px; }
+
+  .news-cal__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 0.2rem;
+  }
+  .news-cal__weekdays span {
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    padding: 0.3rem 0;
+  }
+
+  .news-cal__row { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .news-cal__day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
+    margin: 1px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1.5px solid transparent; /* transparent ring keeps size stable; today fills it */
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s var(--ease), color 0.15s var(--ease);
+  }
+  .news-cal__day:hover { background: var(--primary-soft); color: var(--primary-deep); }
+  .news-cal__day:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+  .news-cal__day.is-muted { color: var(--ink-faint); font-weight: 400; }
+  .news-cal__day.is-today { border-color: var(--primary); } /* crisp ring marker, not a fill */
+  .news-cal__day.is-selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    font-weight: 700;
+  }
+  .news-cal__day.is-selected:hover { background: var(--primary-deep); border-color: var(--primary-deep); color: #fff; }
+
+  .news-cal__footer {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-2);
+    margin-top: var(--s-2);
+    padding-top: var(--s-2);
+    border-top: 1px solid var(--line);
+  }
+  .news-cal__foot {
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary-deep);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
+  }
+  .news-cal__foot:hover { background: var(--primary-soft); border-color: var(--primary-soft); }
+  .news-cal__foot:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  /* respect reduced motion for the open/close + chevron transitions */
+  @media (prefers-reduced-motion: reduce) {
+    .news-cal { transition: none; }
+    .news-datetrigger__chev { transition: none; }
+  }
   .news-dateinput:hover { border-color: var(--primary); }
   .news-dateinput:focus-visible {
     outline: 2px solid var(--primary);
@@ -386,8 +527,16 @@
           </div>
 
           <div class="news-datefilter" role="group" aria-label="依日期篩選最新消息">
-            <label class="news-datefilter__label" for="newsDate">日期</label>
-            <input type="date" id="newsDate" class="news-dateinput" />
+            <span class="news-datefilter__label" id="newsDateLabel">日期</span>
+            <div class="news-datepicker" id="newsDatePicker">
+              <button type="button" class="news-datetrigger" id="newsDateTrigger"
+                      aria-haspopup="dialog" aria-expanded="false" aria-label="依日期篩選，選擇日期">
+                <span class="news-datetrigger__value is-placeholder" id="newsDateValue">選擇日期</span>
+                <svg class="news-datetrigger__chev" aria-hidden="true" focusable="false" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <!-- calendar popover is injected here by the inline script below -->
+            </div>
             <button type="button" class="news-datereset" id="newsDateReset">全部日期</button>
           </div>
         </div>
@@ -483,20 +632,23 @@
 <script src="assets/search.js" defer></script>
 <script src="assets/site.js"></script>
 <script>
-  /* ===== 最新消息: sort (newest first) + clinic filter + 日期 filter =====
-     兩種篩選同時作用（AND）：院區 chip 與所選日期都要符合，卡片才顯示。
-     日期為單一 <input type="date">（原生日曆），選定＝只顯示該日的消息、
-     留空＝不限日期；「全部日期」按鈕清除所選日期。
-     院區比對為精確相等：卡片的 data-clinic 必須等於該 chip（全部除外）。 */
+  /* ===== 最新消息: sort (newest first) + clinic filter + 自製可及性日曆日期篩選 =====
+     - 院區 chip 與所選日期同時作用（AND）。卡片日期格式為 data-date="YYYY-MM-DD"。
+     - 日期選擇器為純 vanilla 自製日曆（無套件、無建置）：
+         觸發鈕 aria-haspopup="dialog"、aria-expanded 反映開合；
+         彈窗 role="dialog" aria-modal、由月份標題標示；日格 role="grid" / row / gridcell，
+         每格 aria-label 為完整日期、選定日 aria-selected；
+         方向鍵逐日移動（跨週、跨月），Enter/Space 選取，Esc 關閉並把焦點還給觸發鈕，
+         PageUp/PageDown 換月，Home/End 移到該週首尾；roving tabindex；焦點鎖在彈窗內；
+         點外面關閉；月份改變以 aria-live="polite" 播報；尊重 prefers-reduced-motion。
+     - 預設不限日期；footer「清除」與外部「全部日期」皆可重設。無符合時顯示既有空狀態。 */
   (function () {
     var grid = document.getElementById('newsGrid');
     if (!grid) return;
     var empty = document.getElementById('newsEmpty');
     var filters = document.querySelectorAll('.news-filter');
-    var dateInput = document.getElementById('newsDate');
-    var dateReset = document.getElementById('newsDateReset');
 
-    // sort cards by data-date, newest first (keeps empty-state node last)
+    // newest-first sort (keeps empty-state node last)
     var cards = Array.prototype.slice.call(grid.querySelectorAll('.news-card'));
     cards.sort(function (a, b) {
       return (b.getAttribute('data-date') || '').localeCompare(a.getAttribute('data-date') || '');
@@ -504,13 +656,13 @@
     cards.forEach(function (card) { grid.insertBefore(card, empty); });
 
     var clinic = 'all';
+    var selectedISO = '';            // '' = 不限日期
 
-    function apply() {
-      var picked = dateInput ? dateInput.value : ''; // ISO YYYY-MM-DD, '' = 不限
+    function applyFilter() {
       var shown = 0;
       cards.forEach(function (card) {
         var clinicMatch = clinic === 'all' || card.getAttribute('data-clinic') === clinic;
-        var dateMatch = !picked || (card.getAttribute('data-date') || '') === picked;
+        var dateMatch = !selectedISO || (card.getAttribute('data-date') || '') === selectedISO;
         var match = clinicMatch && dateMatch;
         card.hidden = !match;
         if (match) shown++;
@@ -522,20 +674,224 @@
       btn.addEventListener('click', function () {
         filters.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
         clinic = btn.getAttribute('data-filter');
-        apply();
+        applyFilter();
       });
     });
 
-    if (dateInput) dateInput.addEventListener('change', apply);
-    if (dateReset) {
-      dateReset.addEventListener('click', function () {
-        if (dateInput) dateInput.value = '';
-        apply();
-      });
+    /* ---------- custom calendar date picker ---------- */
+    var picker   = document.getElementById('newsDatePicker');
+    var trigger  = document.getElementById('newsDateTrigger');
+    var valueEl  = document.getElementById('newsDateValue');
+    var extReset = document.getElementById('newsDateReset');
+
+    var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+    function pad2(n) { return (n < 10 ? '0' : '') + n; }
+    function iso(y, m, d) { return y + '-' + pad2(m + 1) + '-' + pad2(d); }
+    function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
+    function weekdayOf(isoStr) {
+      var p = isoStr.split('-');
+      return new Date(+p[0], +p[1] - 1, +p[2]).getDay();
+    }
+    function reduceMotion() {
+      return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
 
-    // default: 全部院區 + 不限日期
-    apply();
+    var now = new Date();
+    var todayISO = iso(now.getFullYear(), now.getMonth(), now.getDate());
+    var viewY = now.getFullYear(), viewM = now.getMonth();
+    var focusISO = todayISO;
+    var isOpen = false, closeTimer = null;
+
+    // build the popover once and append under the trigger
+    var pop = document.createElement('div');
+    pop.className = 'news-cal';
+    pop.id = 'newsCal';
+    pop.hidden = true;
+    pop.setAttribute('role', 'dialog');
+    pop.setAttribute('aria-modal', 'true');
+    pop.setAttribute('aria-labelledby', 'newsCalTitle');
+    pop.innerHTML =
+      '<div class="news-cal__header">' +
+        '<button type="button" class="news-cal__nav" data-nav="-1" aria-label="上個月">' +
+          '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>' +
+        '<span class="news-cal__title" id="newsCalTitle" aria-live="polite"></span>' +
+        '<button type="button" class="news-cal__nav" data-nav="1" aria-label="下個月">' +
+          '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>' +
+      '</div>' +
+      '<div class="news-cal__weekdays" aria-hidden="true">' +
+        WEEK.map(function (w) { return '<span>' + w + '</span>'; }).join('') +
+      '</div>' +
+      '<div class="news-cal__grid" id="newsCalGrid" role="grid" aria-labelledby="newsCalTitle"></div>' +
+      '<div class="news-cal__footer">' +
+        '<button type="button" class="news-cal__foot" data-foot="clear">清除</button>' +
+        '<button type="button" class="news-cal__foot" data-foot="today">今天</button>' +
+      '</div>';
+    picker.appendChild(pop);
+
+    var titleEl = pop.querySelector('#newsCalTitle');
+    var gridEl  = pop.querySelector('#newsCalGrid');
+
+    function render() {
+      titleEl.textContent = viewY + ' 年 ' + (viewM + 1) + ' 月';
+      var startOffset = new Date(viewY, viewM, 1).getDay();          // 0=Sun
+      var start = new Date(viewY, viewM, 1 - startOffset);
+      var html = '';
+      for (var r = 0; r < 6; r++) {
+        html += '<div class="news-cal__row" role="row">';
+        for (var c = 0; c < 7; c++) {
+          var dt = new Date(start.getFullYear(), start.getMonth(), start.getDate() + (r * 7 + c));
+          var y = dt.getFullYear(), m = dt.getMonth(), d = dt.getDate();
+          var cellISO = iso(y, m, d);
+          var inMonth = (m === viewM);
+          var isToday = (cellISO === todayISO);
+          var isSel = (!!selectedISO && cellISO === selectedISO);
+          var cls = 'news-cal__day';
+          if (!inMonth) cls += ' is-muted';
+          if (isToday) cls += ' is-today';
+          if (isSel)   cls += ' is-selected';
+          var label = y + '年' + (m + 1) + '月' + d + '日' + (isToday ? '，今天' : '');
+          html += '<button type="button" class="' + cls + '" role="gridcell" data-iso="' + cellISO + '"' +
+                  ' tabindex="' + (cellISO === focusISO ? '0' : '-1') + '"' +
+                  ' aria-label="' + label + '" aria-selected="' + (isSel ? 'true' : 'false') + '">' + d + '</button>';
+        }
+        html += '</div>';
+      }
+      gridEl.innerHTML = html;
+    }
+
+    function focusDay() {
+      var cell = gridEl.querySelector('[data-iso="' + focusISO + '"]');
+      if (cell) cell.focus();
+    }
+
+    function setFocusDate(dt, doFocus) {
+      viewY = dt.getFullYear(); viewM = dt.getMonth();
+      focusISO = iso(viewY, viewM, dt.getDate());
+      render();
+      if (doFocus) focusDay();
+    }
+
+    function moveFocus(deltaDays) {
+      var p = focusISO.split('-');
+      setFocusDate(new Date(+p[0], +p[1] - 1, +p[2] + deltaDays), true);
+    }
+
+    function changeMonth(delta, focusGrid) {
+      var dt = new Date(viewY, viewM + delta, 1);
+      viewY = dt.getFullYear(); viewM = dt.getMonth();
+      var day = Math.min(+focusISO.split('-')[2], daysInMonth(viewY, viewM));
+      focusISO = iso(viewY, viewM, day);
+      render();
+      if (focusGrid) focusDay();
+    }
+
+    function updateTriggerLabel() {
+      if (selectedISO) {
+        var p = selectedISO.split('-');
+        valueEl.textContent = (+p[0]) + '年' + (+p[1]) + '月' + (+p[2]) + '日';
+        valueEl.classList.remove('is-placeholder');
+      } else {
+        valueEl.textContent = '選擇日期';
+        valueEl.classList.add('is-placeholder');
+      }
+    }
+
+    function selectDay(cellISO) {
+      selectedISO = cellISO;
+      updateTriggerLabel();
+      applyFilter();
+      close(true);
+    }
+
+    function clearSelection(closeAfter) {
+      selectedISO = '';
+      updateTriggerLabel();
+      applyFilter();
+      if (closeAfter) close(true);
+      else render();
+    }
+
+    function clampPosition() {
+      pop.classList.remove('news-cal--right');
+      if (pop.getBoundingClientRect().right > window.innerWidth - 8) {
+        pop.classList.add('news-cal--right');
+      }
+    }
+
+    function onOutside(e) { if (!picker.contains(e.target)) close(false); }
+
+    function open() {
+      if (isOpen) return;
+      isOpen = true;
+      if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+      var base = (selectedISO || todayISO).split('-');
+      viewY = +base[0]; viewM = +base[1] - 1;
+      focusISO = selectedISO || todayISO;
+      render();
+      pop.hidden = false;
+      trigger.setAttribute('aria-expanded', 'true');
+      requestAnimationFrame(function () { pop.classList.add('is-open'); });
+      clampPosition();
+      focusDay();
+      document.addEventListener('mousedown', onOutside, true);
+    }
+
+    function close(returnFocus) {
+      if (!isOpen) return;
+      isOpen = false;
+      pop.classList.remove('is-open');
+      trigger.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('mousedown', onOutside, true);
+      if (reduceMotion()) pop.hidden = true;
+      else closeTimer = setTimeout(function () { pop.hidden = true; }, 160);
+      if (returnFocus && trigger.focus) trigger.focus();
+    }
+
+    function trapTab(e) {
+      var f = Array.prototype.slice.call(pop.querySelectorAll('button')).filter(function (b) {
+        return b.tabIndex >= 0 && b.offsetParent !== null;
+      });
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+      else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+    }
+
+    trigger.addEventListener('click', function () { isOpen ? close(true) : open(); });
+
+    gridEl.addEventListener('click', function (e) {
+      var btn = e.target.closest('.news-cal__day');
+      if (btn) selectDay(btn.getAttribute('data-iso'));    // Enter/Space on a day fires this via native button click
+    });
+
+    pop.querySelectorAll('[data-nav]').forEach(function (b) {
+      b.addEventListener('click', function () { changeMonth(parseInt(b.getAttribute('data-nav'), 10), false); });
+    });
+    pop.querySelector('[data-foot="clear"]').addEventListener('click', function () { clearSelection(true); });
+    pop.querySelector('[data-foot="today"]').addEventListener('click', function () {
+      viewY = now.getFullYear(); viewM = now.getMonth(); focusISO = todayISO; render(); focusDay();
+    });
+
+    pop.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { close(true); e.preventDefault(); return; }
+      if (e.key === 'Tab') { trapTab(e); return; }
+      if (!e.target.classList || !e.target.classList.contains('news-cal__day')) return;
+      switch (e.key) {
+        case 'ArrowLeft':  moveFocus(-1); e.preventDefault(); break;
+        case 'ArrowRight': moveFocus(1);  e.preventDefault(); break;
+        case 'ArrowUp':    moveFocus(-7); e.preventDefault(); break;
+        case 'ArrowDown':  moveFocus(7);  e.preventDefault(); break;
+        case 'PageUp':     changeMonth(-1, true); e.preventDefault(); break;
+        case 'PageDown':   changeMonth(1, true);  e.preventDefault(); break;
+        case 'Home':       moveFocus(-weekdayOf(focusISO)); e.preventDefault(); break;
+        case 'End':        moveFocus(6 - weekdayOf(focusISO)); e.preventDefault(); break;
+      }
+    });
+
+    extReset.addEventListener('click', function () { clearSelection(false); });
+
+    updateTriggerLabel();
+    applyFilter();   // default: 全部院區 + 不限日期
   })();
 </script>
 </body>
