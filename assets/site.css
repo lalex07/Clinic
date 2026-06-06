@@ -807,45 +807,6 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   .back-to-top:hover { transform: none; }
 }
 
-/* ============ 自訂下拉重新整理 (custom pull-to-refresh, mobile only) ============ */
-/* Keep the browser's native pull-to-refresh + scroll-chaining from fighting our
-   custom gesture. Our own indicator is injected by site.js on touch devices. */
-html, body { overscroll-behavior-y: contain; }
-.ptr-indicator {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  z-index: 55; /* above header(50), below back-to-top(60) and overlays(100) */
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: var(--surface);
-  box-shadow: var(--shadow-md);
-  /* parked just above the viewport until a pull drags it down (JS sets transform) */
-  transform: translateX(-50%) translateY(-56px);
-  opacity: 0;
-  pointer-events: none; /* never blocks taps or scrolling */
-}
-.ptr-indicator img {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  transform: rotate(180deg); /* upside-down doctor logo */
-}
-.ptr-indicator.is-animating {
-  transition: transform 0.28s var(--ease), opacity 0.28s var(--ease);
-}
-.ptr-indicator.is-armed {
-  /* dragged past the reload threshold — deepen the grounded shadow (no glow) */
-  box-shadow: var(--shadow-lg);
-}
-@media (prefers-reduced-motion: reduce) {
-  .ptr-indicator, .ptr-indicator.is-animating { transition: none; }
-}
-
 /* ============ 站內搜尋 (click-to-open overlay) ============ */
 
 /* header 維持單行：移除上一版內嵌搜尋框後，nav 一律不換行、不溢位。

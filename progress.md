@@ -2,7 +2,17 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 25)_
+_Last updated: 2026-06-06 (session 26)_
+
+## 🗓️ 2026-06-06 (session 26) — 移除手機自訂下拉重新整理（恢復原生捲動／重新整理）
+
+session 25 加入的「自訂下拉重新整理」（顛倒醫師 logo 指示器＋拉過門檻 `location.reload()`）回退移除，恢復瀏覽器原生捲動與下拉重新整理。只動 `assets/site.js`、`assets/site.css`。
+
+- **`assets/site.js`**：刪除整段 pull-to-refresh IIFE（touchstart／touchmove／touchend／touchcancel 處理、注入的 `.ptr-indicator` 元素與其 `assets/logo.png` 圖、pull 距離／門檻／rubber-band 邏輯、`window.location.reload()` 觸發）。共移除 82 行。
+- **`assets/site.css`**：刪除 `.ptr-indicator` 全部樣式（含 `transform: rotate(180deg)` 顛倒 logo、is-armed／is-animating、reduced-motion 守則），並移除為壓制原生手勢而加的 `html, body { overscroll-behavior-y: contain; }` 覆寫 → 原生下拉重新整理恢復。
+- **無獨立資產**：顛倒 logo 只是對 `assets/logo.png` 做 CSS `rotate(180deg)`，並非另存圖檔，故無檔案可刪；真正的 `assets/logo.png` 原封不動。
+- **保留不動**：頁尾 NHI logo（`.nhi-mark`／`footer__marks`）、手機「立即預約」修正（`.nav__menu-cta`）、站內搜尋 overlay、預約 modal、回到頂端鈕，全部完好。
+- **驗證（CDP，375px）**：無 `.ptr-indicator`；`overscroll-behavior-y` html/body 皆為 `auto`（非 `contain`）；原生捲動正常（文件高 5590、捲到 1111、回到頂端鈕於 >400 顯示並可點擊歸零）；漢堡選單「立即預約」→ 預約 modal 開啟；搜尋 overlay 開啟。clinic-audit（report-only）三組全 PASS；CSS 大括號平衡（267/267）。
 
 ## 🗓️ 2026-06-06 (session 25) — 頁尾 NHI logo 移到診所 logo 旁（移除文字）；新增手機自訂下拉重新整理
 
