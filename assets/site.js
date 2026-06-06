@@ -72,33 +72,28 @@
     revealEls.forEach(function (el) { el.classList.add('in'); });
   }
 
-  // 健保特約 trust badge — injected site-wide so it appears in the footer of
-  // every page with no per-page HTML edits. The clinic is NHI-contracted
-  // (健保特約, confirmed). 健保特約字樣 is a §九-permitted item.
-  var footerBrand = document.querySelector('.site-footer .footer__brand') ||
-                    document.querySelector('.site-footer .wrap') ||
-                    document.querySelector('.site-footer');
-  if (footerBrand) {
-    var nhiBadge = document.createElement('span');
-    nhiBadge.className = 'nhi-badge';
-    // Official NHI (全民健康保險) logo as the trust mark, with a short 健保特約
-    // text label beside it. The logo is a meaningful trust signal, so its alt
-    // describes it and it is NOT aria-hidden. Served copy lives in assets/;
-    // the source PNG stays in brand_assets/.
-    var nhiLogo = document.createElement('img');
-    nhiLogo.className = 'nhi-badge__logo';
-    nhiLogo.src = 'assets/nhi-logo.png';
-    nhiLogo.alt = '全民健康保險特約院所';
-    nhiLogo.width = 32;
-    nhiLogo.height = 32;
-    nhiLogo.loading = 'lazy';
-    nhiLogo.decoding = 'async';
-    var nhiText = document.createElement('span');
-    nhiText.className = 'nhi-badge__text';
-    nhiText.textContent = '健保特約';
-    nhiBadge.appendChild(nhiLogo);
-    nhiBadge.appendChild(nhiText);
-    footerBrand.appendChild(nhiBadge);
+  // 全民健康保險 (NHI) 特約 trust mark — injected site-wide so it appears in the
+  // footer of every page with no per-page HTML edits. The clinic is NHI-contracted
+  // (健保特約, confirmed). Placed as just the official emblem right beside the
+  // clinic's footer logo (HomePro/Caringlink-style), no visible 健保特約 text.
+  // The emblem is a meaningful trust signal, so its alt carries the meaning and
+  // it is NOT aria-hidden. Served copy lives in assets/ (source in brand_assets/).
+  var footerLogo = document.querySelector('.site-footer .footer__brand .footer__logo');
+  if (footerLogo && footerLogo.parentNode && !footerLogo.parentNode.querySelector('.nhi-mark')) {
+    var nhiMark = document.createElement('img');
+    nhiMark.className = 'nhi-mark';
+    nhiMark.src = 'assets/nhi-logo.png';
+    nhiMark.alt = '全民健康保險特約院所';
+    nhiMark.width = 52;
+    nhiMark.height = 52;
+    nhiMark.loading = 'lazy';
+    nhiMark.decoding = 'async';
+    // wrap the clinic logo + NHI emblem in a row so they sit side by side
+    var markRow = document.createElement('div');
+    markRow.className = 'footer__marks';
+    footerLogo.parentNode.insertBefore(markRow, footerLogo);
+    markRow.appendChild(footerLogo);
+    markRow.appendChild(nhiMark);
   }
 
   // Cloudflare Web Analytics — privacy-friendly, cookieless. No cookies, no
@@ -110,6 +105,88 @@
   cfBeacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';
   cfBeacon.setAttribute('data-cf-beacon', '{"token":"__CF_BEACON_TOKEN__"}');
   document.body.appendChild(cfBeacon);
+
+  /* ===== 自訂下拉重新整理 — custom pull-to-refresh (touch / coarse-pointer only) =====
+     The browser's NATIVE pull-to-refresh can't be styled, so we draw our own: an
+     upside-down doctor logo that follows the pull and reloads once dragged past a
+     threshold. overscroll-behavior-y (CSS) stops the native gesture from fighting it.
+     Guards: only fires at the very top of the page, never while the search overlay or
+     booking modal is open, and never blocks normal scrolling (it only owns the gesture
+     once the user is actively pulling DOWN from scrollY 0). Desktop = no effect. */
+  (function () {
+    var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    var canTouch = 'ontouchstart' in window || (navigator.maxTouchPoints || 0) > 0;
+    if (!coarse || !canTouch) return; // desktop / fine-pointer → feature off entirely
+
+    var THRESHOLD = 72;  // px of (damped) pull needed to trigger a reload
+    var MAX_PULL = 96;   // cap how far the indicator travels
+    var DAMP = 0.5;      // resistance → rubber-band feel
+    var REST = -56;      // indicator parked just above the viewport (px)
+    function reduce() {
+      return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
+    function overlayOpen() {
+      return !!document.querySelector('.search-overlay:not([hidden]), .booking-overlay:not([hidden])');
+    }
+
+    var ind = document.createElement('div');
+    ind.className = 'ptr-indicator';
+    ind.setAttribute('aria-hidden', 'true');
+    var ptrImg = document.createElement('img');
+    ptrImg.src = 'assets/logo.png';
+    ptrImg.alt = '';
+    ind.appendChild(ptrImg);
+    document.body.appendChild(ind);
+
+    var startY = 0, pulling = false, dist = 0, armed = false;
+
+    function setPull(d) {
+      ind.style.transform = 'translateX(-50%) translateY(' + (REST + d) + 'px)';
+      ind.style.opacity = Math.min(1, d / THRESHOLD).toFixed(3);
+    }
+    function reset(animate) {
+      ind.classList.toggle('is-animating', !!animate && !reduce());
+      ind.classList.remove('is-armed');
+      ind.style.transform = '';
+      ind.style.opacity = '';
+    }
+
+    window.addEventListener('touchstart', function (e) {
+      if (e.touches.length !== 1 || window.scrollY > 0 || overlayOpen()) return;
+      startY = e.touches[0].clientY;
+      pulling = true; dist = 0; armed = false;
+      ind.classList.remove('is-animating');
+    }, { passive: true });
+
+    window.addEventListener('touchmove', function (e) {
+      if (!pulling) return;
+      if (window.scrollY > 0 || overlayOpen()) { pulling = false; reset(true); return; }
+      var dy = e.touches[0].clientY - startY;
+      if (dy <= 0) { // pulling up / not down → hand the gesture back to normal scroll
+        if (dist !== 0) { dist = 0; reset(false); }
+        return;
+      }
+      e.preventDefault(); // actively pulling down at the top → we own the gesture
+      dist = Math.min(MAX_PULL, dy * DAMP);
+      setPull(dist);
+      var nowArmed = dist >= THRESHOLD;
+      if (nowArmed !== armed) { armed = nowArmed; ind.classList.toggle('is-armed', armed); }
+    }, { passive: false });
+
+    function end() {
+      if (!pulling) return;
+      pulling = false;
+      if (armed) {
+        ind.classList.add('is-armed', 'is-animating');
+        if (reduce()) window.location.reload();
+        else setTimeout(function () { window.location.reload(); }, 180);
+      } else {
+        reset(true);
+      }
+    }
+    window.addEventListener('touchend', end, { passive: true });
+    window.addEventListener('touchcancel', function () { pulling = false; reset(true); }, { passive: true });
+  })();
 
   /* ===== 線上預約掛號 modal — built once on every page, opened by every booking CTA =====
      Reuses the search overlay's accessible-dialog pattern + dark backdrop.

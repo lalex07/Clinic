@@ -2,7 +2,20 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 24)_
+_Last updated: 2026-06-06 (session 25)_
+
+## 🗓️ 2026-06-06 (session 25) — 頁尾 NHI logo 移到診所 logo 旁（移除文字）；新增手機自訂下拉重新整理
+
+兩項共用檔變更（接在 session 24 的手機 CTA 修正 commit 之後）。動到 `assets/site.js`、`assets/site.css`。clinic-audit（report-only）全 PASS。
+
+- **NHI 標誌改放在診所頁尾 logo 旁、移除「健保特約」文字（HomePro／Caringlink 風格）。** 原本（session 23）注入的是 `.nhi-badge`（NHI logo＋「健保特約」文字 chip，附加在品牌區塊最下方）。改為：`site.js` 改抓 `.footer__brand .footer__logo`，用一個 `.footer__marks` flex row 包住「診所 logo＋NHI 標誌」並插回原 logo 位置，**只放 NHI 圖示、完全移除文字**。NHI 為信任標記，`alt="全民健康保險特約院所"`（非 aria-hidden）。CSS 移除 `.nhi-badge`／`.nhi-badge__logo`，改為 `.footer__marks`（flex、align center、gap `--s-3`）＋ `.nhi-mark`（52px、`border-radius:50%`、白底、object-fit contain；與 56px 的 `.footer__logo` 視覺等高並排）。實心、硬邊、無漸層／光暈。
+- **手機自訂下拉重新整理（custom pull-to-refresh）。** 瀏覽器原生 pull-to-refresh 無法樣式化，故自製：在 touch／`pointer:coarse` 裝置（桌機完全不啟用），於頁面最頂端下拉時顯示一個跟著手指移動的指示器——**診所 doctor logo 旋轉 180°（上下顛倒）**，拉過門檻（72px、阻尼 0.5）放手即 `location.reload()`。`site.js` 用 touchstart／move／end／cancel 實作；`site.css` 加 `.ptr-indicator`（fixed、top center、z-index 55＝在 header 50 之上、overlay 100 之下、`pointer-events:none`、白底圓盤＋grounded `--shadow-md`／armed 時 `--shadow-lg`），logo `transform: rotate(180deg)`。`html, body { overscroll-behavior-y: contain }` 讓原生手勢不來搶。**守門**：僅在 `scrollY===0` 且 search overlay／booking modal 皆未開時啟動；手指上滑（dy≤0）即交還原生捲動，不阻擋正常滾動；尊重 `prefers-reduced-motion`（略過 snap-back 過場、直接 reload）。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：變更檔（site.js／site.css）無 保證／根治／唯一／第一／必須／一定要／最〔上級〕；無費用／療效百分比。全站頁尾免責聲明各 1 齊全。移除「健保特約」純文字不影響合規（NHI 標誌 alt 仍傳達特約信任語意）。
+- **設計規則**：變更檔 gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow／`transition:all` 全 0（grep 命中皆為註解）。`.nhi-mark` 為實心白圓；`.ptr-indicator` 陰影用 `--shadow-md`／`--shadow-lg` token（接地、非光暈）。
+- **無障礙**：NHI `<img alt="全民健康保險特約院所">`（非 aria-hidden、信任標記）；PTR 指示器 `aria-hidden="true"`、logo `alt=""`（純裝飾）；PTR 過場有 `@media (prefers-reduced-motion: reduce)` 守門。
+- **渲染／行為驗證**：桌機 1280px footer——NHI 標誌（52px）與診所 logo（56px）並排同列、無「健保特約」文字、`oldBadgeGone:true`／`textGone:true`（截圖 `/tmp/footer_desktop.png`）；手機 390px footer 同樣並排、無水平捲動（`/tmp/footer_mobile.png`）。PTR：以「強制啟用 gate＋載入真實 site.js」的測試頁＋合成 touch 事件驗證——指示器存在、logo `matrix(-1,0,0,-1,0,0)`＝旋轉 180°、`overscroll-behavior-y:contain`；mid-pull 跟手（translateY、opacity 隨拉動變化）且 `preventDefault`（接管手勢）；過門檻 armed＝true、放手走 reload 路徑；**守門**：search overlay 開啟時下拉不接管（`prevented:false`）、`scrollY>0` 時不接管（`prevented:false`）；**桌機無指示器**（`ptrOnDesktop:false`、`coarse:false`）。截圖 mid-pull `/tmp/ptr_midpull.png`、armed `/tmp/ptr_pull_full.png`。
 
 ## 🗓️ 2026-06-06 (session 24) — 修正：手機版補回「立即預約」booking CTA
 

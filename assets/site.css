@@ -512,27 +512,20 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
 .footer__base nav { display: flex; gap: var(--s-3); flex-wrap: wrap; }
 .footer__base a:hover { color: #fff; }
 
-/* 健保特約 trust badge — injected site-wide via site.js into .footer__brand.
-   Official 全民健康保險 (NHI) logo + short 健保特約 label. Solid cream chip,
-   hard edges, on-brand; no glow/gradient. §九-permitted字樣. */
-.nhi-badge {
-  align-self: flex-start;
-  display: inline-flex;
+/* 全民健康保險 (NHI) 特約 emblem — injected site-wide via site.js beside the
+   footer clinic logo (HomePro/Caringlink-style trust mark, emblem only, no text).
+   Solid white circular plate to match .footer__logo; crisp, no glow/gradient. */
+.footer__marks {
+  display: flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.3rem 0.7rem;
-  background: var(--bg);
-  color: var(--primary-deep);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  border: 1px solid var(--line-strong);
-  border-radius: 7px;
+  gap: var(--s-3);
 }
-.nhi-badge__logo {
-  display: block;
-  width: 32px;
-  height: 32px;
+.nhi-mark {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #fff;
+  object-fit: contain;
   flex-shrink: 0;
 }
 
@@ -812,6 +805,45 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   .back-to-top { transition: none; transform: none; }
   .back-to-top.is-visible { transform: none; }
   .back-to-top:hover { transform: none; }
+}
+
+/* ============ 自訂下拉重新整理 (custom pull-to-refresh, mobile only) ============ */
+/* Keep the browser's native pull-to-refresh + scroll-chaining from fighting our
+   custom gesture. Our own indicator is injected by site.js on touch devices. */
+html, body { overscroll-behavior-y: contain; }
+.ptr-indicator {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  z-index: 55; /* above header(50), below back-to-top(60) and overlays(100) */
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+  /* parked just above the viewport until a pull drags it down (JS sets transform) */
+  transform: translateX(-50%) translateY(-56px);
+  opacity: 0;
+  pointer-events: none; /* never blocks taps or scrolling */
+}
+.ptr-indicator img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transform: rotate(180deg); /* upside-down doctor logo */
+}
+.ptr-indicator.is-animating {
+  transition: transform 0.28s var(--ease), opacity 0.28s var(--ease);
+}
+.ptr-indicator.is-armed {
+  /* dragged past the reload threshold — deepen the grounded shadow (no glow) */
+  box-shadow: var(--shadow-lg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ptr-indicator, .ptr-indicator.is-animating { transition: none; }
 }
 
 /* ============ 站內搜尋 (click-to-open overlay) ============ */
