@@ -57,6 +57,8 @@ Goals:
 - Mobile-first (over 70% of patients will visit on phones; see brief section 十)
 - Each location page should include structured data (schema.org MedicalClinic / LocalBusiness) per brief section 十二
 - Preview locally with `python3 -m http.server 8000` from the project root, then open `http://localhost:8000` in the browser. Never test against `file:///` URLs.
+- Static site, no backend/DB/auth — features needing accounts or persistence require an external service (e.g. Supabase), not the static site.
+- Native browser UI (date pickers, pull-to-refresh) can't be CSS-themed; match the design by building a custom accessible component.
 
 ## File organization
 
@@ -75,9 +77,20 @@ New files follow this categorization by default: a new patient-facing page → r
 
 Taiwan medical advertising rules apply. See section 九 in `site-spec.md` for the do-not-use word list (no 保證, 最, 根治, 唯一, etc.) and the required footer disclaimer. Treat that section as hard constraints.
 
+- No patient testimonials / 病人見證 / reviews on the site (Taiwan 醫療法 restriction).
+- 健保特約 / 健保特約診所 IS a permitted item to display.
+- Medical content (FAQ, 公告) follows draft → 院長 review → publish; never publish unreviewed. 院長-approved copy is inserted verbatim — never reword or silently "fix"; flag suspected typos instead.
+
 ## Pre-commit audit
 
 Before committing any change, run the `clinic-audit` skill in `.claude/skills/clinic-audit/`. It checks §九 compliance, the design rules above, and accessibility (WCAG AA) in one pass, and knows this project's known-good exceptions. Report-only by default; pass "audit and fix" to apply fixes.
+
+## Multi-agent workflow
+
+- Two parallel agents must never edit the same file (last-write-wins silently loses changes).
+- Only ONE agent commits per batch; remove any stale `.git/index.lock` first; don't force-push.
+- Serialize edits to shared chrome (header/footer, `site.css`, `site.js`) into one agent; build site-wide UI by injecting via `site.js` so it lands on every page without per-page edits.
+- Run a synthesis agent last: clinic-audit (report-only) → update `progress.md` → single commit. Always update `progress.md` before committing, even for one-file fixes.
 
 ## Bilingual
 

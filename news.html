@@ -157,13 +157,13 @@
     top: calc(100% + 0.5rem);
     left: 0;
     z-index: 50;
-    width: 19rem;
+    width: 16.5rem;
     max-width: calc(100vw - 2rem);
     background: var(--surface);
     border: 1px solid var(--line-strong);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
-    padding: var(--s-3);
+    padding: var(--s-2);
     opacity: 0;
     transform: translateY(-6px);
     transition: opacity 0.16s var(--ease), transform 0.16s var(--ease);
@@ -177,19 +177,29 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--s-2);
-    margin-bottom: var(--s-2);
+    margin-bottom: 0.35rem;
   }
+  /* month-year title is a button: clicking it opens the direct year/month picker */
   .news-cal__title {
     font-family: "Noto Serif TC", serif;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
     color: var(--primary-deep);
+    background: var(--surface);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 0.2rem 0.55rem;
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
   }
+  .news-cal__title:hover { background: var(--primary-soft); }
+  .news-cal__title:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .news-cal__title[aria-expanded="true"] { background: var(--primary-soft); border-color: var(--primary-soft); }
   .news-cal__nav {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px; height: 32px;
+    width: 28px; height: 28px;
     color: var(--primary-deep);
     background: var(--surface);
     border: 1px solid var(--line-strong);
@@ -199,19 +209,19 @@
   }
   .news-cal__nav:hover { background: var(--primary-soft); border-color: var(--primary-soft); }
   .news-cal__nav:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-  .news-cal__nav svg { width: 16px; height: 16px; }
+  .news-cal__nav svg { width: 15px; height: 15px; }
 
   .news-cal__weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.15rem;
   }
   .news-cal__weekdays span {
     text-align: center;
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 600;
     color: var(--ink-soft);
-    padding: 0.3rem 0;
+    padding: 0.2rem 0;
   }
 
   .news-cal__row { display: grid; grid-template-columns: repeat(7, 1fr); }
@@ -222,7 +232,7 @@
     aspect-ratio: 1 / 1;
     margin: 1px;
     font-family: inherit;
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     font-weight: 500;
     color: var(--ink);
     background: var(--surface);
@@ -243,28 +253,35 @@
   }
   .news-cal__day.is-selected:hover { background: var(--primary-deep); border-color: var(--primary-deep); color: #fff; }
 
-  .news-cal__footer {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--s-2);
-    margin-top: var(--s-2);
-    padding-top: var(--s-2);
-    border-top: 1px solid var(--line);
+  /* direct year/month picker pane (revealed when the title is clicked) */
+  .news-cal__monthpane[hidden] { display: none; }
+  .news-cal__monthgrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.3rem;
   }
-  .news-cal__foot {
+  .news-cal__month {
     font-family: inherit;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 600;
-    color: var(--primary-deep);
+    color: var(--ink);
     background: var(--surface);
-    border: 1px solid var(--line-strong);
-    border-radius: 999px;
-    padding: 0.35rem 0.9rem;
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    padding: 0.55rem 0;
     cursor: pointer;
-    transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
+    transition: background-color 0.15s var(--ease), color 0.15s var(--ease);
   }
-  .news-cal__foot:hover { background: var(--primary-soft); border-color: var(--primary-soft); }
-  .news-cal__foot:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .news-cal__month:hover { background: var(--primary-soft); color: var(--primary-deep); }
+  .news-cal__month:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+  .news-cal__month.is-current { border-color: var(--primary); } /* the month currently in view */
+  .news-cal__month.is-selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    font-weight: 700;
+  }
+  .news-cal__month.is-selected:hover { background: var(--primary-deep); border-color: var(--primary-deep); color: #fff; }
 
   /* respect reduced motion for the open/close + chevron transitions */
   @media (prefers-reduced-motion: reduce) {
@@ -646,11 +663,12 @@
      - 日期選擇器為純 vanilla 自製日曆（無套件、無建置）：
          觸發鈕 aria-haspopup="dialog"、aria-expanded 反映開合；
          彈窗 role="dialog" aria-modal、由月份標題標示；日格 role="grid" / row / gridcell，
-         每格 aria-label 為完整日期、選定日 aria-selected；
+         每格 aria-label 為完整日期、選定日 aria-selected；只渲染該月實際需要的週列（不溢出下個月）；
          方向鍵逐日移動（跨週、跨月），Enter/Space 選取，Esc 關閉並把焦點還給觸發鈕，
          PageUp/PageDown 換月，Home/End 移到該週首尾；roving tabindex；焦點鎖在彈窗內；
+         標題鈕可直接開啟年/月選單（月格 role="grid"，方向鍵移動、‹ › 換年、±10 年、Esc 回到日曆）；
          點外面關閉；月份改變以 aria-live="polite" 播報；尊重 prefers-reduced-motion。
-     - 預設不限日期；footer「清除」與外部「全部日期」皆可重設。無符合時顯示既有空狀態。 */
+     - 預設不限日期；外部「全部日期」鈕可重設。無符合時顯示既有空狀態。 */
   (function () {
     var grid = document.getElementById('newsGrid');
     if (!grid) return;
@@ -721,31 +739,50 @@
     pop.setAttribute('aria-labelledby', 'newsCalTitle');
     pop.innerHTML =
       '<div class="news-cal__header">' +
-        '<button type="button" class="news-cal__nav" data-nav="-1" aria-label="上個月">' +
-          '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>' +
-        '<span class="news-cal__title" id="newsCalTitle" aria-live="polite"></span>' +
-        '<button type="button" class="news-cal__nav" data-nav="1" aria-label="下個月">' +
-          '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>' +
+        '<button type="button" class="news-cal__nav" data-nav="-1" aria-label="上個月"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>' +
+        '<button type="button" class="news-cal__title" id="newsCalTitle" aria-live="polite" aria-haspopup="true" aria-expanded="false" aria-label="選擇年份與月份"></button>' +
+        '<button type="button" class="news-cal__nav" data-nav="1" aria-label="下個月"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>' +
       '</div>' +
-      '<div class="news-cal__weekdays" aria-hidden="true">' +
-        WEEK.map(function (w) { return '<span>' + w + '</span>'; }).join('') +
+      '<div class="news-cal__dayview" id="newsCalDayView">' +
+        '<div class="news-cal__weekdays" aria-hidden="true">' +
+          WEEK.map(function (w) { return '<span>' + w + '</span>'; }).join('') +
+        '</div>' +
+        '<div class="news-cal__grid" id="newsCalGrid" role="grid" aria-labelledby="newsCalTitle"></div>' +
       '</div>' +
-      '<div class="news-cal__grid" id="newsCalGrid" role="grid" aria-labelledby="newsCalTitle"></div>' +
-      '<div class="news-cal__footer">' +
-        '<button type="button" class="news-cal__foot" data-foot="clear">清除</button>' +
-        '<button type="button" class="news-cal__foot" data-foot="today">今天</button>' +
+      '<div class="news-cal__monthpane" id="newsCalMonthPane" role="grid" aria-label="選擇月份" hidden>' +
+        '<div class="news-cal__monthgrid" id="newsCalMonthGrid"></div>' +
       '</div>';
     picker.appendChild(pop);
 
-    var titleEl = pop.querySelector('#newsCalTitle');
-    var gridEl  = pop.querySelector('#newsCalGrid');
+    var titleEl  = pop.querySelector('#newsCalTitle');
+    var gridEl   = pop.querySelector('#newsCalGrid');
+    var dayView  = pop.querySelector('#newsCalDayView');
+    var monthPane = pop.querySelector('#newsCalMonthPane');
+    var monthGrid = pop.querySelector('#newsCalMonthGrid');
+    var MONTHS = ['1 月','2 月','3 月','4 月','5 月','6 月','7 月','8 月','9 月','10 月','11 月','12 月'];
+    var mode = 'day';                 // 'day' = day grid; 'month' = year/month picker
+    var YEAR_RANGE = 10;              // ± years selectable around today
+    var pickY = viewY;                // year currently shown in the month pane
+    var monthFocus = viewM;           // month cell holding roving focus in the pane
+
+    function updateTitle() {
+      if (mode === 'month') {
+        titleEl.textContent = pickY + ' 年';
+        titleEl.setAttribute('aria-expanded', 'true');
+      } else {
+        titleEl.textContent = viewY + ' 年 ' + (viewM + 1) + ' 月';
+        titleEl.setAttribute('aria-expanded', 'false');
+      }
+    }
 
     function render() {
-      titleEl.textContent = viewY + ' 年 ' + (viewM + 1) + ' 月';
+      updateTitle();
       var startOffset = new Date(viewY, viewM, 1).getDay();          // 0=Sun
       var start = new Date(viewY, viewM, 1 - startOffset);
+      // only as many week-rows as this month actually needs — never an all-next-month row
+      var rows = Math.ceil((startOffset + daysInMonth(viewY, viewM)) / 7);
       var html = '';
-      for (var r = 0; r < 6; r++) {
+      for (var r = 0; r < rows; r++) {
         html += '<div class="news-cal__row" role="row">';
         for (var c = 0; c < 7; c++) {
           var dt = new Date(start.getFullYear(), start.getMonth(), start.getDate() + (r * 7 + c));
@@ -771,6 +808,84 @@
     function focusDay() {
       var cell = gridEl.querySelector('[data-iso="' + focusISO + '"]');
       if (cell) cell.focus();
+    }
+
+    /* ----- direct year/month picker ----- */
+    function renderMonthPane() {
+      var minY = now.getFullYear() - YEAR_RANGE, maxY = now.getFullYear() + YEAR_RANGE;
+      if (pickY < minY) pickY = minY;
+      if (pickY > maxY) pickY = maxY;
+      updateTitle();
+      // the ‹ › arrows step the year while the pane is open; disable at range ends
+      pop.querySelectorAll('[data-nav]').forEach(function (b) {
+        var dir = parseInt(b.getAttribute('data-nav'), 10);
+        var blocked = (dir < 0 && pickY <= minY) || (dir > 0 && pickY >= maxY);
+        b.disabled = blocked;
+        b.setAttribute('aria-label', dir < 0 ? '上一年' : '下一年');
+      });
+      var html = '';
+      for (var m = 0; m < 12; m++) {
+        var isCurrent = (pickY === viewY && m === viewM);
+        var isSel = (!!selectedISO && (+selectedISO.split('-')[0]) === pickY && (+selectedISO.split('-')[1] - 1) === m);
+        var cls = 'news-cal__month';
+        if (isCurrent) cls += ' is-current';
+        if (isSel) cls += ' is-selected';
+        html += '<button type="button" class="' + cls + '" role="gridcell" data-month="' + m + '"' +
+                ' tabindex="' + (m === monthFocus ? '0' : '-1') + '"' +
+                ' aria-label="' + pickY + ' 年 ' + (m + 1) + ' 月" aria-selected="' + (isSel ? 'true' : 'false') + '">' +
+                MONTHS[m] + '</button>';
+      }
+      monthGrid.innerHTML = html;
+    }
+
+    function focusMonthCell(m) {
+      var cell = monthGrid.querySelector('[data-month="' + m + '"]');
+      if (cell) cell.focus();
+    }
+
+    function enterMonthMode() {
+      mode = 'month';
+      pickY = viewY;
+      monthFocus = viewM;
+      dayView.hidden = true;
+      monthPane.hidden = false;
+      renderMonthPane();
+      focusMonthCell(monthFocus);
+    }
+
+    function exitMonthMode(focusGrid) {
+      mode = 'day';
+      monthPane.hidden = true;
+      dayView.hidden = false;
+      // restore month-nav labels the arrows had in day mode
+      pop.querySelectorAll('[data-nav]').forEach(function (b) {
+        var dir = parseInt(b.getAttribute('data-nav'), 10);
+        b.disabled = false;
+        b.setAttribute('aria-label', dir < 0 ? '上個月' : '下個月');
+      });
+      render();
+      if (focusGrid) focusDay();
+    }
+
+    function pickMonth(m) {
+      viewY = pickY; viewM = m;
+      var day = Math.min(+focusISO.split('-')[2], daysInMonth(viewY, viewM));
+      focusISO = iso(viewY, viewM, day);
+      exitMonthMode(true);
+    }
+
+    function changePickYear(delta) {
+      pickY += delta;
+      renderMonthPane();
+      focusMonthCell(monthFocus);   // keep focus on the same month cell after re-render
+    }
+
+    function moveMonthFocus(delta) {
+      var m = monthFocus + delta;
+      if (m < 0 || m > 11) return;  // stay within the year; year nav is via ‹ ›
+      monthFocus = m;
+      renderMonthPane();
+      focusMonthCell(monthFocus);
     }
 
     function setFocusDate(dt, doFocus) {
@@ -833,6 +948,15 @@
       if (isOpen) return;
       isOpen = true;
       if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+      // always open on the day grid, even if it was last closed mid year/month pick
+      mode = 'day';
+      monthPane.hidden = true;
+      dayView.hidden = false;
+      pop.querySelectorAll('[data-nav]').forEach(function (b) {
+        var dir = parseInt(b.getAttribute('data-nav'), 10);
+        b.disabled = false;
+        b.setAttribute('aria-label', dir < 0 ? '上個月' : '下個月');
+      });
       var base = (selectedISO || todayISO).split('-');
       viewY = +base[0]; viewM = +base[1] - 1;
       focusISO = selectedISO || todayISO;
@@ -874,15 +998,45 @@
     });
 
     pop.querySelectorAll('[data-nav]').forEach(function (b) {
-      b.addEventListener('click', function () { changeMonth(parseInt(b.getAttribute('data-nav'), 10), false); });
+      b.addEventListener('click', function () {
+        var dir = parseInt(b.getAttribute('data-nav'), 10);
+        if (mode === 'month') changePickYear(dir);   // ‹ › step the year while picking
+        else changeMonth(dir, false);                // ‹ › step the month in day view
+      });
     });
-    pop.querySelector('[data-foot="clear"]').addEventListener('click', function () { clearSelection(true); });
-    pop.querySelector('[data-foot="today"]').addEventListener('click', function () {
-      viewY = now.getFullYear(); viewM = now.getMonth(); focusISO = todayISO; render(); focusDay();
+
+    // header title toggles the direct year/month picker
+    titleEl.addEventListener('click', function () {
+      if (mode === 'month') exitMonthMode(true);
+      else enterMonthMode();
+    });
+
+    monthGrid.addEventListener('click', function (e) {
+      var btn = e.target.closest('.news-cal__month');
+      if (btn) pickMonth(parseInt(btn.getAttribute('data-month'), 10));
+    });
+
+    monthGrid.addEventListener('keydown', function (e) {
+      if (!e.target.classList || !e.target.classList.contains('news-cal__month')) return;
+      switch (e.key) {
+        case 'ArrowLeft':  moveMonthFocus(-1); e.preventDefault(); break;
+        case 'ArrowRight': moveMonthFocus(1);  e.preventDefault(); break;
+        case 'ArrowUp':    moveMonthFocus(-3); e.preventDefault(); break;
+        case 'ArrowDown':  moveMonthFocus(3);  e.preventDefault(); break;
+        case 'PageUp':     changePickYear(-1); e.preventDefault(); break;
+        case 'PageDown':   changePickYear(1);  e.preventDefault(); break;
+        case 'Home':       monthFocus = 0;  renderMonthPane(); focusMonthCell(0);  e.preventDefault(); break;
+        case 'End':        monthFocus = 11; renderMonthPane(); focusMonthCell(11); e.preventDefault(); break;
+      }
     });
 
     pop.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') { close(true); e.preventDefault(); return; }
+      if (e.key === 'Escape') {
+        if (mode === 'month') { titleEl.focus(); exitMonthMode(false); }   // back to day view first
+        else close(true);
+        e.preventDefault();
+        return;
+      }
       if (e.key === 'Tab') { trapTab(e); return; }
       if (!e.target.classList || !e.target.classList.contains('news-cal__day')) return;
       switch (e.key) {

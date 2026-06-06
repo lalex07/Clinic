@@ -2,7 +2,28 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-07 (session 27)_
+_Last updated: 2026-06-07 (session 28)_
+
+## 🗓️ 2026-06-07 (session 28) — 最新消息日曆精修（標題鈕直接選年/月）+ CLAUDE.md 補多代理與合規慣例
+
+多 agent 平行作業（A／B），本 agent 負責整併、clinic-audit（report-only）、瀏覽器（CDP）驗證與唯一 commit。三組全 PASS，無回歸。動到 `news.html`（日曆元件）、`CLAUDE.md`（不 served 的規則檔）。
+
+- **Agent B — `news.html` 最新消息日曆精修。** 移除原本的「清除／今天」footer 兩鈕（`.news-cal__footer`／`.news-cal__foot`／`[data-foot]` 全數移除，無殘留——已 grep 確認），改為**月份標題鈕直接開啟年/月選擇面板**：
+  - 月份標題由 `<span>` 改為 `<button class="news-cal__title" aria-haspopup="true" aria-expanded aria-label="選擇年份與月份">`，點擊／聚焦切換內嵌的 `.news-cal__monthpane`（`role="grid" aria-label="選擇月份"`，12 個月格 `role="gridcell"`）。年份以日曆既有 ‹ › 箭頭在面板開啟時改為「換年」（±10 年範圍、到端點 `disabled`＋`aria-label` 切為上一年／下一年），關閉面板還原為換月。
+  - **月格鍵盤**：方向鍵移動（左右 ±1、上下 ±3）、PageUp/PageDown 換年、Home/End 跳 1 月／12 月、Enter/Space（click）選月即回日曆視圖並把焦點還給日格；**roving tabindex**（僅作用月可 Tab，CDP 實測恰 1 個 tabindex=0）。**Esc**：在月面板時先回到日曆日視圖（焦點還給標題鈕）而非直接關閉；在日視圖時才整個關閉。
+  - **日格只渲染該月實際需要的週列**（`rows = ceil((起始偏移 + 當月天數) / 7)`），不再固定 6 列、不再出現整列全是下個月的空行（CDP 實測 2026/1 為 5 列）。
+  - 開啟 picker 一律回到日視圖（即使上次關閉時停在年/月面板）。選月後沿用原 `focusISO` 日期、夾在當月最大天數內。
+  - 樣式：標題鈕／月格 hover 變底色（`--primary-soft`）皆為**控制項**（非卡片，符合「卡片 hover=lift」規則）；目前檢視月 `.is-current`＝`--primary` 細框、已選月 `.is-selected`＝實心 `--primary` 白字。實心硬邊、無漸層／光暈／backdrop-filter／drop-shadow。彈窗縮窄為 16.5rem、字級／nav 鈕微縮以容納年/月面板。
+- **Agent A — `CLAUDE.md` 補入多代理協作與合規慣例（不 served、不影響 live 站）。**
+  - Technical 節新增兩條：靜態站無後端／DB／auth（需帳號／持久化的功能要外部服務如 Supabase）；原生瀏覽器 UI（date picker、pull-to-refresh）無法 CSS 主題化，要做就自製可及性元件。
+  - Compliance 節新增三條：站上不放病人見證／評論（醫療法）；`健保特約／健保特約診所` 為**允許**顯示項；醫療內容走 草稿→院長審閱→發布、院長核准文案逐字插入不改寫（疑似錯字只標記不自行修）。
+  - 新增「## Multi-agent workflow」節：兩平行 agent 不得同改一檔（last-write-wins 會靜默丟失）；每批僅一個 agent commit、先清 `.git/index.lock`、不 force-push；共用 chrome（header/footer、`site.css`、`site.js`）的編輯收斂到單一 agent，站台級 UI 以 `site.js` 注入避免逐頁改；synthesis agent 最後跑 clinic-audit→更新 `progress.md`→單一 commit，commit 前一律先更新 `progress.md`。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：兩檔無 保證／根治／唯一／第一／必須／一定要／最〔上級〕；全站 `最` 僅 最新×49／最近×7／最佳×3；無費用；`[0-9]%` grep 命中皆為 CSS（`border-radius:50%`／`width:100%`／keyframes／地圖 URL `%E…` 編碼）非療效宣稱；頁尾免責聲明各頁齊全；`news.html` 中山卡片維持「2026 年 10 月開幕・敬請期待」未來式、無手術招攬。
+- **設計規則**：兩檔 gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow／`transition:all` 全 0（命中皆為 CSS 註解）；日曆標題鈕／月格 hover 變色為控制項；`.news-card:hover`＝lift（transform＋shadow，不變色）；月面板實心硬邊、grounded `--shadow-md`。
+- **無障礙**：`news.html` html lang zh-Hant、1 h1（順序 h1 h2 h2 無跳級）；月面板 `role="grid"`／月格 `role="gridcell"`＋`aria-selected`、標題鈕 `aria-haspopup`/`aria-expanded`、roving tabindex（日／月各恰 1 個 tabindex=0，CDP 實測）、Esc 兩段式（月面板→日視圖→關閉）；reduced-motion 守則仍在（3 處）；唯一無 alt 的 `<img>`（line 595）在 HTML 範本註解內、公告磚 `<svg>`（line 578）位於 `aria-hidden="true"` 祖先下，皆既知誤報。`CLAUDE.md` 結構良好（標題層級正確、無未閉合反引號）。
+- **瀏覽器驗證（CDP headless，756px）**：點日期鈕 → 日曆開啟（opacity 1、visible、不溢出視窗）；日格 5 列（只渲染需要的週）、無清除／今天 footer；點月份標題 → 年/月面板（12 月格、`aria-expanded=true`）；選 1 月 → 回日視圖、標題「2026 年 1 月」；點日格 → 觸發鈕顯示所選日期並篩選；日／月皆恰 1 個 roving tabindex；月面板 Esc → 回到日視圖（非關閉）。全部通過。
 
 ## 🗓️ 2026-06-07 (session 27) — 發布 FAQ Q13–Q17（院長核准）— 全 17 篇衛教文章上線
 
