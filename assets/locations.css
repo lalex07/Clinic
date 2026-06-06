@@ -1,0 +1,394 @@
+/* =====================================================================
+   Location pages — hub (locations.html) + per-location detail pages
+   Loaded after site.css.
+   ===================================================================== */
+
+/* ============ Hub:院區切換器 ============ */
+.loc-switch {
+  padding: 0 0 var(--s-7);
+}
+.loc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--s-4);
+}
+.loc-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--s-5);
+  box-shadow: var(--shadow-sm);
+  /* lift + shadow only on hover — no gradient, no color/border change */
+  transition: transform 0.35s ease-out, box-shadow 0.35s ease-out;
+}
+.loc-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+.loc-card:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+.loc-card--soon { background: var(--bg-2); }
+
+/* hub card cover photo (zone 5) — sits at the top of each card */
+.loc-card__photo { aspect-ratio: 4 / 3; }
+
+/* detail-page header photo (zone 3) — wide exterior banner above the address */
+.loc-hero {
+  padding: 0 0 var(--s-2);
+}
+.loc-hero-photo {
+  aspect-ratio: 4 / 3;
+  max-height: 22rem;
+}
+
+.loc-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+.loc-card__name {
+  font-family: "Noto Serif TC", serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--primary-deep);
+}
+.loc-card__tag {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: #fff;
+  background: var(--primary);
+  padding: 0.18rem 0.6rem;
+  border-radius: 6px;
+}
+.loc-card__tag--accent { background: var(--accent); }
+.loc-card__tag--soon { background: var(--ink-faint); }
+
+.loc-card__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+.loc-card__row svg {
+  width: 17px; height: 17px;
+  flex-shrink: 0;
+  margin-top: 0.28rem;
+  color: var(--primary);
+}
+.loc-card__more {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  color: var(--primary);
+  font-weight: 500;
+  font-size: 0.92rem;
+}
+.loc-card__more svg { width: 15px; height: 15px; transition: transform 0.3s var(--ease); }
+.loc-card:hover .loc-card__more svg { transform: translateX(4px); }
+.loc-card--soon .loc-card__more { color: var(--ink-faint); }
+
+/* schedule call-out band */
+.sched-band {
+  background: var(--bg-2);
+  padding: var(--s-7) 0;
+}
+.sched-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-4) var(--s-5);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--s-5) var(--s-5);
+  box-shadow: var(--shadow-sm);
+}
+.sched-card__icon {
+  width: 56px; height: 56px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  display: grid; place-items: center;
+  background: var(--primary-soft);
+  color: var(--primary-deep);
+}
+.sched-card__icon svg { width: 28px; height: 28px; }
+.sched-card__body { flex: 1 1 16rem; }
+.sched-card__body h2 { font-size: 1.3rem; color: var(--primary-deep); margin-bottom: 0.3rem; }
+.sched-card__body p { margin: 0; color: var(--ink-soft); font-size: 0.96rem; }
+
+/* ============ Detail: two-column layout ============ */
+.detail {
+  padding: var(--s-2) 0 var(--s-7);
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 22rem;
+  gap: var(--s-6);
+  align-items: start;
+}
+
+/* contact sidebar */
+.detail-aside {
+  position: sticky;
+  top: 92px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--s-5);
+  box-shadow: var(--shadow-sm);
+}
+.card > h2, .card > h3 {
+  font-size: 1.18rem;
+  color: var(--primary-deep);
+  margin-bottom: var(--s-3);
+}
+
+.info-list { display: flex; flex-direction: column; gap: var(--s-3); margin: 0; padding: 0; }
+.info-row { display: flex; gap: 0.8rem; align-items: flex-start; }
+.info-row__icon {
+  width: 34px; height: 34px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  display: grid; place-items: center;
+  background: var(--primary-soft);
+  color: var(--primary-deep);
+}
+.info-row__icon svg { width: 18px; height: 18px; }
+.info-row__body { min-width: 0; }
+.info-row__label {
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 600;
+  margin-bottom: 0.1rem;
+}
+.info-row__val { font-size: 0.96rem; color: var(--ink); line-height: 1.6; }
+.info-row__val a { color: var(--primary-deep); font-weight: 500; }
+.info-row__val a:hover { color: var(--primary); text-decoration: underline; }
+
+/* contact action buttons */
+.aside-actions { display: flex; flex-direction: column; gap: 0.6rem; margin-top: var(--s-4); }
+.aside-actions .btn { justify-content: center; width: 100%; }
+
+/* QR booking card */
+.qr-card { text-align: center; }
+.qr-card h3 { text-align: left; }
+.qr-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-4);
+}
+.qr-grid.two { grid-template-columns: 1fr 1fr; }
+.qr-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.qr-item img {
+  width: 100%;
+  max-width: 168px;
+  aspect-ratio: 1/1;
+  object-fit: contain;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  padding: 0.5rem;
+  box-shadow: var(--shadow-sm);
+}
+.qr-item__label {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--primary-deep);
+}
+.qr-item__sub { font-size: 0.78rem; color: var(--ink-faint); line-height: 1.5; }
+.qr-placeholder {
+  width: 100%;
+  max-width: 168px;
+  aspect-ratio: 1/1;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--bg-2);
+  color: var(--ink-faint);
+  font-size: 0.84rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* main column blocks */
+.detail-block { margin-bottom: var(--s-6); }
+.detail-block > h2 {
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  color: var(--primary-deep);
+  margin-bottom: var(--s-3);
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.detail-block > h2 svg { width: 24px; height: 24px; color: var(--accent); flex-shrink: 0; }
+.detail-block > p { color: var(--ink-soft); margin: 0 0 var(--s-3); }
+
+/* hours table */
+.hours-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  font-size: 0.92rem;
+}
+.hours-table caption {
+  caption-side: bottom;
+  text-align: left;
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+  padding: 0.6rem 0.2rem 0;
+}
+.hours-table th, .hours-table td {
+  padding: 0.7rem 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--line);
+}
+.hours-table thead th {
+  background: var(--primary-soft);
+  color: var(--primary-deep);
+  font-weight: 600;
+}
+.hours-table tbody th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--ink-soft);
+  background: var(--bg-2);
+  white-space: nowrap;
+}
+.hours-table tbody tr:last-child th,
+.hours-table tbody tr:last-child td { border-bottom: none; }
+.hours-table td.tbd-cell { color: var(--ink-faint); }
+
+/* map / generic placeholder panel */
+.placeholder-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  text-align: center;
+  min-height: 13rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-2);
+  color: var(--ink-faint);
+  padding: var(--s-5);
+}
+.placeholder-panel svg { width: 34px; height: 34px; opacity: 0.7; }
+.placeholder-panel p { margin: 0; font-size: 0.92rem; }
+
+/* transit list (交通方式) — concise, solid card, hard edges, no glow */
+.transit-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.transit-list li {
+  display: flex;
+  gap: var(--s-3);
+  padding: var(--s-4) var(--s-5);
+  border-bottom: 1px solid var(--line);
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--ink-soft);
+}
+.transit-list li:last-child { border-bottom: none; }
+.transit-list svg {
+  width: 22px; height: 22px;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  color: var(--primary);
+}
+.transit-list strong {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+}
+.transit-list .tbd { font-style: normal; }
+
+/* embedded Google map — matches card radius + shadow tokens */
+.loc-map {
+  display: block;
+  width: 100%;
+  border: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  background: var(--bg-2);
+}
+.map-addr {
+  margin: var(--s-3) 0 0;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+
+/* "opening soon" banner for 中山 */
+.soon-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3) var(--s-4);
+  background: var(--primary-soft);
+  border: 1px solid var(--primary-soft);
+  border-radius: var(--radius-lg);
+  padding: var(--s-4) var(--s-5);
+  margin-bottom: var(--s-6);
+}
+.soon-banner__badge {
+  flex-shrink: 0;
+  font-family: "Noto Serif TC", serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #fff;
+  background: var(--accent);
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+}
+.soon-banner p { margin: 0; color: var(--primary-deep); font-weight: 500; font-size: 0.98rem; }
+
+/* feature chips (中山 surgery centre one-stop list) */
+.feature-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: var(--s-3); }
+.feature-chips li {
+  list-style: none;
+  font-size: 0.86rem;
+  color: var(--primary-deep);
+  background: var(--primary-soft);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+}
+
+/* ============ Responsive ============ */
+@media (max-width: 900px) {
+  .detail-grid { grid-template-columns: 1fr; }
+  .detail-aside { position: static; }
+}
+@media (max-width: 760px) {
+  .loc-grid { grid-template-columns: 1fr; }
+}

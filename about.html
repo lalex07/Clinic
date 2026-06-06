@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>關於大豐｜大豐耳鼻喉科聯合診所</title>
+<meta name="description" content="大豐耳鼻喉科自 2010 年於新店建國路起步，陸續成立木柵、興隆院區，2026 年 10 月中山旗艦手術中心開幕。深耕新店・文山，提供成人與兒童耳鼻喉與睡眠呼吸中止症照護。" />
+<link rel="canonical" href="https://lalex07.github.io/Clinic/about.html" />
+<meta property="og:site_name" content="大豐耳鼻喉科聯合診所" />
+<meta property="og:locale" content="zh_TW" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="關於大豐｜大豐耳鼻喉科聯合診所" />
+<meta property="og:description" content="大豐耳鼻喉科自 2010 年於新店建國路起步，陸續成立木柵、興隆院區，2026 年 10 月中山旗艦手術中心開幕。深耕新店・文山，提供成人與兒童耳鼻喉與睡眠呼吸中止症照護。" />
+<meta property="og:url" content="https://lalex07.github.io/Clinic/about.html" />
+<meta property="og:image" content="https://lalex07.github.io/Clinic/assets/logo.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="關於大豐｜大豐耳鼻喉科聯合診所" />
+<meta name="twitter:description" content="大豐耳鼻喉科自 2010 年於新店建國路起步，陸續成立木柵、興隆院區，2026 年 10 月中山旗艦手術中心開幕。深耕新店・文山，提供成人與兒童耳鼻喉與睡眠呼吸中止症照護。" />
+<meta name="twitter:image" content="https://lalex07.github.io/Clinic/assets/logo.png" />
+<link rel="icon" type="image/png" href="assets/favicon.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="assets/site.css" />
+<style>
+  /* ============ About-specific ============ */
+
+  /* founding story */
+  .about-intro { padding: var(--s-2) 0 var(--s-6); }
+  .about-intro__lead {
+    font-family: "Noto Serif TC", serif;
+    font-size: clamp(1.15rem, 2.6vw, 1.5rem);
+    line-height: 1.9;
+    color: var(--primary-deep);
+    max-width: 40ch;
+    margin: 0 0 var(--s-4);
+  }
+  .about-intro p { color: var(--ink-soft); margin: 0 0 var(--s-3); max-width: 60ch; line-height: 1.95; }
+
+  /* ============ Timeline ============ */
+  .timeline-sec {
+    background: var(--bg-2);
+    padding: var(--s-8) 0;
+  }
+  .timeline { list-style: none; margin: var(--s-2) 0 0; padding: 0; }
+  .tl-item { position: relative; padding-left: 3rem; padding-bottom: var(--s-5); }
+  .tl-item:last-child { padding-bottom: 0; }
+  /* connector line — sits behind the opaque dots */
+  .tl-item:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 9px; top: 0.6rem; bottom: -0.4rem;
+    width: 2px;
+    background: var(--line-strong);
+  }
+  /* milestone dot — flat solid circle, no glow/halo */
+  .tl-item::after {
+    content: "";
+    position: absolute;
+    left: 0; top: 0.45rem;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+  }
+  .tl-item--future::after { background: var(--accent); }
+
+  .tl-content {
+    display: grid;
+    grid-template-columns: 152px 1fr;
+    gap: var(--s-5);
+    align-items: start;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--s-5);
+  }
+  .tl-photo { width: 100%; }
+  @media (max-width: 600px) {
+    .tl-content { grid-template-columns: 1fr; }
+    .tl-photo { max-width: 200px; }
+  }
+  .tl-year {
+    display: block;
+    font-family: "Noto Serif TC", serif;
+    font-size: clamp(1.6rem, 3.6vw, 2.1rem);
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.1;
+  }
+  .tl-item--future .tl-year { color: var(--accent); }
+  .tl-soon {
+    font-family: "Noto Sans TC", sans-serif;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.03em;
+    color: #fff; background: var(--accent);
+    padding: 0.2rem 0.6rem; border-radius: 6px;
+    vertical-align: middle; margin-left: 0.6rem; white-space: nowrap;
+  }
+  .tl-title {
+    font-family: "Noto Serif TC", serif;
+    font-size: 1.22rem; font-weight: 600; color: var(--primary-deep);
+    margin: 0.35rem 0 0.6rem;
+  }
+  .tl-content p { margin: 0; color: var(--ink-soft); line-height: 1.95; font-size: 0.98rem; }
+
+  /* ============ Specialty credibility callout ============ */
+  .cred { padding: var(--s-8) 0; }
+  .cred__card {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: var(--s-4);
+    align-items: start;
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-soft);
+    border-radius: var(--radius-lg);
+    padding: var(--s-6);
+  }
+  .cred__icon {
+    width: 64px; height: 64px; border-radius: 18px;
+    display: grid; place-items: center;
+    background: var(--surface); color: var(--primary-deep);
+    box-shadow: var(--shadow-sm);
+  }
+  .cred__icon svg { width: 32px; height: 32px; }
+  .cred__card h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); color: var(--primary-deep); margin-bottom: var(--s-2); }
+  .cred__card p { margin: 0; color: var(--ink-soft); line-height: 1.95; max-width: 60ch; }
+  .cred__card p + p { margin-top: var(--s-3); }
+
+  /* ============ Community / values ============ */
+  .values { padding: 0 0 var(--s-8); }
+  .values__inner {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--s-7) var(--s-6);
+    text-align: center;
+  }
+  .values__inner .kicker {
+    font-size: 0.92rem; letter-spacing: 0.14em; color: var(--ink-soft);
+    font-weight: 700; display: inline-flex; align-items: center; gap: 0.5rem;
+    margin-bottom: var(--s-3);
+  }
+  .values__inner .kicker::before,
+  .values__inner .kicker::after { content: ""; width: 22px; height: 2px; border-radius: 2px; background: var(--accent); }
+  .values__inner p {
+    font-family: "Noto Serif TC", serif;
+    font-size: clamp(1.15rem, 2.6vw, 1.5rem);
+    line-height: 1.95; color: var(--primary-deep);
+    max-width: 44ch; margin: 0 auto;
+  }
+
+  /* ============ Closing CTA ============ */
+  .about-cta { padding-bottom: var(--s-8); }
+  .about-cta__card {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    gap: var(--s-4) var(--s-5);
+    background: var(--primary-deep); color: #fff;
+    border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
+    padding: var(--s-6);
+  }
+  .about-cta__card h2 { color: #fff; font-size: clamp(1.3rem, 3vw, 1.7rem); }
+  .about-cta__card p { margin: 0.4rem 0 0; color: rgba(255,255,255,0.78); font-size: 0.96rem; max-width: 46ch; }
+  .about-cta__links { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .about-cta__links a {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    font-size: 0.92rem; font-weight: 500; color: #fff;
+    border: 1px solid rgba(255,255,255,0.35); border-radius: 999px;
+    padding: 0.5rem 1.05rem;
+    transition: background 0.25s ease-out, border-color 0.25s ease-out, transform 0.25s ease-out;
+  }
+  .about-cta__links a:hover { background: rgba(255,255,255,0.1); border-color: #fff; transform: translateY(-2px); }
+  .about-cta__links a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .about-cta__links a svg { width: 15px; height: 15px; }
+  /* dark label for AA contrast on the terracotta CTA (white-on-accent was 3.27:1).
+     #121110 clears 4.5:1 on both the resting accent and the #b96a38 hover. */
+  .about-cta__links .primary {
+    background: var(--accent); border-color: var(--accent); color: #121110;
+  }
+  .about-cta__links .primary:hover { background: #b96a38; border-color: #b96a38; }
+
+  /* ============ Responsive ============ */
+  @media (max-width: 760px) {
+    .cred__card { grid-template-columns: 1fr; }
+    .cred__icon { width: 56px; height: 56px; }
+    .values__inner { padding: var(--s-6) var(--s-5); }
+    .about-cta__card { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">跳到主要內容</a>
+
+<!-- ===================== Header ===================== -->
+<header class="site-header" id="header">
+  <div class="wrap nav">
+    <a href="index.html" class="brand" aria-label="大豐耳鼻喉科聯合診所 首頁">
+      <img src="assets/logo.png" alt="大豐耳鼻喉科聯合診所 標誌" class="brand__mark" />
+      <span class="brand__text">
+        <span class="brand__name">大豐耳鼻喉科</span>
+        <span class="brand__sub">DAFENG ENT CLINIC</span>
+      </span>
+    </a>
+    <nav class="nav__links" id="navLinks" aria-label="主要選單">
+      <a href="about.html" aria-current="page">關於大豐</a>
+      <a href="services.html">診療項目</a>
+      <a href="team.html">醫療團隊</a>
+      <a href="locations.html">院區・門診</a>
+      <a href="faq.html">衛教專欄</a>
+      <a href="news.html">最新消息</a>
+    </nav>
+    <div class="lang-toggle" aria-label="語言 / Language">
+      <span class="lang-toggle__on" lang="zh-Hant" aria-current="true">中文</span>
+      <span class="sep" aria-hidden="true">|</span>
+      <a href="en/about.html" lang="en">EN</a>
+    </div>
+
+    <a href="contact.html" class="btn nav__cta">
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      立即預約
+    </a>
+    <button class="nav__toggle" id="navToggle" aria-label="開啟選單" aria-expanded="false" aria-controls="navLinks">
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+  <!-- ===================== Page head ===================== -->
+  <section class="page-head">
+    <div class="wrap">
+      <nav class="breadcrumb" aria-label="麵包屑">
+        <a href="index.html">首頁</a>
+        <span class="sep">／</span>
+        <span aria-current="page">關於大豐</span>
+      </nav>
+      <span class="eyebrow reveal in">自 2010 年・在地深耕</span>
+      <h1 class="reveal in d1">關於大豐</h1>
+      <p class="page-head__lead reveal in d2">在地深耕新店・文山，從基層耳鼻喉照護，到成人與兒童的睡眠呼吸中止症診斷與治療，大豐陪伴社區家庭的每一個階段。</p>
+    </div>
+  </section>
+
+  <!-- ===================== Founding story ===================== -->
+  <section class="about-intro" aria-label="診所理念">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="kicker"><span class="kicker__en">Our Story</span>我們的起點</span>
+        <h2>社區巷口的耳鼻喉照護</h2>
+      </div>
+      <p class="about-intro__lead reveal">「大豐」之名，取「醫者大愛、健康豐盛」之意。我們相信好的耳鼻喉照護，不該只在大醫院，更應該在您每天經過的社區巷口。</p>
+      <p class="reveal">從 2010 年新店的一間診所開始，大豐一步步在文山與新店扎根，由社區門診逐漸成長為跨院區的聯合診所。十多年來，我們始終把「就近、專業、陪伴一家人」放在照護的中心。</p>
+    </div>
+  </section>
+
+  <!-- ===================== Timeline ===================== -->
+  <section class="timeline-sec" aria-label="大豐的發展歷程">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="kicker"><span class="kicker__en">Milestones</span>發展歷程</span>
+        <h2>從新店一間診所，到四大院區</h2>
+        <p>2010 至今，大豐一步一腳印，把耳鼻喉照護帶到社區的更多角落。</p>
+      </div>
+
+      <ol class="timeline">
+        <li class="tl-item reveal">
+          <div class="tl-content">
+            <figure class="photo-zone photo-zone--1x1 photo-zone--sm tl-photo">
+              <span class="photo-zone__icon" aria-hidden="true">
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              </span>
+              <p class="photo-zone__label"><strong>2010 院區照片</strong>開幕合影／外觀／代表空間<br />1:1 或 4:5</p>
+            </figure>
+            <div class="tl-body">
+              <span class="tl-year">2010</span>
+              <h3 class="tl-title">新店建國路 — 大豐起點</h3>
+              <p>大豐診所於 2010 年在新店建國路開始營運，由蔡彥群醫師與廖學森醫師共同看診。兩位醫師專注於基層耳鼻喉科疾病的診治，以及成人與兒童睡眠呼吸中止症的診斷與治療，為大豐奠定基礎。</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="tl-item reveal">
+          <div class="tl-content">
+            <figure class="photo-zone photo-zone--1x1 photo-zone--sm tl-photo">
+              <span class="photo-zone__icon" aria-hidden="true">
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              </span>
+              <p class="photo-zone__label"><strong>2019 院區照片</strong>開幕合影／外觀／代表空間<br />1:1 或 4:5</p>
+            </figure>
+            <div class="tl-body">
+              <span class="tl-year">2019</span>
+              <h3 class="tl-title">木柵院區成立</h3>
+              <p>2019 年，蔡彥群醫師、廖學森醫師偕同蕭仁豪醫師與林雅芳醫師，共同成立木柵大豐耳鼻喉科診所，把耳鼻喉照護帶進文山區。</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="tl-item reveal">
+          <div class="tl-content">
+            <figure class="photo-zone photo-zone--1x1 photo-zone--sm tl-photo">
+              <span class="photo-zone__icon" aria-hidden="true">
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              </span>
+              <p class="photo-zone__label"><strong>2025 院區照片</strong>開幕合影／外觀／代表空間<br />1:1 或 4:5</p>
+            </figure>
+            <div class="tl-body">
+              <span class="tl-year">2025</span>
+              <h3 class="tl-title">興隆院區開幕</h3>
+              <p>2025 年 7 月，團隊再與李順源醫師、巫靚穎醫師攜手，開設興隆大豐耳鼻喉科診所，於文山興隆深化在地門診，並加入小兒專科的照護。</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="tl-item tl-item--future reveal">
+          <div class="tl-content">
+            <figure class="photo-zone photo-zone--1x1 photo-zone--sm tl-photo">
+              <span class="photo-zone__icon" aria-hidden="true">
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M19.1 4.9l-2.8 2.8M7.7 16.3l-2.8 2.8"/></svg>
+              </span>
+              <p class="photo-zone__label"><strong>中山院區開幕後補上</strong>Photo pending — clinic opens 2026/10</p>
+            </figure>
+            <div class="tl-body">
+              <span class="tl-year">2026 <span class="tl-soon">預計 10 月開幕</span></span>
+              <h3 class="tl-title">中山旗艦手術中心</h3>
+              <p>廖學森醫師、蔡彥群醫師與蕭仁豪醫師，預計於 2026 年 10 月在台北市中山區開設大豐耳鼻喉科診所附設手術中心。確切開幕日期與服務內容將陸續公布，敬請期待。</p>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===================== Specialty credibility ===================== -->
+  <section class="cred" aria-label="睡眠醫療經驗">
+    <div class="wrap">
+      <div class="cred__card reveal">
+        <span class="cred__icon">
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </span>
+        <div>
+          <h2>從創立起，就具備兒童睡眠手術經驗</h2>
+          <p>大豐自創立起，即具備兒童睡眠呼吸中止症的外科治療經驗。創院期間，廖學森醫師同時於萬芳醫學中心兼任耳鼻喉科主治醫師，並為兒童睡眠呼吸中止症安排手術治療。</p>
+          <p>這份在醫學中心累積的經驗，成為大豐長期投入睡眠醫療照護的基礎；2026 年中山旗艦院區設立手術中心後，將把睡眠與鼻過敏的評估到治療，整合在同一個地方。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Community / values ===================== -->
+  <section class="values" aria-label="社區承諾">
+    <div class="wrap">
+      <div class="values__inner reveal">
+        <span class="kicker"><span class="kicker__en">Our Promise</span>陪伴社區每一個家庭</span>
+        <p>從新店到文山，從孩子的中耳炎、過敏，到成人的鼻竇炎、眩暈與睡眠問題，大豐以一致的專業與親切，照顧每一個家庭、每一個階段，成為您家附近就近、可信賴的耳鼻喉科。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Closing CTA ===================== -->
+  <section class="about-cta">
+    <div class="wrap">
+      <div class="about-cta__card reveal">
+        <div>
+          <h2>想更認識大豐？</h2>
+          <p>看看我們的醫師團隊、診療項目與各院區門診資訊，或直接預約看診。</p>
+        </div>
+        <div class="about-cta__links">
+          <a href="team.html">醫療團隊
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a href="locations.html">院區・門診
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a href="services.html">診療項目
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="primary" href="contact.html">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            立即預約</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===================== Footer ===================== -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <img src="assets/logo.png" alt="大豐耳鼻喉科聯合診所 標誌" class="footer__logo" />
+        <span class="brand__name">大豐耳鼻喉科聯合診所</span>
+        <p>深耕新店、木柵與文山興隆，集結 6 位耳鼻喉科專科醫師與 1 位小兒專科醫師，陪伴社區每一個家庭。</p>
+      </div>
+      <div class="footer__locs">
+        <a class="loc" href="location-xindian.html">
+          <h4>新店大豐<span class="tag">總院</span></h4>
+          <p>231 新北市新店區明德里建國路 161、163 號 1 樓</p>
+          <p>電話 <span class="tel">02-2219-3122</span></p>
+        </a>
+        <a class="loc" href="location-xinglong.html">
+          <h4>興隆大豐</h4>
+          <p>116 臺北市文山區興安里興隆路二段 118 號</p>
+          <p>電話 <span class="tel">02-2933-6969</span></p>
+        </a>
+        <a class="loc" href="location-muzha.html">
+          <h4>木柵大豐</h4>
+          <p>116 臺北市文山區樟文里木新路三段 220 號 1 樓</p>
+          <p>電話 <span class="tel">02-2937-1299</span></p>
+        </a>
+        <a class="loc loc--soon" href="location-zhongshan.html">
+          <h4>中山大豐<span class="tag">手術中心</span></h4>
+          <p>臺北市中山區</p>
+          <p>2026 年 10 月開幕・敬請期待</p>
+        </a>
+      </div>
+    </div>
+
+    <p class="disclaimer">本網站依《醫療機構網際網路資訊管理辦法》規定：禁止任何網際網路服務業者轉錄本網站資訊之內容供人點閱；但以網路搜尋或超連結方式直接進入本網站者，不在此限。本網站內容僅供衛教參考，無法取代醫師親自診療，實際病情請以門診醫師評估為準。</p>
+
+    <div class="footer__base">
+      <span>© 2026 大豐耳鼻喉科聯合診所</span>
+      <nav aria-label="頁尾選單">
+        <a href="about.html">關於大豐</a>
+        <a href="services.html">診療項目</a>
+        <a href="team.html">醫療團隊</a>
+        <a href="locations.html">院區・門診</a>
+        <a href="contact.html">預約掛號</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/search-index.js" defer></script>
+<script src="assets/search.js" defer></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

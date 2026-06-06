@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1640" height="624" viewBox="0 0 1640 624" role="img" aria-label="大豐耳鼻喉科聯合診所 Facebook 封面">
+  <title>大豐耳鼻喉科聯合診所 — Facebook 封面</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Noto+Serif+TC:wght@600;700&amp;display=swap');
+    .serif { font-family: "Noto Serif TC","Songti TC","PingFang TC",serif; }
+    .sans  { font-family: "Noto Sans TC","PingFang TC","Heiti TC",sans-serif; }
+    text { letter-spacing: 0.01em; }
+  </style>
+
+  <!-- base / right cream panel -->
+  <rect x="0" y="0" width="1640" height="624" fill="#FAF6EF"/>
+  <!-- left teal panel -->
+  <rect x="0" y="0" width="1000" height="624" fill="#16635B"/>
+  <!-- crisp accent seam between panels (solid, no gradient) -->
+  <rect x="1000" y="0" width="8" height="624" fill="#CC7A45"/>
+
+  <!-- ============================================================= -->
+  <!-- LEFT TEAL PANEL — VERSION A: eyebrow + icons shifted RIGHT     -->
+  <!-- ============================================================= -->
+
+  <!-- eyebrow -->
+  <rect x="405" y="66" width="52" height="6" rx="3" fill="#CC7A45"/>
+  <text class="sans" x="469" y="80" font-size="24" font-weight="700" fill="#E3EFEC" letter-spacing="0.14em">專業診療項目</text>
+
+  <!-- 4 specialty icons (boxes #0E4A44, white line icons) — shifted right -->
+  <!-- icon 1 — 一般耳鼻喉 -->
+  <rect x="405" y="112" width="104" height="104" rx="28" fill="#0E4A44"/>
+  <g transform="translate(431,138) scale(2.1667)" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A1 1 0 0 0 3 3v3a6 6 0 0 0 12 0V3a1 1 0 0 0-1.8-.7"/><path d="M9 14v2a5 5 0 0 0 10 0v-1"/><circle cx="20" cy="10" r="2"/></g>
+  <text class="sans" x="457" y="252" text-anchor="middle" font-size="24" font-weight="500" fill="#FFFFFF">一般耳鼻喉</text>
+
+  <!-- icon 2 — 睡眠呼吸中止 -->
+  <rect x="557" y="112" width="104" height="104" rx="28" fill="#0E4A44"/>
+  <g transform="translate(583,138) scale(2.1667)" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></g>
+  <text class="sans" x="609" y="252" text-anchor="middle" font-size="24" font-weight="500" fill="#FFFFFF">睡眠呼吸中止</text>
+
+  <!-- icon 3 — 眩暈 -->
+  <rect x="709" y="112" width="104" height="104" rx="28" fill="#0E4A44"/>
+  <g transform="translate(735,138) scale(2.1667)" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0"/><path d="M12 12a5 5 0 0 1 5-5 7 7 0 0 1 0 14H8a6 6 0 0 1 0-12"/></g>
+  <text class="sans" x="761" y="252" text-anchor="middle" font-size="24" font-weight="500" fill="#FFFFFF">眩暈</text>
+
+  <!-- icon 4 — 頭頸部 -->
+  <rect x="861" y="112" width="104" height="104" rx="28" fill="#0E4A44"/>
+  <g transform="translate(887,138) scale(2.1667)" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></g>
+  <text class="sans" x="913" y="252" text-anchor="middle" font-size="24" font-weight="500" fill="#FFFFFF">頭頸部</text>
+
+  <!-- tagline (lower-right of teal panel, clear of bottom-left) -->
+  <rect x="405" y="406" width="68" height="6" rx="3" fill="#CC7A45"/>
+  <text class="serif" x="405" y="452" font-size="38" font-weight="600" fill="#FFFFFF">新店・文山在地深耕</text>
+  <text class="serif" x="405" y="508" font-size="38" font-weight="600" fill="#FFFFFF">三院區守護全家人的呼吸與睡眠</text>
+
+  <!-- ============================================================= -->
+  <!-- RIGHT CREAM PANEL — clinic name + 院區 list (no logo)          -->
+  <!-- centered at x=1300, kept clear of mobile right-crop edge      -->
+  <!-- ============================================================= -->
+  <text class="serif" x="1300" y="252" text-anchor="middle" font-size="52" font-weight="700" fill="#0E4A44" letter-spacing="0.03em">大豐耳鼻喉科</text>
+  <text class="serif" x="1300" y="312" text-anchor="middle" font-size="52" font-weight="700" fill="#0E4A44" letter-spacing="0.06em">聯合診所</text>
+  <rect x="1270" y="344" width="60" height="6" rx="3" fill="#CC7A45"/>
+  <text class="sans" x="1300" y="394" text-anchor="middle" font-size="22" font-weight="500" fill="#16635B" letter-spacing="0.10em">新店・木柵・興隆・中山</text>
+  <text class="sans" x="1300" y="432" text-anchor="middle" font-size="16" font-weight="500" fill="#5E584E" letter-spacing="0.06em">LINE 線上預約看診</text>
+</svg>
