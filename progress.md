@@ -2,7 +2,20 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 16)_
+_Last updated: 2026-06-06 (session 17)_
+
+## 🗓️ 2026-06-06 (session 17) — 最新消息：日期篩選改單一「日期」選擇器 + 修正院區篩選 bug；衛教專欄分頁改圓形
+
+多 agent 平行作業（A／B），本 agent 負責整併、稽核與唯一 commit。clinic-audit（report-only）三組全 PASS，無回歸。動到 `news.html`、`faq.html` 兩檔。
+
+- **最新消息：日期篩選由「從／到」區間改為單一「日期」選擇器。** `news.html` 原本兩個 `<input type="date">`（從／到，AND 區間）改為**單一原生日期選擇器** `<input type="date" id="newsDate">`，配 `<label for="newsDate">日期</label>`，群組改用 `role="group" aria-label="依日期篩選最新消息"`。選定＝只顯示**該日**消息（`data-date` 精確相等）、留空＝不限日期；「全部日期」按鈕清除所選。移除已不需要的 `.news-datefilter__field`／`__sep` 樣式與 from/to JS。日期框沿用既有 `--line-strong` 邊框 token、實心硬邊、無漸層／光暈；hover 僅變控制項自身（非卡片），並把原生日曆圖示 `::-webkit-calendar-picker-indicator` 的 opacity 由 0.65→hover 1。院區與日期兩種篩選仍同時作用（AND）。
+- **修正院區篩選 bug：中山公告現在只在「全部／中山」出現。** 真正成因＝CSS 優先序：`.news-card { display: flex }` 蓋過瀏覽器內建的 `[hidden]{display:none}`，所以 JS 設 `card.hidden=true` 後卡片**仍然顯示**——中山那張公告因此在每個院區篩選下都看得到。修法：新增 `.news-card[hidden] { display: none; }` 顯式覆寫（與既有 `.news-empty[hidden]` 同理）。院區比對維持精確相等（`data-clinic === chip`，全部除外）。實測：預設＝中山卡可見；按「新店」＝中山卡隱藏、列表落空狀態；按「中山」＝僅中山卡可見。
+- **衛教專欄分頁改為圓形。** `faq.html` `.faq-pagination__item` 由圓角矩形（`min-width:42px`／`padding:0 .6rem`／`border-radius:10px`）改為**正圓**（`width:42px`／`height:42px`／`padding:0`／`border-radius:50%`）。狀態色不變、皆既有 token：目前頁 `aria-current="page"`＝白字 on `--primary`（實心綠）、hover＝`--primary-deep` 字 on `--primary-soft` 底高亮、`:focus-visible`＝2px `--primary` 外框、端點箭頭 `is-disabled`＝`--ink-faint`／`--line`。實心硬邊、無漸層／光暈；hover 變色僅作用於控制項（非卡片）。分頁邏輯／`?page=N`／reduced-motion 不變。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：兩檔無 保證／根治／唯一／第一／必須〔命中 1 筆為 JS 註解「data-clinic 必須等於該 chip」，非頁面文案〕／一定要／最〔上級〕；`最` 全站僅 最新×42／最近×7／最佳×3；無費用；`%` grep 命中皆為 CSS（width:100%、border-radius:50%）；中山卡片維持未來式、無手術招攬；兩檔頁尾免責聲明齊全。
+- **設計規則**：兩檔 gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow／`transition:all` 全 0（`transition:all` grep 命中 2 筆皆為「never transition-all」註解）；`.news-card:hover`＝lift（transform＋shadow，不變色）；日期框／reset／分頁的 hover 變色皆為控制項（非卡片）；圓形分頁實心硬邊無光暈。**桌機 header 維持單行**（1280px 截圖確認 header 高 73px 單列，含中山 chip 不溢出）。
+- **無障礙**：日期 input 有 `<label for="newsDate">`＋群組 `aria-label`；對比皆過 AA — 分頁 active 白字 on `--primary` 6.85／hover `--primary-deep` on `--primary-soft` 8.4／disabled `--ink-faint` on white 5.20／resting `--ink-soft` 7.04；日期 label `--ink-soft` on cream 6.54／reset 7.04。html lang zh-Hant；唯一無 alt 的 `<img>`（news.html:420）在 HTML 範本註解內、非實際元素；分頁 `aria-current`／`aria-disabled`／`aria-label` 齊備。兩支 inline script 渲染正常。截圖確認：`news-header`（單行）、`news-controls`（單一日期選擇器＋reset）、`faq-pagination`（圓形、1 為實心綠 active）。
 
 ## 🗓️ 2026-06-06 (session 16) — 最新消息：中山院區篩選 + 依日期篩選；修正 FAQ 分頁捲動被 sticky header 遮蔽；團隊照重新置中
 

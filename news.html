@@ -96,7 +96,7 @@
     border-color: var(--primary);
   }
 
-  /* right-side controls column: clinic chips on top, date range below */
+  /* right-side controls column: clinic chips on top, 日期 picker below */
   .news-controls {
     display: flex;
     flex-direction: column;
@@ -104,7 +104,7 @@
     gap: var(--s-3);
   }
 
-  /* date-range filter — solid hard-edged inputs, no glow/gradient */
+  /* single 日期 picker — one compact native date control, solid hard edges, no glow/gradient */
   .news-datefilter {
     display: flex;
     flex-wrap: wrap;
@@ -116,20 +116,6 @@
     font-weight: 600;
     color: var(--ink-soft);
   }
-  .news-datefilter__field {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-  .news-datefilter__field label {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--ink-faint);
-  }
-  .news-datefilter__sep {
-    color: var(--ink-faint);
-    font-weight: 600;
-  }
   .news-dateinput {
     font-family: inherit;
     font-size: 0.85rem;
@@ -137,9 +123,13 @@
     background: var(--surface);
     border: 1px solid var(--line-strong);
     border-radius: var(--radius);
-    padding: 0.4rem 0.6rem;
+    padding: 0.45rem 0.7rem;
+    cursor: pointer;
     transition: border-color 0.2s var(--ease);
   }
+  /* nudge the native calendar picker indicator to the brand ink tone */
+  .news-dateinput::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.65; }
+  .news-dateinput:hover::-webkit-calendar-picker-indicator { opacity: 1; }
   .news-dateinput:hover { border-color: var(--primary); }
   .news-dateinput:focus-visible {
     outline: 2px solid var(--primary);
@@ -190,6 +180,9 @@
     transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
   }
   .news-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+  /* filtered-out cards must hide: .news-card{display:flex} outranks the UA [hidden] rule,
+     so an explicit override is required (same reason .news-empty[hidden] has one). */
+  .news-card[hidden] { display: none; }
   /* media box: fixed 16:9 so cards align; real images cover it and never overflow */
   .news-card__media {
     position: relative;
@@ -392,17 +385,9 @@
             <button type="button" class="news-filter" data-filter="zhongshan" aria-pressed="false">中山</button>
           </div>
 
-          <div class="news-datefilter" role="group" aria-labelledby="newsDateLabel">
-            <span class="news-datefilter__label" id="newsDateLabel">依日期篩選</span>
-            <span class="news-datefilter__field">
-              <label for="newsDateFrom">從</label>
-              <input type="date" id="newsDateFrom" class="news-dateinput" />
-            </span>
-            <span class="news-datefilter__sep" aria-hidden="true">–</span>
-            <span class="news-datefilter__field">
-              <label for="newsDateTo">到</label>
-              <input type="date" id="newsDateTo" class="news-dateinput" />
-            </span>
+          <div class="news-datefilter" role="group" aria-label="依日期篩選最新消息">
+            <label class="news-datefilter__label" for="newsDate">日期</label>
+            <input type="date" id="newsDate" class="news-dateinput" />
             <button type="button" class="news-datereset" id="newsDateReset">全部日期</button>
           </div>
         </div>
@@ -498,17 +483,17 @@
 <script src="assets/search.js" defer></script>
 <script src="assets/site.js"></script>
 <script>
-  /* ===== 最新消息: sort (newest first) + clinic filter + date-range filter =====
-     兩種篩選同時作用（AND）：院區 chip 與日期區間都要符合，卡片才顯示。
-     日期區間用 from/到 兩個 <input type="date">，留空＝該側無限制；
-     「全部日期」按鈕清除日期區間。預設：院區=全部、日期=不限。 */
+  /* ===== 最新消息: sort (newest first) + clinic filter + 日期 filter =====
+     兩種篩選同時作用（AND）：院區 chip 與所選日期都要符合，卡片才顯示。
+     日期為單一 <input type="date">（原生日曆），選定＝只顯示該日的消息、
+     留空＝不限日期；「全部日期」按鈕清除所選日期。
+     院區比對為精確相等：卡片的 data-clinic 必須等於該 chip（全部除外）。 */
   (function () {
     var grid = document.getElementById('newsGrid');
     if (!grid) return;
     var empty = document.getElementById('newsEmpty');
     var filters = document.querySelectorAll('.news-filter');
-    var dateFrom = document.getElementById('newsDateFrom');
-    var dateTo = document.getElementById('newsDateTo');
+    var dateInput = document.getElementById('newsDate');
     var dateReset = document.getElementById('newsDateReset');
 
     // sort cards by data-date, newest first (keeps empty-state node last)
@@ -520,15 +505,12 @@
 
     var clinic = 'all';
 
-    // ISO date strings (YYYY-MM-DD) compare correctly with simple string compare.
     function apply() {
-      var from = dateFrom ? dateFrom.value : '';
-      var to = dateTo ? dateTo.value : '';
+      var picked = dateInput ? dateInput.value : ''; // ISO YYYY-MM-DD, '' = 不限
       var shown = 0;
       cards.forEach(function (card) {
-        var d = card.getAttribute('data-date') || '';
         var clinicMatch = clinic === 'all' || card.getAttribute('data-clinic') === clinic;
-        var dateMatch = (!from || d >= from) && (!to || d <= to);
+        var dateMatch = !picked || (card.getAttribute('data-date') || '') === picked;
         var match = clinicMatch && dateMatch;
         card.hidden = !match;
         if (match) shown++;
@@ -544,12 +526,10 @@
       });
     });
 
-    if (dateFrom) dateFrom.addEventListener('change', apply);
-    if (dateTo) dateTo.addEventListener('change', apply);
+    if (dateInput) dateInput.addEventListener('change', apply);
     if (dateReset) {
       dateReset.addEventListener('click', function () {
-        if (dateFrom) dateFrom.value = '';
-        if (dateTo) dateTo.value = '';
+        if (dateInput) dateInput.value = '';
         apply();
       });
     }
