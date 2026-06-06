@@ -2,7 +2,21 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 21)_
+_Last updated: 2026-06-06 (session 22)_
+
+## 🗓️ 2026-06-06 (session 22) — 衛教專欄移除 Q 編號；404 頁加上診所 logo
+
+多 agent 平行作業（A／B），本 agent 負責整併、clinic-audit（report-only）、瀏覽器驗證與唯一 commit。三組全 PASS，無回歸；header 桌機與行動版皆單行。動到 `404.html`、`assets/site.css`、`faq-q1…q12.html`（12 篇文章頁）。
+
+- **衛教專欄移除 Q 編號（文章頁＋卡片＋未用 CSS；URL 不變）。** 12 篇 `faq-qN.html` 各移除標題上方的 `<span class="faq-article__num">QN</span>`（Q1–Q12），文章直接以 `<h1>` 主標起頭，讀來更像衛教文章而非題庫編號。每頁仍恰 1 個 `<h1>`、標題順序 `h1→h2 h2 h2` 無跳級。`assets/site.css` 一併移除已無用的 `.faq-article__num` 規則。**卡片頁 `faq.html` 本就無編號標記**（卡片用分類 pill＋標題＋摘要，無 Q 數字），故無需更動、不在改檔清單。**檔名／URL／`#`／`?page=` 一律不變**，站內連結與搜尋索引不受影響。每檔 diff 皆為單行刪除（僅該 num span），無其他內容變動。
+- **404 頁加上診所 logo。** `404.html` 在 error-hero「404」大字上方加入診所 logo（`assets/logo.png`），樣式 `.error-logo`＝圓形白底底板、`padding` 留白、grounded `--shadow-sm`（接地陰影、非光暈）、硬邊、無漸層。logo 為**裝飾性**（`alt="" aria-hidden="true"`；頁面語意由 `<h1>找不到頁面` 承載、header 另有具 alt 的品牌 logo），不影響無障礙。上下對稱留白維持。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：變更檔無 保證／根治／唯一／第一／必須／一定要／最〔上級〕；無費用；無療效百分比；12 篇文章頁與 404 頁尾免責聲明各 1 齊全；移除的僅為視覺編號 span，院長核准之內文一字未動。
+- **設計規則**：變更檔 gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow／`transition:all` 全 0；404 logo 底板為實心圓＋grounded `--shadow-sm`（非光暈）；無漸層。**header 桌機與 390px 皆單行（73px）**。
+- **無障礙**：12 篇文章頁移除 num span 後仍各 1 `<h1>`、標題順序 `h1 h2 h2 h2` 無跳級（CDP 實測文章首元素＝`<h1>` 主標、無 Q 標籤）；404 logo `alt="" aria-hidden`＝裝飾、不入無障礙樹；變更檔 `<img>` 具 alt、裝飾 SVG 全 `aria-hidden`。
+- **瀏覽器驗證**：`404.html` logo 渲染（圓形底板、無光暈）、header 單行；`faq-q1.html` 文章直接以「鼻過敏與睡眠品質的關係」`<h1>` 起頭、無 Q1 標籤。截圖 `404-logo` 確認。
+- **範圍外未提交**：工作目錄另有未追蹤檔 `brand_assets/NHI logo.png`，**未被任何頁面／樣式引用**，且不屬本次（FAQ 編號＋404 logo）範圍，故**未納入本次 commit**；留待釐清是否要接上 §九「健保特約」徽章圖（目前徽章為純文字 chip）。
 
 ## 🗓️ 2026-06-06 (session 21) — 自訂 404 頁 + 健保特約頁尾徽章（全站）+ Cloudflare Web Analytics；booking modal 連結置中；行動版 QA
 

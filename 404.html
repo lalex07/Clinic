@@ -25,6 +25,18 @@
     text-align: center;
   }
   .error-hero__inner { max-width: 32rem; }
+  /* decorative brand mark — circular, solid white plate, grounded shadow (no glow/gradient) */
+  .error-logo {
+    width: clamp(96px, 24vw, 112px);
+    height: clamp(96px, 24vw, 112px);
+    border-radius: 50%;
+    object-fit: cover;
+    background: #fff;
+    padding: 6px;
+    margin: 0 auto var(--s-4);
+    display: block;
+    box-shadow: var(--shadow-sm);
+  }
   .error-code {
     font-family: "Noto Serif TC", serif;
     font-size: clamp(3rem, 11vw, 4.75rem);
@@ -96,6 +108,7 @@
 <main id="main">
   <section class="error-hero">
     <div class="error-hero__inner">
+      <img class="error-logo" src="assets/logo.png" alt="" aria-hidden="true" />
       <p class="error-code" aria-hidden="true">404</p>
       <h1>找不到頁面</h1>
       <p class="error-lead">您要找的頁面可能已移除或網址有誤。</p>
