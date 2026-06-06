@@ -2,7 +2,19 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 14)_
+_Last updated: 2026-06-06 (session 15)_
+
+## 🗓️ 2026-06-06 (session 15) — 修正搜尋：Enter 顯示結果而非跳到第一筆 + 背幕續加深至 ~rgba(0,0,0,.65)
+
+clinic-audit（report-only）三組全 PASS，無回歸。本次僅動 `assets/search.js`（搜尋行為）與先前 `assets/site.css`（背幕）。
+
+- **修正搜尋 UX bug：Enter／「搜尋」鈕不再自動跳到第一筆結果。** 先前 `assets/search.js` 的 form submit 與 Enter keydown 都呼叫 `go(active)`，當無標定項（`active === -1`）時 `go()` 會後備跳到 `results[0]`，等於一按 Enter 就離開 overlay 跳到第一筆。現在：①`go(i)` 移除「自動選第一筆」後備，僅在 `i > -1`（使用者明確選定）時導航；②form submit 改為只 `preventDefault()` 並 `render(input.value)`——不導航、不重載，與即時輸入相同；③Enter keydown 僅在已用 ↑/↓ 標定某筆（`active > -1`）時才導航，否則交給 submit→render。導航只發生在使用者明確點擊某筆結果，或鍵盤標定後 Enter。即時篩選、熱門搜尋 chip、Esc／點背幕關閉、focus trap／焦點處理、combobox ARIA 全部不變。**保留鍵盤 ↑/↓+Enter 開啟結果的路徑**（結果 `<a>` 為 `tabindex="-1"`，這是唯一鍵盤導向路徑，移除將造成 a11y 回歸）。
+- **搜尋 overlay 背幕續加深。** `assets/site.css` `.search-overlay__backdrop` 由 `rgba(0,0,0,.5)` 再加深為 `rgba(0,0,0,.65)`，頁面更明確壓暗、白色彈窗更突出（接近 HomePro）；仍為實心 rgba、**無 `backdrop-filter`／模糊**，符合設計規則。（此筆於 session 14 之後追加，補記於此。）
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：未動任何頁面文案，無新增違規詞／費用／療效百分比；頁尾免責聲明不受影響。
+- **設計規則**：changed files 內 gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow／`transition:all` 全 0；背幕實心無模糊。`node --check assets/search.js` 通過。
+- **無障礙**：search.js 的 combobox ARIA（`aria-expanded`／`aria-controls`／`aria-activedescendant`、`role="listbox"`／`"option"`）與 focus trap 維持原樣；鍵盤 ↑/↓+Enter 結果導向路徑保留。
 
 ## 🗓️ 2026-06-06 (session 14) — 衛教專欄列表分頁（每頁 6 篇）+ 搜尋 overlay 背幕加深
 

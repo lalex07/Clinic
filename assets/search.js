@@ -216,9 +216,10 @@
       input.setAttribute("aria-expanded", "true");
     }
 
+    // 僅在使用者明確選定某筆結果（i > -1，經 ↑/↓ 標定）時才導航。
+    // 不做任何「自動選第一筆」的後備跳轉——送出搜尋本身不該離開 overlay。
     function go(i) {
       if (i > -1 && results[i]) window.location.href = results[i].url;
-      else if (results.length) window.location.href = results[0].url;
     }
 
     // --- overlay 開 / 關 ------------------------------------------------
@@ -257,10 +258,11 @@
 
     input.addEventListener("input", function () { render(input.value); });
 
+    // 送出（Enter 或「搜尋」鈕）：不導航、不重新載入，只重跑篩選並渲染結果，
+    // 與即時輸入相同。導航僅在使用者點擊（或 ↑/↓ 標定後 Enter）某筆結果時發生。
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      if (results.length) go(active);
-      else render(input.value);
+      render(input.value);
     });
 
     input.addEventListener("keydown", function (e) {
@@ -274,7 +276,8 @@
           if (!list.hidden) { setActive(active - 1); e.preventDefault(); }
           break;
         case "Enter":
-          if (!list.hidden && results.length) { go(active); e.preventDefault(); }
+          // 僅當已用 ↑/↓ 標定某筆（active > -1）時才導航；否則交給 submit→render。
+          if (!list.hidden && active > -1) { go(active); e.preventDefault(); }
           break;
       }
     });
