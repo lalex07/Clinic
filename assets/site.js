@@ -69,7 +69,23 @@
   if (footerBrand) {
     var nhiBadge = document.createElement('span');
     nhiBadge.className = 'nhi-badge';
-    nhiBadge.textContent = '健保特約診所';
+    // Official NHI (全民健康保險) logo as the trust mark, with a short 健保特約
+    // text label beside it. The logo is a meaningful trust signal, so its alt
+    // describes it and it is NOT aria-hidden. Served copy lives in assets/;
+    // the source PNG stays in brand_assets/.
+    var nhiLogo = document.createElement('img');
+    nhiLogo.className = 'nhi-badge__logo';
+    nhiLogo.src = 'assets/nhi-logo.png';
+    nhiLogo.alt = '全民健康保險特約院所';
+    nhiLogo.width = 32;
+    nhiLogo.height = 32;
+    nhiLogo.loading = 'lazy';
+    nhiLogo.decoding = 'async';
+    var nhiText = document.createElement('span');
+    nhiText.className = 'nhi-badge__text';
+    nhiText.textContent = '健保特約';
+    nhiBadge.appendChild(nhiLogo);
+    nhiBadge.appendChild(nhiText);
     footerBrand.appendChild(nhiBadge);
   }
 

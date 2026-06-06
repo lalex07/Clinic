@@ -510,12 +510,13 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
 .footer__base a:hover { color: #fff; }
 
 /* 健保特約 trust badge — injected site-wide via site.js into .footer__brand.
-   Solid cream chip, hard edges, on-brand; no glow/gradient. §九-permitted字樣. */
+   Official 全民健康保險 (NHI) logo + short 健保特約 label. Solid cream chip,
+   hard edges, on-brand; no glow/gradient. §九-permitted字樣. */
 .nhi-badge {
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   padding: 0.3rem 0.7rem;
   background: var(--bg);
   color: var(--primary-deep);
@@ -525,12 +526,11 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   border: 1px solid var(--line-strong);
   border-radius: 7px;
 }
-.nhi-badge::before {
-  content: "";
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--primary);
+.nhi-badge__logo {
+  display: block;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
 }
 
 /* ============ Reveal animation ============ */

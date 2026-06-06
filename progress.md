@@ -2,7 +2,22 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 22)_
+_Last updated: 2026-06-06 (session 23)_
+
+## 🗓️ 2026-06-06 (session 23) — 健保特約 footer badge 改用官方 NHI（全民健康保險）logo
+
+把全站頁尾的「健保特約診所」純文字 badge 換成官方 **全民健康保險（NHI）logo** 圖示＋短文字標籤。診所為健保特約（已確認）。clinic-audit（report-only）三組全 PASS。動到 `assets/site.js`、`assets/site.css`，新增圖片資產。
+
+- **新增圖片資產（source 留存、served 複製）。** 來源 `brand_assets/NHI logo.png`（官方 NHI 圓形標誌，250×250 PNG）保留未動於 source 資料夾；**複製一份**為服務用的 `assets/nhi-logo.png`，並縮為 144×144（footer 顯示 32px 的 4×，retina 仍銳利、降採樣不放大），檔案 32KB→22KB。命名去除空格，符合 file-organization 規則（served 資產平鋪於 `assets/`）。
+- **`assets/site.js` badge 注入改為 logo 圖。** 原 `nhiBadge.textContent = '健保特約診所'`（純文字）改為注入 `<img class="nhi-badge__logo" src="assets/nhi-logo.png" alt="全民健康保險特約院所" width=32 height=32 loading=lazy decoding=async>` ＋ 旁邊短標籤 `<span class="nhi-badge__text">健保特約</span>`。logo 是信任標記，**alt 描述其意義且未 `aria-hidden`**。logo 本身只含「全民健康保險」字樣，故保留「健保特約」文字標籤以傳達「特約」語意、可讀性更佳。
+- **`assets/site.css` 微調 `.nhi-badge`。** 移除原本的裝飾性小圓點 `.nhi-badge::before`（有了真正的 logo 後該點多餘、會顯雜亂），新增 `.nhi-badge__logo`（block、32×32、flex-shrink:0），gap 0.4→0.45rem。chip 維持實心 cream 底、`--line-strong` 邊框、硬邊、圓角 7px——無漸層／光暈（符合設計規則）。
+- **未動其他。** 僅 footer badge；header、頁面結構、其餘元件與 §九 文案皆未更動。`健保特約` 字樣為 §九 允許項。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：site.js／site.css／全站無 保證／根治／唯一／第一／必須／一定要／最〔上級〕；無費用（`%` grep 命中皆為 CSS 寬度與既有 noise 紋理 data URI `100%25`）；無療效百分比。健保特約為合規信任標記（已確認特約）。
+- **設計規則**：site.js clean；`.nhi-badge` 區塊 gradient／blur／drop-shadow／`0 0` glow／`transition:all` 全 0（grep 命中為註解文字）；badge 為實心 cream chip、硬邊；logo 由 144px 降採樣顯示 32px，銳利不放大。
+- **無障礙**：rendered DOM 確認注入 `<img … alt="全民健康保險特約院所" …>`（**非 aria-hidden**）＋「健保特約」文字；badge 文字 `--primary-deep` on cream chip ＝ **9.36:1** 過 AA；header 不受影響（僅 footer 變更），桌機維持單行。其餘頁面 static `<img>` alt 全齊（news.html `<img>` 命中為 HTML 範本註解內，既知誤報）。
+- **渲染**（Chrome headless，`temporary screenshots/s17-*`）：`s17-footer-desktop`／`s17-badge-desktop-closeup`（桌機 footer badge：NHI logo＋健保特約，銳利）、`s17-badge-mobile`（手機同樣銳利）。本機 server 對 index.html 與 `assets/nhi-logo.png` 皆 200。
 
 ## 🗓️ 2026-06-06 (session 22) — 衛教專欄移除 Q 編號；404 頁加上診所 logo
 
