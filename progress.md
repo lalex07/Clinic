@@ -2,7 +2,16 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 19)_
+_Last updated: 2026-06-06 (session 20)_
+
+## 🗓️ 2026-06-06 (session 20) — 立即預約 booking modal 微調：院區名稱字重、院區・門診連結、開啟動畫放慢
+
+只動 `assets/site.js`、`assets/site.css`。clinic-audit（report-only）三組全 PASS，無回歸；header 仍單行。
+
+- **院區名稱字重調輕。** `.booking-row__name` 由 `font-weight: 600` 改為 `500`（medium），新店大豐／木柵大豐等讀來清楚但不厚重；尺寸與顏色不變（`--ink`）。
+- **新增「查看院區・門診 →」導覽連結。** modal 底部加入 `.booking-modal__more`（真實 `<a href="locations.html">`，非 contact CTA，故不被預約攔截器接管，正常導頁）。實心硬邊、teal 底線（`--primary-deep`，hover 轉 `--primary`），`:focus-visible` 外框；鍵盤可聚焦並納入 focus trap（為最後一個可聚焦元素，CDP 實測）。對比度：resting 10.09:1、hover 6.85:1（白底）皆過 WCAG AA。
+- **開啟動畫放慢。** `.booking-overlay`（opacity）與 `.booking-modal`（transform）過場由 `0.22s` 提高為 `0.28s`、沿用 `--ease`（gentle），開啟更順不突兀；JS 關閉計時器同步 `240ms→280ms`。`@media (prefers-reduced-motion: reduce)` 仍將 booking 過場設為 `none`＝瞬開（CDP 確認 transitionDuration 0.28s、reduced-motion 不變）。
+- **驗證（CDP headless）**：開啟 modal → more 連結文字「查看院區・門診 →」、href `locations.html`、在 focus trap 內且為最後可聚焦項、聚焦後點擊導向 `/locations.html` ✓；`.booking-row__name` computed font-weight 500 ✓；overlay／modal transitionDuration 皆 0.28s ✓。桌機截圖確認名稱變輕、連結置於底部。
 
 ## 🗓️ 2026-06-06 (session 19) — 立即預約 booking modal（LINE 預約掛號＋手術諮詢）+ contact.html 後備頁 + 院區 QR 卡接上預約連結
 

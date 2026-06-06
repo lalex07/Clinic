@@ -124,6 +124,7 @@
             }).join('') +
           '</ul>' +
         '</div>' +
+        '<a class="booking-modal__more" href="locations.html">查看院區・門診<span aria-hidden="true"> →</span></a>' +
       '</div>';
     document.body.appendChild(overlay);
 
@@ -153,7 +154,7 @@
       if (overlay.hidden) return;
       overlay.classList.remove('is-open');
       if (reduceMotion()) finishClose();
-      else closeTimer = setTimeout(finishClose, 240);
+      else closeTimer = setTimeout(finishClose, 280);
       if (lastFocus && lastFocus.focus) lastFocus.focus(); // 焦點回到開啟的 CTA
     }
 

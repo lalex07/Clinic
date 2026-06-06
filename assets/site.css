@@ -1060,7 +1060,7 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   justify-content: center;
   padding: clamp(1rem, 8vh, 6rem) var(--s-4) var(--s-4);
   opacity: 0;
-  transition: opacity 0.22s var(--ease);
+  transition: opacity 0.28s var(--ease); /* slower, gentle open fade */
 }
 .booking-overlay.is-open { opacity: 1; }
 .booking-overlay[hidden] { display: none; }
@@ -1082,7 +1082,7 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   box-shadow: var(--shadow-lg);
   padding: var(--s-5);
   transform: translateY(-8px);
-  transition: transform 0.22s var(--ease);
+  transition: transform 0.28s var(--ease); /* slower, gentle open slide */
 }
 .booking-overlay.is-open .booking-modal { transform: translateY(0); }
 .booking-modal:focus { outline: none; } /* dialog 開啟時聚焦容器，不顯示焦點框（內部元素才需要） */
@@ -1149,7 +1149,7 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   border: 1px solid var(--line);
   border-radius: var(--radius);
 }
-.booking-row__name { font-weight: 600; color: var(--ink); }
+.booking-row__name { font-weight: 500; color: var(--ink); }
 .booking-row__soon { font-size: 0.85rem; color: var(--ink-faint); }
 .booking-row--soon { background: var(--surface); border-style: dashed; border-color: var(--line-strong); }
 
@@ -1176,6 +1176,21 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
 }
 .booking-line:focus-visible { outline: 2px solid var(--primary-deep); outline-offset: 3px; }
 .booking-line__icon { width: 18px; height: 18px; flex: none; }
+
+/* modal 底部「查看院區・門診」導覽連結 — 實心硬邊、無光暈／漸層 */
+.booking-modal__more {
+  display: inline-block;
+  margin-top: var(--s-4);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-deep);
+  text-decoration: none;
+  border-bottom: 1px solid var(--primary-soft);
+  padding-bottom: 1px;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.booking-modal__more:hover { color: var(--primary); border-color: var(--primary); }
+.booking-modal__more:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; border-color: transparent; }
 
 /* contact.html 的預約區塊容器（窄欄、置中、舒適行距） */
 .booking-page {
