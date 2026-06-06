@@ -2,7 +2,26 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 20)_
+_Last updated: 2026-06-06 (session 21)_
+
+## 🗓️ 2026-06-06 (session 21) — 自訂 404 頁 + 健保特約頁尾徽章（全站）+ Cloudflare Web Analytics；booking modal 連結置中；行動版 QA
+
+多 agent 平行作業（A／B），本 agent 負責整併、clinic-audit（report-only）、瀏覽器驗證與唯一 commit。三組全 PASS，無回歸；桌機與行動版 header 皆單行。動到 `404.html`（新增）、`assets/site.js`、`assets/site.css`、`faq.html`、`news.html`。
+
+- **新增自訂 `404.html`。** GitHub Pages 會對找不到的路徑自動回此頁（置於 repo 根目錄）。`<meta name="robots" content="noindex">`；置中 error-hero（大字「404」為 `aria-hidden` 裝飾、`--accent` 大字 ≥3:1；h1「找不到頁面」、一行說明）；兩顆動作鈕「回首頁」（實心）＋「院區・門診」（`.btn--ghost`）。沿用全站 header／footer、skip-link、§九 頁尾免責聲明、`assets/site.css`＋`site.js`（故徽章與 analytics 也注入此頁）。實心硬邊、上下對稱留白、無光暈／漸層。
+- **booking modal「查看院區・門診 →」連結置中。** `.booking-modal__more` 由 `display:inline-block`＋`margin-top` 改為 `display:block; width:fit-content; margin: var(--s-4) auto 0`，水平置中（CDP 實測左右間距 200/200 對稱）。仍為真實 `<a href="locations.html">`（非 contact CTA，不被預約攔截器接管），鍵盤可聚焦且在 focus trap 內；對比 resting 10.09／hover 6.85 過 AA。
+- **健保特約頁尾徽章（全站）。** 診所為**健保特約（已確認）**。以 `assets/site.js` 將 `.nhi-badge`（文字「健保特約診所」）注入每頁 `.footer__brand`，免逐頁改 HTML。`assets/site.css` 加樣式：實心 cream（`--bg`）底、`--primary-deep` 字、`--line-strong` 硬邊、`--primary` 實心小圓點（`::before`，就是個圓點、非光暈），無漸層／光暈。「健保特約」字樣為 §九 允許的事實陳述。對比 9.36（字 on cream chip）過 AA。
+- **接上 Cloudflare Web Analytics（隱私友善、無 cookie）。** `assets/site.js` 注入 `static.cloudflareinsights.com/beacon.min.js`（`defer`），`data-cf-beacon` token 為佔位字串 **`__CF_BEACON_TOKEN__`**。⚠️ **站方待辦：到 Cloudflare 後台 Web Analytics 複製真實 token 取代此佔位字串**；在此之前 beacon 會載入但不回報資料。未引入 cookie 或其他追蹤器。
+- **行動版 QA 通過 + 修正（觸控目標 ≥44px，WCAG 2.5.5）：**
+  - `faq.html`：`@media (max-width:480px)` 時 `.faq-pagination__item` 由 42px 放大為 **44×44px**（維持正圓）。
+  - `news.html`：行動版 `.news-filter`／`.news-datereset`／`.news-datetrigger` 加 `min-height:44px`（chips／reset 改 inline-flex 置中），點選區達標。
+  - 390px 實測：**無水平捲動**（scrollWidth 390＝clientWidth 390）、header 單行（73px）、各控制項與分頁圓點皆 44px。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：變更／新增檔無 保證／根治／唯一／第一／必須／一定要／最〔上級〕；無費用；無療效百分比；`404.html` 頁尾免責聲明齊全；`最` 全站僅 最新×43／最近×7／最佳×3；「健保特約」為允許之事實字樣；中山維持「敬請期待」未受影響。
+- **設計規則**：gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow／`transition:all` 全 0（grep 命中皆為註解或既知 team 照色彩正規化）；nhi-badge／404／centered link 皆實心硬邊；徽章圓點為純色圓、非光暈。**header 桌機與 390px 行動版皆單行（73px）**。
+- **無障礙**：`404.html` lang zh-Hant、1 個 h1（無跳級）、`<img>` 具 alt、裝飾 SVG `aria-hidden`、skip-link 齊；對比皆過 AA（nhi-badge 字 9.36／404 h1 9.36／lead 6.54／modal-more 10.09・hover 6.85；404 大字「404」`--accent` 3.03 為 aria-hidden 裝飾大字、可接受）；行動觸控目標 ≥44px。
+- **瀏覽器驗證**：徽章「健保特約診所」於 index／faq／404 頁尾皆注入；Cloudflare beacon 注入且帶佔位 token；modal-more 連結置中且指向 `locations.html`；`404.html`／`index.html` 皆 200。截圖 `404-mobile`（置中、徽章、無溢出）、`news-controls-mobile`（控制項 44px）確認。
 
 ## 🗓️ 2026-06-06 (session 20) — 立即預約 booking modal 微調：院區名稱字重、院區・門診連結、開啟動畫放慢
 

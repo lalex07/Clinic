@@ -60,6 +60,29 @@
     revealEls.forEach(function (el) { el.classList.add('in'); });
   }
 
+  // 健保特約 trust badge — injected site-wide so it appears in the footer of
+  // every page with no per-page HTML edits. The clinic is NHI-contracted
+  // (健保特約, confirmed). 健保特約字樣 is a §九-permitted item.
+  var footerBrand = document.querySelector('.site-footer .footer__brand') ||
+                    document.querySelector('.site-footer .wrap') ||
+                    document.querySelector('.site-footer');
+  if (footerBrand) {
+    var nhiBadge = document.createElement('span');
+    nhiBadge.className = 'nhi-badge';
+    nhiBadge.textContent = '健保特約診所';
+    footerBrand.appendChild(nhiBadge);
+  }
+
+  // Cloudflare Web Analytics — privacy-friendly, cookieless. No cookies, no
+  // other trackers. SITE OWNER: replace __CF_BEACON_TOKEN__ below with your
+  // real token from the Cloudflare dashboard (Web Analytics → your site →
+  // "Add a site" snippet). Until then the beacon loads but reports nothing.
+  var cfBeacon = document.createElement('script');
+  cfBeacon.defer = true;
+  cfBeacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+  cfBeacon.setAttribute('data-cf-beacon', '{"token":"__CF_BEACON_TOKEN__"}');
+  document.body.appendChild(cfBeacon);
+
   /* ===== 線上預約掛號 modal — built once on every page, opened by every booking CTA =====
      Reuses the search overlay's accessible-dialog pattern + dark backdrop.
      Intercepts clicks on any anchor pointing at contact.html (header 立即預約,

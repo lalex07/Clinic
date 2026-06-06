@@ -450,6 +450,15 @@
     .news-toolbar { align-items: flex-start; }
     .news-controls { align-items: flex-start; }
     .news-grid { grid-template-columns: 1fr; gap: var(--s-4); }
+    /* touch tap targets ≥ 44px for the filter controls */
+    .news-filter,
+    .news-datereset {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .news-datetrigger { min-height: 44px; }
   }
 </style>
 </head>

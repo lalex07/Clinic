@@ -89,6 +89,10 @@
     color: var(--ink-faint);
     font-weight: 600;
   }
+  /* touch tap targets ≥ 44px on mobile (circles stay circular) */
+  @media (max-width: 480px) {
+    .faq-pagination__item { width: 44px; height: 44px; }
+  }
 </style>
 <script type="application/ld+json">
 {

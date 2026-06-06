@@ -509,6 +509,30 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
 .footer__base nav { display: flex; gap: var(--s-3); flex-wrap: wrap; }
 .footer__base a:hover { color: #fff; }
 
+/* 健保特約 trust badge — injected site-wide via site.js into .footer__brand.
+   Solid cream chip, hard edges, on-brand; no glow/gradient. §九-permitted字樣. */
+.nhi-badge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  background: var(--bg);
+  color: var(--primary-deep);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+}
+.nhi-badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+
 /* ============ Reveal animation ============ */
 .reveal { opacity: 0; transform: translateY(22px); }
 .reveal.in { opacity: 1; transform: none; transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
@@ -1179,8 +1203,9 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
 
 /* modal 底部「查看院區・門診」導覽連結 — 實心硬邊、無光暈／漸層 */
 .booking-modal__more {
-  display: inline-block;
-  margin-top: var(--s-4);
+  display: block;
+  width: fit-content;
+  margin: var(--s-4) auto 0;
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--primary-deep);
