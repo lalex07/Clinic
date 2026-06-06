@@ -2,7 +2,16 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 23)_
+_Last updated: 2026-06-06 (session 24)_
+
+## 🗓️ 2026-06-06 (session 24) — 修正：手機版補回「立即預約」booking CTA
+
+**Bug**：`@media (max-width: 760px)` 內 `.nav__links, .nav__cta { display: none; }` 把 header 的立即預約鈕也一起隱藏，導致手機（多數病患來源）完全看不到預約入口。`.nav__cta` 是 `.nav__links` 的兄弟節點而非子節點，故無法純 CSS 把它塞進開啟的漢堡選單。
+
+- **`assets/site.js`**：在 mobile nav 初始化時，複製 header `.nav__cta` 的 `href` 與內容（行事曆 icon＋「立即預約」），於 `#navLinks` 末端注入一顆 `.nav__menu-cta`，作為漢堡選單最下方的主要行動鈕。沿用既有 close-on-link-click 處理（點擊即關選單），其 `href="contact.html"` 仍被既有 booking-modal 攔截器接管 → 手機點擊即開預約 modal。
+- **`assets/site.css`**：`.nav__menu-cta` 桌機 `display:none`（避免出現在水平 nav）；於 `@media (max-width:760px)` 的 `.nav__links.open .nav__menu-cta` 設為實心 teal 滿版膠囊鈕（`--primary` 底白字、硬邊、`--shadow-sm`、`:focus-visible` 外框、hover 轉 `--primary-deep`），無漸層／光暈。
+- **驗證（CDP，375px）**：選單關閉時 header CTA 與 menu CTA 皆隱藏；開啟漢堡 → 「立即預約」滿版顯示（寬 327px、左右對稱 24px、底色 `#28645C`、href contact.html）；點擊 → booking modal 開啟（`role="dialog"`）且選單關閉 ✓。桌機 1280px：nav 高 72px 單行、header CTA 顯示、menu CTA 隱藏 → 無回歸。截圖：手機 header／開啟選單／modal、桌機 header。
+- **對比度**：白字 on `--primary` 6.85:1、hover on `--primary-deep` 10.09:1，皆過 WCAG AA。clinic-audit（report-only）三組全 PASS。
 
 ## 🗓️ 2026-06-06 (session 23) — 健保特約 footer badge 改用官方 NHI（全民健康保險）logo
 

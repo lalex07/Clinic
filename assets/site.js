@@ -14,6 +14,18 @@
   var toggle = document.getElementById('navToggle');
   var links = document.getElementById('navLinks');
   if (toggle && links) {
+    // Surface the 立即預約 booking CTA inside the mobile menu — the header .nav__cta
+    // is display:none at <=760px, so on phones there was no way to book. Clone it as a
+    // prominent full-width action at the bottom of the menu; its contact.html href is
+    // intercepted by the booking-modal handler below, so it opens the modal on mobile too.
+    var headerCta = document.querySelector('.nav__cta');
+    if (headerCta && !links.querySelector('.nav__menu-cta')) {
+      var menuCta = document.createElement('a');
+      menuCta.className = 'nav__menu-cta';
+      menuCta.href = headerCta.getAttribute('href') || 'contact.html';
+      menuCta.innerHTML = headerCta.innerHTML; // calendar icon + 立即預約 label
+      links.appendChild(menuCta);
+    }
     toggle.addEventListener('click', function () {
       var open = links.classList.toggle('open');
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');

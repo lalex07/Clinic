@@ -214,6 +214,9 @@ body > * { position: relative; z-index: 1; }
 .btn--sm { padding: 0.5rem 1rem; font-size: 0.88rem; }
 
 .nav__cta { flex-shrink: 0; }
+/* mobile-menu booking CTA (injected into #navLinks by site.js): hidden on desktop,
+   shown only inside the open hamburger menu at <=760px (see media query below) */
+.nav__menu-cta { display: none; }
 
 /* language toggle (中文 | EN) — no flags; active in primary, inactive in ink-faint */
 .lang-toggle {
@@ -570,6 +573,25 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
     box-shadow: var(--shadow-md);
   }
   .nav__links.open a { padding: 0.8rem 0.6rem; border-radius: 10px; }
+  /* 立即預約 as the primary action at the bottom of the mobile menu —
+     solid teal pill, hard edges, no glow/gradient; full-width via column stretch */
+  .nav__links.open .nav__menu-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: var(--s-3);
+    padding: 0.9rem 1.1rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: 999px;
+    box-shadow: var(--shadow-sm);
+  }
+  .nav__links.open .nav__menu-cta:hover { color: #fff; background: var(--primary-deep); border-color: var(--primary-deep); }
+  .nav__links.open .nav__menu-cta:focus-visible { outline: 2px solid var(--primary-deep); outline-offset: 3px; }
+  .nav__links.open .nav__menu-cta svg { width: 16px; height: 16px; }
   .footer__locs { grid-template-columns: 1fr; }
 }
 /* on phones, compact the brand so brand + language toggle + hamburger
