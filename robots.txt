@@ -1,6 +1,0 @@
-# robots.txt — 大豐耳鼻喉科聯合診所
-# Allow all crawlers full access.
-User-agent: *
-Allow: /
-
-Sitemap: https://lalex07.github.io/Clinic/sitemap.xml
