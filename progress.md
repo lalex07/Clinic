@@ -2,7 +2,22 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-06 (session 18)_
+_Last updated: 2026-06-06 (session 19)_
+
+## 🗓️ 2026-06-06 (session 19) — 立即預約 booking modal（LINE 預約掛號＋手術諮詢）+ contact.html 後備頁 + 院區 QR 卡接上預約連結
+
+多 agent 平行作業（A／B）。本功能程式碼已於 commit `b404e96`（"contact page and booking update"）進入並推送；本 agent 負責 clinic-audit（report-only）、瀏覽器驗證與本進度記錄。三組全 PASS，無回歸。動到 `assets/site.js`、`assets/site.css`、`contact.html`（新增）、`location-xindian.html`、`location-muzha.html`、`location-xinglong.html`。
+
+- **「立即預約」改開線上預約掛號 modal（漸進增強）。** `assets/site.js` 在每頁建立一次共用對話框，並全域攔截所有指向 `contact.html` 的預約 CTA（header 立即預約／footer 預約掛號／首頁 qcard）→ `preventDefault` 改開 modal；**`contact.html` 維持為無 JS 也可用的永久連結後備**，CTA 不再 dead-end（先前 header「立即預約」長期指向尚未建立的 `contact.html`＝壞連結，本次修復）。沿用搜尋 overlay 的可及性對話框模式：`role="dialog" aria-modal="true"`、`aria-labelledby`／`aria-describedby`、開啟聚焦容器（`tabindex="-1"`）、**focus trap（Tab 循環）**、**Esc 關閉並把焦點還給開啟的 CTA**、點背幕／X 關閉、實心 `rgba(0,0,0,.65)` 深色背幕無模糊、`prefers-reduced-motion` 下關閉開合過場。
+- **modal 內容＝門診預約＋手術諮詢兩組 LINE 連結。** 門診：新店／木柵／興隆 各一條 LINE「預約掛號」（`lh.hding.com.tw` 官方帳號邀請連結）；手術：新店・木柵共用＋興隆 各一條 LINE「手術諮詢」（`lin.ee` 短連結）。**中山大豐＝「2026 年 10 月開幕・敬請期待」純文字、無連結、無手術招攬語**（`.booking-row--soon` 虛線列、僅 `<span>`），符合中山狀態。所有 LINE 連結 `target="_blank" rel="noopener noreferrer"`＋具體 `aria-label`（含「另開新視窗」）。
+- **新增 `contact.html`（精簡後備頁）。** 與 modal 共用 `.booking-list/.booking-row/.booking-line` 樣式，列出同一組門診／手術 LINE 連結與中山「敬請期待」；標準 header／footer、breadcrumb、§九 頁尾免責聲明齊全、標題順序 h1→h2→h2、skip-link。無 JS 亦完整可用。
+- **三間營運院區 QR 卡接上預約連結。** `location-xindian/muzha/xinglong.html` 的「看診預約」QR 卡與「手術・睡眠諮詢」QR 卡各加一顆 `.btn.btn--sm`「LINE 預約掛號」實體連結（`target="_blank" rel="noopener noreferrer"`），URL 與 modal／contact.html 一致；掃 QR 與點連結兩種路徑並存。中山頁不加（維持敬請期待）。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：變更檔無 保證／根治／唯一／第一／必須／一定要／最〔上級〕；無費用；無療效百分比；`contact.html` 頁尾免責聲明齊全；**中山在 modal、contact.html、院區頁皆維持「敬請期待」未來式、無預約連結、無手術招攬**。
+- **設計規則**：booking modal／LINE 按鈕／QR 卡 gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow／`transition:all` 全 0；背幕實心無模糊；modal 用 grounded `--shadow-lg` token；LINE 按鈕 hover＝變深底色＋上移（控制項非卡片，允許變色）。**桌機 header 維持單行**（contact.html 量測 header 高 73px 單列）。
+- **無障礙**：modal 對話框 ARIA／focus-trap／Esc＋焦點返還／reduced-motion 經 headless 實測通過（index 開啟＝`role=dialog`/`aria-modal=true`/焦點落於容器/門診 3＋手術 2 連結/中山無連結；Esc 關閉＋焦點返回 CTA）；變更檔 html lang zh-Hant、`<img>` 全具 alt、裝飾 SVG 全 `aria-hidden`、skip-link 齊備、標題順序 ok。**對比（WCAG AA）**：LINE 按鈕白字 on `--line-green #117A38` ＝ 5.43、hover on `--line-green-deep #0C6630` ＝ 7.10（皆採加深綠，非 LINE 原廠 #06C755 之 ~2.4:1 不及格）；close 鈕 hover `--primary-deep` on `--primary-soft`、focus 2px `--primary` 外框皆過。
+- **瀏覽器驗證**：modal 於 `index.html`（header CTA）、`faq.html`（footer 預約掛號）、`team.html`（CTA）皆正常開啟；`contact.html` 直接載入 200（後備可用）。截圖 `booking-modal`（門診／手術兩組＋中山虛線無鈕、實心硬邊無光暈）確認。
 
 ## 🗓️ 2026-06-06 (session 18) — 最新消息：日期篩選改為自製可及性日曆 date picker（取代原生 input）
 
