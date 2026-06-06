@@ -818,7 +818,7 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
 .search-overlay__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5); /* 實心半透明黑，明確壓暗整個頁面；無模糊（design rule） */
+  background: rgba(0, 0, 0, 0.65); /* 實心半透明黑，明確壓暗整個頁面、讓白色彈窗更突出；無模糊（design rule） */
 }
 
 /* 置中卡片 */
