@@ -940,7 +940,7 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
 }
 .search-chips {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: var(--s-2);
   margin: 0;
   padding: 0;

@@ -26,7 +26,7 @@
   var TYPE_LABEL = { faq: "衛教", location: "院區", news: "消息" };
 
   // 「熱門搜尋」— 真實的診所主題（對應索引內的關鍵字）。
-  var HOT = ["睡眠呼吸中止", "鼻過敏", "眩暈", "兒童門診", "門診時間", "立即預約"];
+  var HOT = ["睡眠呼吸中止", "鼻過敏", "眩暈", "兒童門診", "門診時間"];
 
   function reduceMotion() {
     return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;

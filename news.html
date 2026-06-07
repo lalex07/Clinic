@@ -253,7 +253,8 @@
   }
   .news-cal__day.is-selected:hover { background: var(--primary-deep); border-color: var(--primary-deep); color: #fff; }
 
-  /* direct year/month picker pane (revealed when the title is clicked) */
+  /* direct year/month picker panes (revealed when the title is clicked) */
+  .news-cal__yearpane[hidden] { display: none; }
   .news-cal__monthpane[hidden] { display: none; }
   .news-cal__monthgrid {
     display: grid;
@@ -282,6 +283,16 @@
     font-weight: 700;
   }
   .news-cal__month.is-selected:hover { background: var(--primary-deep); border-color: var(--primary-deep); color: #fff; }
+
+  /* future (unselectable) cells — it's a news-date filter, so no future dates */
+  .news-cal__day:disabled,
+  .news-cal__month:disabled {
+    color: var(--ink-faint);
+    opacity: 0.4;
+    cursor: default;
+  }
+  .news-cal__day:disabled:hover,
+  .news-cal__month:disabled:hover { background: var(--surface); color: var(--ink-faint); }
 
   /* respect reduced motion for the open/close + chevron transitions */
   @media (prefers-reduced-motion: reduce) {
@@ -665,7 +676,9 @@
          每格 aria-label 為完整日期、選定日 aria-selected；只渲染該月實際需要的週列（不溢出下個月）；
          方向鍵逐日移動（跨週、跨月），Enter/Space 選取，Esc 關閉並把焦點還給觸發鈕，
          PageUp/PageDown 換月，Home/End 移到該週首尾；roving tabindex；焦點鎖在彈窗內；
-         標題鈕可直接開啟年/月選單（月格 role="grid"，方向鍵移動、‹ › 換年、±10 年、Esc 回到日曆）；
+         標題鈕開啟兩段式選單：先年格（role="grid"，方向鍵移動、‹ › 換頁、Esc 回日曆），
+         選年後進月格（方向鍵移動、‹ › 換年、Esc 回年格）；皆以今天為上限——
+         不顯示未來年；當年只能選到本月；本月日格停在今天，未來年/月/日一律停用且不可聚焦；
          點外面關閉；月份改變以 aria-live="polite" 播報；尊重 prefers-reduced-motion。
      - 預設不限日期；外部「全部日期」鈕可重設。無符合時顯示既有空狀態。 */
   (function () {
@@ -748,6 +761,9 @@
         '</div>' +
         '<div class="news-cal__grid" id="newsCalGrid" role="grid" aria-labelledby="newsCalTitle"></div>' +
       '</div>' +
+      '<div class="news-cal__yearpane" id="newsCalYearPane" role="grid" aria-label="選擇年份" hidden>' +
+        '<div class="news-cal__monthgrid" id="newsCalYearGrid"></div>' +
+      '</div>' +
       '<div class="news-cal__monthpane" id="newsCalMonthPane" role="grid" aria-label="選擇月份" hidden>' +
         '<div class="news-cal__monthgrid" id="newsCalMonthGrid"></div>' +
       '</div>';
@@ -756,16 +772,30 @@
     var titleEl  = pop.querySelector('#newsCalTitle');
     var gridEl   = pop.querySelector('#newsCalGrid');
     var dayView  = pop.querySelector('#newsCalDayView');
+    var yearPane = pop.querySelector('#newsCalYearPane');
+    var yearGrid = pop.querySelector('#newsCalYearGrid');
     var monthPane = pop.querySelector('#newsCalMonthPane');
     var monthGrid = pop.querySelector('#newsCalMonthGrid');
     var MONTHS = ['1 月','2 月','3 月','4 月','5 月','6 月','7 月','8 月','9 月','10 月','11 月','12 月'];
-    var mode = 'day';                 // 'day' = day grid; 'month' = year/month picker
-    var YEAR_RANGE = 10;              // ± years selectable around today
+    var curY = now.getFullYear(), curM = now.getMonth();   // present — nothing past here is selectable
+    var mode = 'day';                 // 'day' = day grid; 'year' = year grid; 'month' = month grid
+    var YEARS_PER_PAGE = 12;          // 3×4 grid, identical footprint to the month grid
     var pickY = viewY;                // year currently shown in the month pane
-    var monthFocus = viewM;           // month cell holding roving focus in the pane
+    var monthFocus = viewM;           // month cell holding roving focus in the month pane
+    var yearPageEnd = curY;           // latest year shown on the current year-grid page (never future)
+    var yearFocus = curY;             // year cell holding roving focus in the year pane
+
+    // latest year of the aligned page that contains y, never past the present
+    function pageEndFor(y) {
+      if (y >= curY) return curY;
+      return curY - Math.floor((curY - y) / YEARS_PER_PAGE) * YEARS_PER_PAGE;
+    }
 
     function updateTitle() {
-      if (mode === 'month') {
+      if (mode === 'year') {
+        titleEl.textContent = (yearPageEnd - YEARS_PER_PAGE + 1) + ' – ' + yearPageEnd;
+        titleEl.setAttribute('aria-expanded', 'true');
+      } else if (mode === 'month') {
         titleEl.textContent = pickY + ' 年';
         titleEl.setAttribute('aria-expanded', 'true');
       } else {
@@ -776,6 +806,12 @@
 
     function render() {
       updateTitle();
+      // day-view nav: ‹ steps back freely; › is blocked while viewing the current month (no future)
+      pop.querySelectorAll('[data-nav]').forEach(function (b) {
+        var dir = parseInt(b.getAttribute('data-nav'), 10);
+        b.disabled = (dir > 0 && viewY === curY && viewM === curM);
+        b.setAttribute('aria-label', dir < 0 ? '上個月' : '下個月');
+      });
       var startOffset = new Date(viewY, viewM, 1).getDay();          // 0=Sun
       var start = new Date(viewY, viewM, 1 - startOffset);
       // only as many week-rows as this month actually needs — never an all-next-month row
@@ -790,13 +826,15 @@
           var inMonth = (m === viewM);
           var isToday = (cellISO === todayISO);
           var isSel = (!!selectedISO && cellISO === selectedISO);
+          var isFuture = (cellISO > todayISO);          // beyond today — not a valid news date
           var cls = 'news-cal__day';
           if (!inMonth) cls += ' is-muted';
           if (isToday) cls += ' is-today';
           if (isSel)   cls += ' is-selected';
           var label = y + '年' + (m + 1) + '月' + d + '日' + (isToday ? '，今天' : '');
           html += '<button type="button" class="' + cls + '" role="gridcell" data-iso="' + cellISO + '"' +
-                  ' tabindex="' + (cellISO === focusISO ? '0' : '-1') + '"' +
+                  (isFuture ? ' disabled' : '') +
+                  ' tabindex="' + (cellISO === focusISO && !isFuture ? '0' : '-1') + '"' +
                   ' aria-label="' + label + '" aria-selected="' + (isSel ? 'true' : 'false') + '">' + d + '</button>';
         }
         html += '</div>';
@@ -809,28 +847,103 @@
       if (cell) cell.focus();
     }
 
-    /* ----- direct year/month picker ----- */
-    function renderMonthPane() {
-      var minY = now.getFullYear() - YEAR_RANGE, maxY = now.getFullYear() + YEAR_RANGE;
-      if (pickY < minY) pickY = minY;
-      if (pickY > maxY) pickY = maxY;
+    /* ----- step 1: year grid ----- */
+    function renderYearPane() {
+      if (yearPageEnd > curY) yearPageEnd = curY;   // never page into the future
       updateTitle();
-      // the ‹ › arrows step the year while the pane is open; disable at range ends
+      var startY = yearPageEnd - YEARS_PER_PAGE + 1;
+      // ‹ › page the year ranges; › is blocked once the page reaches the present
       pop.querySelectorAll('[data-nav]').forEach(function (b) {
         var dir = parseInt(b.getAttribute('data-nav'), 10);
-        var blocked = (dir < 0 && pickY <= minY) || (dir > 0 && pickY >= maxY);
-        b.disabled = blocked;
+        b.disabled = (dir > 0 && yearPageEnd >= curY);
+        b.setAttribute('aria-label', dir < 0 ? '上一頁年份' : '下一頁年份');
+      });
+      var html = '';
+      for (var i = 0; i < YEARS_PER_PAGE; i++) {
+        var y = startY + i;
+        var disabled = (y > curY);                  // no future years
+        var isCurrent = (y === viewY);
+        var isSel = (!!selectedISO && (+selectedISO.split('-')[0]) === y);
+        var cls = 'news-cal__month';
+        if (isCurrent) cls += ' is-current';
+        if (isSel) cls += ' is-selected';
+        html += '<button type="button" class="' + cls + '" role="gridcell" data-year="' + y + '"' +
+                (disabled ? ' disabled' : '') +
+                ' tabindex="' + (y === yearFocus && !disabled ? '0' : '-1') + '"' +
+                ' aria-label="' + y + ' 年" aria-selected="' + (isSel ? 'true' : 'false') + '">' +
+                y + '</button>';
+      }
+      yearGrid.innerHTML = html;
+    }
+
+    function focusYearCell(y) {
+      var cell = yearGrid.querySelector('[data-year="' + y + '"]');
+      if (cell && !cell.disabled) cell.focus();
+    }
+
+    function enterYearMode() {
+      mode = 'year';
+      dayView.hidden = true;
+      monthPane.hidden = true;
+      yearFocus = Math.min(viewY, curY);
+      yearPageEnd = pageEndFor(yearFocus);
+      yearPane.hidden = false;
+      renderYearPane();
+      focusYearCell(yearFocus);
+    }
+
+    function changeYearPage(delta) {
+      if (delta > 0 && yearPageEnd >= curY) return;
+      yearPageEnd += delta * YEARS_PER_PAGE;
+      if (yearPageEnd > curY) yearPageEnd = curY;
+      var startY = yearPageEnd - YEARS_PER_PAGE + 1;
+      yearFocus += delta * YEARS_PER_PAGE;          // keep the same cell position across pages
+      if (yearFocus < startY) yearFocus = startY;
+      if (yearFocus > yearPageEnd) yearFocus = yearPageEnd;
+      if (yearFocus > curY) yearFocus = curY;
+      renderYearPane();
+      focusYearCell(yearFocus);
+    }
+
+    function moveYearFocus(delta) {
+      var startY = yearPageEnd - YEARS_PER_PAGE + 1;
+      var y = yearFocus + delta;
+      if (y < startY || y > yearPageEnd) return;    // stay within the page; page via ‹ ›
+      if (y > curY) return;                         // no future year
+      yearFocus = y;
+      renderYearPane();
+      focusYearCell(yearFocus);
+    }
+
+    function pickYear(y) {
+      pickY = y;
+      var maxM = (pickY === curY) ? curM : 11;
+      monthFocus = Math.min(viewM, maxM);           // land on a selectable month
+      enterMonthMode();
+    }
+
+    /* ----- step 2: month grid for the chosen year ----- */
+    function renderMonthPane() {
+      if (pickY > curY) pickY = curY;
+      updateTitle();
+      var maxM = (pickY === curY) ? curM : 11;      // current year stops at the current month
+      // ‹ › step the year while picking; › is blocked at the present
+      pop.querySelectorAll('[data-nav]').forEach(function (b) {
+        var dir = parseInt(b.getAttribute('data-nav'), 10);
+        b.disabled = (dir > 0 && pickY >= curY);
         b.setAttribute('aria-label', dir < 0 ? '上一年' : '下一年');
       });
       var html = '';
       for (var m = 0; m < 12; m++) {
+        var disabled = (m > maxM);                  // future months greyed/disabled
         var isCurrent = (pickY === viewY && m === viewM);
         var isSel = (!!selectedISO && (+selectedISO.split('-')[0]) === pickY && (+selectedISO.split('-')[1] - 1) === m);
         var cls = 'news-cal__month';
         if (isCurrent) cls += ' is-current';
         if (isSel) cls += ' is-selected';
         html += '<button type="button" class="' + cls + '" role="gridcell" data-month="' + m + '"' +
-                ' tabindex="' + (m === monthFocus ? '0' : '-1') + '"' +
+                (disabled ? ' disabled' : '') +
+                ' tabindex="' + (m === monthFocus && !disabled ? '0' : '-1') + '"' +
                 ' aria-label="' + pickY + ' 年 ' + (m + 1) + ' 月" aria-selected="' + (isSel ? 'true' : 'false') + '">' +
                 MONTHS[m] + '</button>';
       }
@@ -839,49 +952,55 @@
 
     function focusMonthCell(m) {
       var cell = monthGrid.querySelector('[data-month="' + m + '"]');
-      if (cell) cell.focus();
+      if (cell && !cell.disabled) cell.focus();
     }
 
     function enterMonthMode() {
       mode = 'month';
-      pickY = viewY;
-      monthFocus = viewM;
+      var maxM = (pickY === curY) ? curM : 11;
+      if (monthFocus > maxM) monthFocus = maxM;
       dayView.hidden = true;
+      yearPane.hidden = true;
       monthPane.hidden = false;
       renderMonthPane();
       focusMonthCell(monthFocus);
     }
 
-    function exitMonthMode(focusGrid) {
+    function exitToDay(focusGrid) {
       mode = 'day';
+      yearPane.hidden = true;
       monthPane.hidden = true;
       dayView.hidden = false;
-      // restore month-nav labels the arrows had in day mode
-      pop.querySelectorAll('[data-nav]').forEach(function (b) {
-        var dir = parseInt(b.getAttribute('data-nav'), 10);
-        b.disabled = false;
-        b.setAttribute('aria-label', dir < 0 ? '上個月' : '下個月');
-      });
-      render();
+      render();                       // restores the day-view nav labels/states
       if (focusGrid) focusDay();
+      else titleEl.focus();
     }
 
     function pickMonth(m) {
+      var maxM = (pickY === curY) ? curM : 11;
+      if (m > maxM) return;           // guard: disabled (future) month
       viewY = pickY; viewM = m;
       var day = Math.min(+focusISO.split('-')[2], daysInMonth(viewY, viewM));
+      if (viewY === curY && viewM === curM) day = Math.min(day, now.getDate());  // clamp into the past
       focusISO = iso(viewY, viewM, day);
-      exitMonthMode(true);
+      exitToDay(true);
     }
 
     function changePickYear(delta) {
-      pickY += delta;
+      var ny = pickY + delta;
+      if (ny > curY) return;          // no future years
+      pickY = ny;
+      var maxM = (pickY === curY) ? curM : 11;
+      if (monthFocus > maxM) monthFocus = maxM;
       renderMonthPane();
-      focusMonthCell(monthFocus);   // keep focus on the same month cell after re-render
+      focusMonthCell(monthFocus);     // keep focus on the same month cell after re-render
     }
 
     function moveMonthFocus(delta) {
       var m = monthFocus + delta;
-      if (m < 0 || m > 11) return;  // stay within the year; year nav is via ‹ ›
+      if (m < 0 || m > 11) return;    // stay within the year; year nav is via ‹ ›
+      var maxM = (pickY === curY) ? curM : 11;
+      if (m > maxM) return;           // can't focus a disabled (future) month
       monthFocus = m;
       renderMonthPane();
       focusMonthCell(monthFocus);
@@ -896,13 +1015,18 @@
 
     function moveFocus(deltaDays) {
       var p = focusISO.split('-');
-      setFocusDate(new Date(+p[0], +p[1] - 1, +p[2] + deltaDays), true);
+      var target = new Date(+p[0], +p[1] - 1, +p[2] + deltaDays);
+      var tISO = iso(target.getFullYear(), target.getMonth(), target.getDate());
+      if (tISO > todayISO) return;    // never focus a future day
+      setFocusDate(target, true);
     }
 
     function changeMonth(delta, focusGrid) {
       var dt = new Date(viewY, viewM + delta, 1);
+      if (dt.getFullYear() > curY || (dt.getFullYear() === curY && dt.getMonth() > curM)) return;  // no future months
       viewY = dt.getFullYear(); viewM = dt.getMonth();
       var day = Math.min(+focusISO.split('-')[2], daysInMonth(viewY, viewM));
+      if (viewY === curY && viewM === curM) day = Math.min(day, now.getDate());
       focusISO = iso(viewY, viewM, day);
       render();
       if (focusGrid) focusDay();
@@ -949,17 +1073,13 @@
       if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
       // always open on the day grid, even if it was last closed mid year/month pick
       mode = 'day';
+      yearPane.hidden = true;
       monthPane.hidden = true;
       dayView.hidden = false;
-      pop.querySelectorAll('[data-nav]').forEach(function (b) {
-        var dir = parseInt(b.getAttribute('data-nav'), 10);
-        b.disabled = false;
-        b.setAttribute('aria-label', dir < 0 ? '上個月' : '下個月');
-      });
       var base = (selectedISO || todayISO).split('-');
       viewY = +base[0]; viewM = +base[1] - 1;
       focusISO = selectedISO || todayISO;
-      render();
+      render();   // sets the day-view nav labels/states
       pop.hidden = false;
       trigger.setAttribute('aria-expanded', 'true');
       requestAnimationFrame(function () { pop.classList.add('is-open'); });
@@ -999,24 +1119,45 @@
     pop.querySelectorAll('[data-nav]').forEach(function (b) {
       b.addEventListener('click', function () {
         var dir = parseInt(b.getAttribute('data-nav'), 10);
-        if (mode === 'month') changePickYear(dir);   // ‹ › step the year while picking
+        if (mode === 'year') changeYearPage(dir);    // ‹ › page the year ranges
+        else if (mode === 'month') changePickYear(dir);   // ‹ › step the year while picking months
         else changeMonth(dir, false);                // ‹ › step the month in day view
       });
     });
 
-    // header title toggles the direct year/month picker
+    // header title walks the picker steps: day → year grid → (pick year) → month grid
     titleEl.addEventListener('click', function () {
-      if (mode === 'month') exitMonthMode(true);
-      else enterMonthMode();
+      if (mode === 'year') exitToDay(false);         // collapse back to the day grid
+      else enterYearMode();                          // from day OR month, step back to the year grid
+    });
+
+    yearGrid.addEventListener('click', function (e) {
+      var btn = e.target.closest('.news-cal__month');
+      if (btn && !btn.disabled) pickYear(parseInt(btn.getAttribute('data-year'), 10));
+    });
+
+    yearGrid.addEventListener('keydown', function (e) {
+      if (!e.target.classList || !e.target.classList.contains('news-cal__month')) return;
+      switch (e.key) {
+        case 'ArrowLeft':  moveYearFocus(-1); e.preventDefault(); break;
+        case 'ArrowRight': moveYearFocus(1);  e.preventDefault(); break;
+        case 'ArrowUp':    moveYearFocus(-3); e.preventDefault(); break;
+        case 'ArrowDown':  moveYearFocus(3);  e.preventDefault(); break;
+        case 'PageUp':     changeYearPage(-1); e.preventDefault(); break;
+        case 'PageDown':   changeYearPage(1);  e.preventDefault(); break;
+        case 'Home':       yearFocus = yearPageEnd - YEARS_PER_PAGE + 1; renderYearPane(); focusYearCell(yearFocus); e.preventDefault(); break;
+        case 'End':        yearFocus = Math.min(yearPageEnd, curY); renderYearPane(); focusYearCell(yearFocus); e.preventDefault(); break;
+      }
     });
 
     monthGrid.addEventListener('click', function (e) {
       var btn = e.target.closest('.news-cal__month');
-      if (btn) pickMonth(parseInt(btn.getAttribute('data-month'), 10));
+      if (btn && !btn.disabled) pickMonth(parseInt(btn.getAttribute('data-month'), 10));
     });
 
     monthGrid.addEventListener('keydown', function (e) {
       if (!e.target.classList || !e.target.classList.contains('news-cal__month')) return;
+      var maxM = (pickY === curY) ? curM : 11;       // current year stops at the current month
       switch (e.key) {
         case 'ArrowLeft':  moveMonthFocus(-1); e.preventDefault(); break;
         case 'ArrowRight': moveMonthFocus(1);  e.preventDefault(); break;
@@ -1024,15 +1165,16 @@
         case 'ArrowDown':  moveMonthFocus(3);  e.preventDefault(); break;
         case 'PageUp':     changePickYear(-1); e.preventDefault(); break;
         case 'PageDown':   changePickYear(1);  e.preventDefault(); break;
-        case 'Home':       monthFocus = 0;  renderMonthPane(); focusMonthCell(0);  e.preventDefault(); break;
-        case 'End':        monthFocus = 11; renderMonthPane(); focusMonthCell(11); e.preventDefault(); break;
+        case 'Home':       monthFocus = 0;     renderMonthPane(); focusMonthCell(0);    e.preventDefault(); break;
+        case 'End':        monthFocus = maxM;  renderMonthPane(); focusMonthCell(maxM); e.preventDefault(); break;
       }
     });
 
     pop.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
-        if (mode === 'month') { titleEl.focus(); exitMonthMode(false); }   // back to day view first
-        else close(true);
+        if (mode === 'month') enterYearMode();        // month → back to year grid
+        else if (mode === 'year') exitToDay(false);   // year → back to day grid
+        else close(true);                             // day → close
         e.preventDefault();
         return;
       }

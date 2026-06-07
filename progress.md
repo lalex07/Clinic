@@ -2,7 +2,23 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-07 (session 30)_
+_Last updated: 2026-06-07 (session 31)_
+
+## 🗓️ 2026-06-07 (session 31) — 熱門搜尋收成單列；日曆改年→月兩段式選擇、年/月/日範圍一律封頂於今天
+
+多 agent 平行作業（A／B），本 agent 負責整併、clinic-audit（report-only）、瀏覽器（CDP）驗證與唯一 commit。三組全 PASS，無回歸。動到 `assets/search.js`、`assets/site.css`、`news.html`。
+
+- **Agent A — 「熱門搜尋」chips 收成一列。** `assets/search.js` 的 `HOT` 由 6 顆減為 **5 顆**（移除「立即預約」，留 睡眠呼吸中止／鼻過敏／眩暈／兒童門診／門診時間——皆對應索引內真實主題）；`assets/site.css` `.search-chips` 由 `flex-wrap: wrap` 改為 **`nowrap`**，固定單列。CDP 實測：搜尋 overlay 於 320／360／1280px 皆 **恰 1 列、無水平溢出**（chips scrollWidth＝clientWidth，文件無 docOverflow）。chip 仍為實心 `--primary-soft` 膠囊、硬邊、hover 僅變控制項自身底色（非卡片）、`:focus-visible` 外框，無漸層／光暈。
+- **Agent B — 最新消息日曆：標題鈕改「年→月」兩段式選擇，且年/月/日全部封頂於今天。**
+  - 標題鈕點擊先開 **年格**（新增 `.news-cal__yearpane`，`role="grid" aria-label="選擇年份"`，內含 `.news-cal__monthgrid` 12 格 → **與月格相同的 3×4 footprint**）；選年後進 **月格**，選月回日曆視圖。標題顯示：年格＝年份區間「YYYY – YYYY」、月格＝「YYYY 年」、日格＝「YYYY 年 M 月」。
+  - **範圍一律封頂於今天（不可選未來）**：年格不顯示未來年（`> 今年` `disabled`）、‹ › 換頁到本年即 `disabled`；當年的月格只能選到本月（`> 本月` `disabled`）；本月日格停在今天、未來日 `disabled` 且不可聚焦；日視圖 › 在當前月時 `disabled`、年/月選擇時 › 到端點亦 `disabled`。選月若落在當月會把日 clamp 進今天之前。
+  - **鍵盤／roving tabindex**：年格與月格皆方向鍵（左右 ±1、上下 ±3）、PageUp/PageDown 換頁/換年、Home/End 跳該頁首尾（End 夾在今年）、Enter/Space 選取；停用（未來）格不可聚焦。**Esc 三段式**：月格→回年格、年格→回日視圖、日視圖→關閉。新增 `.news-cal__day:disabled`／`.news-cal__month:disabled` 樣式（`--ink-faint`、`opacity:.4`、hover 不變底）；實心硬邊、無漸層／光暈／backdrop-filter／drop-shadow。
+  - 開啟 picker 一律回日視圖。日格續只渲染該月實際需要的週列。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：三檔無 保證／根治／唯一／第一／必須／一定要／最〔上級〕；`最` 僅 最新；無費用；`[0-9]%` grep 命中皆為 CSS（`100%`／`calc(100% + …)`）非療效宣稱；`news.html` 頁尾免責聲明齊全、中山卡維持「敬請期待」未受影響。
+- **設計規則**：三檔 gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow／`transition:all` 全 0（命中皆 CSS 註解）；`.news-card:hover`＝lift（transform＋shadow，不變色）；chips／年格／月格 hover 變色為控制項（非卡片）；停用格、彈窗皆實心硬邊、grounded shadow。
+- **無障礙（CDP headless 實測）**：chips 5 顆／單列／無溢出（320／360／1280）；年格 12＝月格 12（`gridMatch`）；年格／月格／日格各 **恰 1 個 roving tabindex=0**；未來年／未來月（7 月起）／未來日皆 `disabled`、當月（6 月）可選；年/月/日視圖的「下一」nav 在到達今天時皆 `disabled`。`news.html` html lang zh-Hant、1 h1（h1 h2 h2 無跳級）；年/月面板 `role="grid"`＋格 `role="gridcell"`／`aria-selected`、標題鈕 `aria-haspopup`/`aria-expanded`/`aria-live`。**header 桌機 1280px 與行動 390px 皆單行（73px）、無水平溢出。**
 
 ## 🗓️ 2026-06-07 (session 30) — 移除頁面標題上方的圓角 eyebrow 膠囊（全站）
 
