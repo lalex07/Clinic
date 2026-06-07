@@ -281,7 +281,7 @@ body > * { position: relative; z-index: 1; }
   width: 22px; height: 2px; border-radius: 2px;
   background: var(--accent);
 }
-/* bilingual eyebrow: small italic English caption beside the Chinese kicker
+/* bilingual section kicker: small italic English caption beside the Chinese kicker
    (CureClinic-style). English is muted/italic; Chinese stays accent-weighted. */
 .kicker__en {
   font-style: italic;
@@ -311,27 +311,6 @@ body > * { position: relative; z-index: 1; }
 .breadcrumb a:hover { color: var(--primary-deep); }
 .breadcrumb span[aria-current] { color: var(--primary-deep); font-weight: 500; }
 .breadcrumb .sep { color: var(--line-strong); }
-.page-head .eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-family: "Noto Serif TC", serif;
-  font-size: 0.95rem;
-  letter-spacing: 0.08em;
-  color: var(--primary-deep);
-  font-weight: 600;
-  padding: 0.5rem 1.15rem;
-  border: 1px solid var(--primary-soft);
-  background: var(--surface);
-  /* crisp edges — no box-shadow (would read as a soft halo on a small pill) */
-  border-radius: 999px;
-  margin-bottom: var(--s-4);
-}
-.page-head .eyebrow::before {
-  content: "";
-  width: 9px; height: 9px; border-radius: 50%;
-  background: var(--accent);
-}
 .page-head h1 {
   font-size: clamp(2rem, 4.8vw, 3rem);
   font-weight: 600;
@@ -604,16 +583,6 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
    FAQ PAGE / 衛教專欄  ——  Agent 2 scope (faq.html only).
    All FAQ-specific styles live below this header. Do not edit rules above it.
    ============================================================================ */
-
-/* hero: bilingual eyebrow (italic English caption + Chinese), CureClinic-style */
-.faq-hero .eyebrow__en {
-  font-style: italic;
-  font-weight: 500;
-  color: var(--ink-faint);
-  letter-spacing: 0.04em;
-  text-transform: none;
-  margin-right: 0.1rem;
-}
 
 /* ---- article card grid (magazine-style index) ----
    Magazine grid à la a health-education blog, rendered in Dafeng's own

@@ -2,7 +2,18 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-07 (session 29)_
+_Last updated: 2026-06-07 (session 30)_
+
+## 🗓️ 2026-06-07 (session 30) — 移除頁面標題上方的圓角 eyebrow 膠囊（全站）
+
+把所有頁面主標題上方那顆圓角膠囊「● …」（小赤陶圓點＋文字的 eyebrow pill）全數移除。動到 29 個 HTML 頁與 `assets/site.css`、`index.html` 內嵌 `<style>`；其餘元素（麵包屑、hero 統計泡泡「7 位專科醫師」「4 大院區・好就近」、章節標題、nav、斜體章節 kicker）一律保留。
+
+- **HTML（29 檔）**：刪除每頁的 `<span class="eyebrow …">…</span>` 整行——首頁 hero（`新店・木柵・興隆・中山`）、about（`自 2010 年・在地深耕`）、services／team／locations／4 個 location 頁、news（`News & Notices／最新消息`）、contact（`Booking／預約掛號`）、faq 與 faq-q1～q17（`Health Education／衛教專欄`）。用 `<span class="eyebrow` 精準比對，grep 確認 0 殘留。`/en/` 各頁本來就沒有 eyebrow，未動。
+- **CSS**：移除 `assets/site.css` 的 `.page-head .eyebrow` ＋ `::before`（圓點）與只給膠囊英文小標用的 `.faq-hero .eyebrow__en`；移除 `index.html` 內嵌 `<style>` 的 `.eyebrow` ＋ `::before`。無 dangling rule（grep 僅剩 `.kicker__en` 上方一句註解，文字已由「bilingual eyebrow」改為「bilingual section kicker」以免混淆——`.kicker__en` 是要保留的斜體章節 kicker，非膠囊）。
+- **版面**：移除後麵包屑→h1→lead 直接銜接，瀏覽器截圖（index／about／faq／location-xindian，desktop 1280px）確認標題位置端正、上下留白不突兀，無需再調 top spacing。
+
+### 驗證（clinic-audit report-only）
+- **§九 / 設計規則 / 無障礙：本次變更範圍內全 PASS。** 每頁仍恰 1 個 `<h1>`、無跳級；頁尾免責聲明各頁齊全；移除的是元素與 CSS，未引入任何 gradient／glow；截圖確認版面無回歸。
 
 ## 🗓️ 2026-06-07 (session 29) — 蔡彥群 醫師真人照片上線（醫療團隊頁）
 
