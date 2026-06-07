@@ -43,6 +43,8 @@ Use the frontend-design skill in `.claude/skills/frontend-design/` for all UI wo
 
 **Images in a placeholder must stay inside the placeholder box.** When a real image replaces a `.photo-zone` (or any fixed aspect-ratio placeholder), it must be constrained to that box — `object-fit: cover` within the placeholder's fixed `aspect-ratio`, width/height 100%, never breaking out, overflowing, or stretching the layout. The placeholder defines the footprint; the image fills it and is clipped to it, never the reverse. Check that a swapped-in image hasn't grown the box or spilled past its rounded corners.
 
+**No eyebrow pill above page headings.** Page heroes / page-heads go straight to the heading — never add the rounded dot-plus-text "eyebrow" pill (the old "● 新店・木柵・興隆・中山" style) above an `<h1>`. Breadcrumbs and the italic section kickers are fine; this bans only that rounded eyebrow-pill component.
+
 Goals:
 - Generous vertical breathing room between sections
 - Short paragraphs (2-4 sentences max in body copy)
