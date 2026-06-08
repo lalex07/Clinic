@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- Internal admin tool — keep crawlers out -->
+<meta name="robots" content="noindex, nofollow" />
+<title>醫療團隊編輯後台｜大豐耳鼻喉科</title>
+<link rel="icon" type="image/png" href="../assets/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet" />
+<!-- reuse the public site's design tokens (colors, shadows, radii) -->
+<link rel="stylesheet" href="../assets/site.css" />
+<link rel="stylesheet" href="admin.css" />
+</head>
+<body class="admin">
+
+<!-- ===== Login ===== -->
+<section id="loginView" class="admin-login" hidden>
+  <form id="loginForm" class="admin-card admin-login__card" autocomplete="on">
+    <h1>醫療團隊編輯後台</h1>
+    <p class="admin-muted">僅限管理員登入。</p>
+    <label>電子郵件
+      <input type="email" id="email" required autocomplete="username" />
+    </label>
+    <label>密碼
+      <input type="password" id="password" required autocomplete="current-password" />
+    </label>
+    <button type="submit" class="admin-btn admin-btn--primary" id="loginBtn">登入</button>
+    <p id="loginError" class="admin-error" role="alert" aria-live="polite"></p>
+  </form>
+</section>
+
+<!-- ===== App ===== -->
+<section id="appView" hidden>
+  <header class="admin-topbar">
+    <div>
+      <strong>醫療團隊編輯</strong>
+      <span class="admin-muted" id="whoami"></span>
+    </div>
+    <div class="admin-topbar__actions">
+      <button class="admin-btn" id="publishBtn" title="觸發網站重新產生 team.html">發佈到網站</button>
+      <button class="admin-btn admin-btn--ghost" id="logoutBtn">登出</button>
+    </div>
+  </header>
+
+  <p id="publishMsg" class="admin-publishmsg" role="status" aria-live="polite" hidden></p>
+
+  <main class="admin-main">
+    <aside class="admin-list" aria-label="醫師清單">
+      <div class="admin-list__head">
+        <h2>醫師</h2>
+        <button class="admin-btn admin-btn--sm" id="newBtn">＋ 新增</button>
+      </div>
+      <ul id="doctorList"></ul>
+    </aside>
+
+    <section class="admin-editor" aria-label="編輯">
+      <p id="editorEmpty" class="admin-muted admin-editor__empty">從左側選擇一位醫師，或新增一筆。</p>
+
+      <form id="editForm" hidden>
+        <input type="hidden" id="docId" />
+        <div class="admin-grid">
+          <label>姓名 (.doc__name)
+            <input type="text" id="f_name" required />
+          </label>
+          <label>職稱 / 院區 (.doc__role)
+            <input type="text" id="f_role" placeholder="例：新店總院院長 / 主治醫師" />
+          </label>
+          <label class="admin-span2">代稱 slug（網址用，英文小寫連字號）
+            <input type="text" id="f_slug" placeholder="例：tsai-yen-chun" />
+          </label>
+          <label class="admin-span2">專長 (.doc__spec)
+            <textarea id="f_specialty" rows="2"></textarea>
+          </label>
+          <label class="admin-check admin-span2">
+            <input type="checkbox" id="f_pending" /> 顯示「待醫師確認」標記
+          </label>
+        </div>
+
+        <fieldset class="admin-fieldset">
+          <legend>學經歷 (.doc__cv)</legend>
+          <ul id="cvList" class="admin-rows"></ul>
+          <button type="button" class="admin-btn admin-btn--sm" id="addCv">＋ 新增一項</button>
+        </fieldset>
+
+        <fieldset class="admin-fieldset">
+          <legend>院區連結 (.doc__clinic)</legend>
+          <ul id="clinicList" class="admin-rows"></ul>
+          <button type="button" class="admin-btn admin-btn--sm" id="addClinic">＋ 新增連結</button>
+        </fieldset>
+
+        <div class="admin-grid">
+          <label>排序 display_order
+            <input type="number" id="f_order" />
+          </label>
+          <label>照片模式 photo_mode
+            <select id="f_photo_mode">
+              <option value="photo">photo — 真實照片</option>
+              <option value="anon">anon — 匿名剪影</option>
+              <option value="placeholder">placeholder — 姓氏字樣（照片待提供）</option>
+            </select>
+          </label>
+          <div class="admin-span2 admin-photo" id="photoRow">
+            <div class="admin-photo__preview" id="photoPreview" aria-hidden="true"></div>
+            <div>
+              <label class="admin-muted">上傳照片（存入 doctor-photos bucket，發佈時下載到 assets/doctors/）
+                <input type="file" id="f_photo" accept="image/*" />
+              </label>
+              <p class="admin-muted admin-photo__path" id="photoPathLabel"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-actions">
+          <button type="submit" class="admin-btn admin-btn--primary" id="saveBtn">儲存</button>
+          <button type="button" class="admin-btn admin-btn--danger" id="deleteBtn">刪除</button>
+          <span id="saveMsg" class="admin-savemsg" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+  </main>
+</section>
+
+<script src="config.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>

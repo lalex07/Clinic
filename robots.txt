@@ -1,6 +1,8 @@
 # robots.txt — 大豐耳鼻喉科聯合診所
-# Allow all crawlers full access.
+# Allow all crawlers full access, except the internal admin tool.
 User-agent: *
 Allow: /
+# Internal, login-gated admin (doctor editor) — not part of the public site.
+Disallow: /admin/
 
 Sitemap: https://lalex07.github.io/Clinic/sitemap.xml

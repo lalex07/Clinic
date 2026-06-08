@@ -1,0 +1,116 @@
+/* Admin-only styles. Reuses the public site's tokens from site.css (colors,
+   shadows, radii). Internal tool — calm, crisp, no glow/gradient (still honours
+   the project design rules: solid colors, grounded shadows, hover = lift). */
+
+body.admin {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Noto Sans TC", system-ui, sans-serif;
+}
+
+.admin-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--s-6);
+}
+.admin-muted { color: var(--ink-faint); font-size: 0.86rem; }
+.admin-error { color: #8a2b2b; font-size: 0.9rem; min-height: 1.2em; margin: 0.4rem 0 0; }
+
+/* ---- buttons ---- */
+.admin-btn {
+  font: inherit; font-weight: 500; cursor: pointer;
+  background: var(--surface); color: var(--primary-deep);
+  border: 1px solid var(--line-strong); border-radius: 999px;
+  padding: 0.5rem 1.05rem;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, background 0.2s ease-out, border-color 0.2s ease-out;
+}
+.admin-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.admin-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.admin-btn--primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.admin-btn--primary:hover { background: var(--primary-deep); border-color: var(--primary-deep); }
+.admin-btn--ghost { background: transparent; }
+.admin-btn--danger { color: #8a2b2b; border-color: #d8b3b3; }
+.admin-btn--sm { padding: 0.32rem 0.75rem; font-size: 0.85rem; }
+
+/* ---- login ---- */
+.admin-login { min-height: 100vh; display: grid; place-items: center; padding: var(--s-5); }
+.admin-login__card { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: var(--s-3); }
+.admin-login__card h1 { font-family: "Noto Serif TC", serif; font-size: 1.4rem; color: var(--primary-deep); margin: 0; }
+.admin-login__card label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.9rem; color: var(--ink-soft); }
+
+input, textarea, select {
+  font: inherit; color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong); border-radius: var(--radius-md, 8px);
+  padding: 0.5rem 0.65rem;
+}
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--primary); outline-offset: 1px; border-color: var(--primary);
+}
+
+/* ---- topbar ---- */
+.admin-topbar {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);
+  padding: var(--s-3) var(--s-5);
+  background: var(--surface); border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 10;
+}
+.admin-topbar strong { color: var(--primary-deep); }
+.admin-topbar__actions { display: flex; gap: 0.6rem; }
+.admin-publishmsg {
+  margin: 0; padding: var(--s-3) var(--s-5);
+  background: var(--primary-soft); color: var(--primary-deep); font-size: 0.9rem;
+}
+
+/* ---- layout ---- */
+.admin-main {
+  display: grid; grid-template-columns: 280px 1fr; gap: var(--s-5);
+  max-width: 1100px; margin: 0 auto; padding: var(--s-5);
+}
+.admin-list__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--s-3); }
+.admin-list__head h2 { font-size: 1rem; margin: 0; color: var(--primary-deep); }
+#doctorList { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+#doctorList button {
+  width: 100%; text-align: left; font: inherit; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md, 8px);
+  padding: 0.6rem 0.75rem; color: var(--ink);
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out;
+}
+#doctorList button:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+#doctorList button[aria-current="true"] { border-color: var(--primary); }
+#doctorList .dl-name { font-weight: 600; color: var(--primary-deep); }
+#doctorList .dl-role { display: block; font-size: 0.8rem; color: var(--ink-faint); }
+
+/* ---- editor ---- */
+.admin-editor { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: var(--s-5); }
+.admin-editor__empty { padding: var(--s-6) 0; text-align: center; }
+.admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); margin-bottom: var(--s-4); }
+.admin-grid label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.9rem; color: var(--ink-soft); }
+.admin-span2 { grid-column: 1 / -1; }
+.admin-check { flex-direction: row !important; align-items: center; gap: 0.5rem !important; }
+.admin-check input { width: auto; }
+
+.admin-fieldset { border: 1px solid var(--line); border-radius: var(--radius-md, 8px); padding: var(--s-4); margin: 0 0 var(--s-4); }
+.admin-fieldset legend { font-size: 0.85rem; font-weight: 700; color: var(--ink-faint); padding: 0 0.4rem; }
+.admin-rows { list-style: none; margin: 0 0 0.6rem; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.admin-rows li { display: flex; gap: 0.4rem; align-items: center; }
+.admin-rows input { flex: 1; }
+.admin-rows .rm { flex: 0 0 auto; }
+
+.admin-photo { display: flex; gap: var(--s-4); align-items: flex-start; }
+.admin-photo__preview {
+  width: 96px; height: 120px; flex: 0 0 auto;
+  background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius-md, 8px);
+  background-size: cover; background-position: center 18%;
+}
+.admin-photo__path { margin: 0.4rem 0 0; word-break: break-all; }
+
+.admin-actions { display: flex; align-items: center; gap: 0.6rem; margin-top: var(--s-4); }
+.admin-savemsg { font-size: 0.88rem; color: var(--primary-deep); }
+
+@media (max-width: 720px) {
+  .admin-main { grid-template-columns: 1fr; }
+  .admin-grid { grid-template-columns: 1fr; }
+}

@@ -2,7 +2,28 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-08 (session 36)_
+_Last updated: 2026-06-08 (session 37)_
+
+## 🗓️ 2026-06-08 (session 37) — Supabase 後端 Phase 1：醫療團隊（醫師）可編輯化（doctors 表＋RLS＋storage、/admin/ 編輯器、變更時重生成 team.html）
+
+依 `docs/supabase-admin-plan.md` 的 Phase 1 與 approach A（**公開站維持靜態**，醫師資料變更時才重生成 team.html）。模型：單一管理員帳號全權；公開可讀 doctors（公開資訊）；編輯在登入閘控的 `/admin/` 進行。新增 `admin/`、`scripts/`、`.github/workflows/`、`supabase/`，並改 `team.html`（加標記）、`robots.txt`、`.gitignore`、`.env.example`。**無任何 service-role key 或 GitHub PAT 進入瀏覽器或 repo**；瀏覽器只用 anon key＋Supabase Auth。
+
+- **Part A — Schema＋安全（經 Supabase MCP 直接建置，已套用 3 個 migration）。**
+  - `profiles`（id=auth.users id、full_name、role admin/doctor/nurse 預設 admin、active、timestamps）與 `doctors`（slug 唯一、name、role、specialty、specialty_pending=待醫師確認、credentials jsonb、clinics jsonb [{label,url}]、photo_mode photo/anon/placeholder、photo_path、display_order、updated_at 觸發器）。
+  - RLS deny-by-default；`is_admin()`（SECURITY DEFINER，避免 profiles 自我遞迴）。Policies：anon＋authenticated 可 SELECT doctors（全列）；admin 對 doctors／profiles 全 CRUD；authenticated 可讀自己的 profile；其餘拒絕。
+  - Storage：`doctor-photos` bucket，公開 READ、寫入限 `is_admin()`。
+  - 安全 advisor：修正 `set_updated_at` search_path、移除過寬的 bucket 列舉 SELECT policy、撤銷 anon 對 `is_admin()` 的 EXECUTE。**剩 1 個 WARN（authenticated 可執行 is_admin）為設計必要**（RLS policy 需呼叫它；函式僅回傳「呼叫者本人是否為 admin」，不洩漏他人資料），已於 README 記錄。
+  - Auth：公開註冊須在 dashboard 關閉、手動建立唯一 admin user 並插入 profile（role=admin）——已於 `supabase/README.md` 詳列步驟（無法由程式代做）。
+- **Part B — 由現有內容 seed（不杜撰）。** 解析 team.html 全部 7 張 `article.doc`，忠實寫入 doctors：姓名／職稱／專長＋pending、credentials、clinics、display_order、photo_mode/photo_path（有 jpg=photo＋該路徑；剪影=anon；待補=placeholder）。保留各醫師 `待醫師確認` 旗標；僅 巫靚穎 specialty_pending=false（與原頁一致）。
+- **Part C — `/admin/` 登入閘控編輯器（純 HTML/JS＋CDN supabase-js，no build）。** Email/密碼登入 → 檢查 is_admin → 醫師清單 → 逐位編輯表單（姓名、職稱、專長＋「待醫師確認」開關、學經歷增刪、院區連結、排序、photo_mode、照片上傳至 bucket）→ 儲存寫回 Supabase（RLS 把關）。重用 site.css tokens、crisp 無光暈／漸層。已從 nav／語言切換／sitemap／robots／搜尋索引**排除** /admin/。
+- **Part D — 變更時重生成 team.html（approach A）。** team.html 加 `<!-- DOCTORS:START/END -->` 標記，重生成只動該區塊。`scripts/generate-team.mjs`（純 fetch、無 npm 依賴）以 anon key 讀 doctors 依 display_order 重現**完全相同的卡片 markup**；photo-mode 醫師的照片以 bucket 為來源下載進 `assets/doctors/` 並引用**本地路徑**，使公開站對 Supabase **零執行期依賴**。`.github/workflows/regen-team.yml`（workflow_dispatch＋repository_dispatch:doctors-changed，GITHUB_TOKEN contents:write，Supabase URL/anon 為 repo variables）重生成並提交。安全自動觸發：已部署 `regen-team` Edge Function（admin 閘控；PAT 存於函式 secret，非瀏覽器）；另記錄 Database Webhook 作法。基線（手動 workflow_dispatch／本機 `node scripts/generate-team.mjs`）已驗證可正確重生成。
+- **Part E — 文件＋驗證。** `supabase/README.md`：建立專案、關閉註冊、建 admin、插 profile、key 安全表（anon vs service-role vs PAT 各放哪）、發佈流程、安全清單（2FA／HTTPS／RLS 為閘）、§九 仍規管已發佈內容。`.env` 已 gitignored、`.env.example` 用 placeholder。
+
+### 驗證（實測 vs 未實測）
+- **實測（DB/RLS）**：anon **可讀** doctors（7 列）、anon **寫入被擋**（INSERT 失敗、無殘留）；pg_policies 確認 doctors/profiles/storage policy 與設計一致；security advisor 僅剩設計必要的 1 個 WARN。
+- **實測（重生成）**：`node scripts/generate-team.mjs` 重生成 team.html，`git diff` 僅移除**不可見的編輯註解**並加標記，**每張 `<article>` 卡 byte-for-byte 不變**；Chrome headless 1280 截圖確認照片／剪影／字樣占位／pending／CV／院區連結／header 單行／無光暈漸層皆與原頁相同、卡片填滿框。
+- **實測（admin UI）**：`/admin/` 登入畫面以 site tokens 正常渲染（supabase-js ESM 由 CDN 載入、init 執行）。
+- **未實測（需手動前置）**：登入後的 admin 編輯／上傳 end-to-end **尚未實跑**，因 admin auth user 需在 dashboard 手動建立（註冊已關閉）；其寫入路徑已由 RLS policy 層（admin 全 CRUD＋storage 限 is_admin、anon 實測被擋）保證。Edge Function 已部署但回 503，待 `GITHUB_DISPATCH_PAT`/`GITHUB_REPO` secret 設定後生效；GitHub Action 需在實際 repo 設定 variables 後由 workflow_dispatch 跑。
 
 ## 🗓️ 2026-06-08 (session 36) — 衛教專欄：q1 封面還原為原始版
 

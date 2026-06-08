@@ -1,0 +1,50 @@
+name: Regenerate team.html
+
+# Approach A: regenerate the static team.html from Supabase whenever doctor data
+# changes. Two triggers:
+#   - workflow_dispatch       — manual "Run workflow" button (baseline; always works)
+#   - repository_dispatch     — fired by the Supabase webhook / Edge Function on a
+#                               'doctors-changed' event (the admin "Publish" button)
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [doctors-changed]
+
+permissions:
+  contents: write          # GITHUB_TOKEN may commit the regenerated file + images
+
+concurrency:
+  group: regen-team
+  cancel-in-progress: false
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Regenerate team.html from Supabase
+        env:
+          # Browser-safe values stored as repo VARIABLES (not secrets): the anon
+          # key is public by design; RLS is the security gate.
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+        run: node scripts/generate-team.mjs
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add team.html assets/doctors
+          if git diff --staged --quiet; then
+            echo "No changes to publish."
+          else
+            git commit -m "team.html: regenerate from Supabase (doctors-changed)"
+            git push
+          fi
