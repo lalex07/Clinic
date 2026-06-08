@@ -2,7 +2,22 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-08 (session 32)_
+_Last updated: 2026-06-08 (session 33)_
+
+## 🗓️ 2026-06-08 (session 33) — 衛教專欄 6 張封面以重生成的滿版（full-bleed）版本替換（q4／q17 並修正吉祥物）
+
+把 6 張衛教專欄封面（`faq-q1／q4／q7／q10／q14／q17`）替換為重新生成的**滿版（full-bleed）**版本：q1／q7／q10／q14＝滿版；q4／q17＝滿版＋**修正吉祥物**（院長 ENT 醫師臉部／頭鏡／白袍還原）。動到 `assets/faq/`（6 張 PNG 覆寫）、`faq.html`、6 篇 `faq-qN.html`（加 `?v=2` cache-bust）、`docs/faq-images-map.md`。
+
+- **下載與資產（`assets/faq/`，6 張覆寫）。** 從 CloudFront（連結會過期）即時 `curl` 下載 6 張 2k 原圖（2752×1536，皆 HTTP 200、>4MB、真 PNG），以同檔名覆寫舊版；再用 `sips -z 768 1376` **下採樣到 1376×768** 以對齊其餘 11 張封面的尺寸與檔案大小（約 1.2–1.4MB）。q8（圖內錯字 軟鵒→軟顎）、q13、q15 依指示**不動**，留待後續重生成。
+- **Cache-bust。** 僅對這 6 張被替換的 `<img src>` 在 `faq.html` 與各自 `faq-qN.html` 追加 `?v=2`（共 12 處，已逐處核對一致），讓 CDN／瀏覽器顯示新圖；markup／CSS 結構無其他變動（仍走 `.photo-zone--filled`＋`object-fit:cover`）。
+- **`docs/faq-images-map.md` 更新。** 將 q1／q4／q7／q10／q14／q17 的表格列與「Full URLs」換成新檔名，標注 2026-06-08 重生成（q1／q7／q10／q14＝full-bleed；q4／q17＝full-bleed＋修正吉祥物）；新增 TODO：q8（圖內錯字 軟顎）、q13、q15 仍待重生成。
+
+### 驗證（clinic-audit report-only）
+- **§九**：6 變更頁無 保證／根治／唯一／第一／必須／一定要／最〔上級〕（`最` 命中皆 最新 nav）；無費用；`[0-9]%` 命中為 CSS `border-radius:50%`；7 頁頁尾免責聲明齊全。
+- **設計規則**：變更檔無 gradient／backdrop-filter／filter:blur／drop-shadow／`transition:all`；新圖皆 16:9、`object-fit:cover` 滿版裁切於圓角框內、未撐框未溢出（本機 `http://localhost:8000` 預覽，頁面與 6 圖皆 HTTP 200）。
+- **無障礙**：變更頁 `<img>` 全具描述性 alt（仍與新圖主題相符）；html lang zh-Hant。
+- **逐張視覺核對**：6 張吉祥物忠實（圓臉、黑框眼鏡、額頭頭鏡、白袍、同一成年男性）、滿版情境設定、主題資訊圖正確；中文標題／描述字形正常。
+- **待院長簽核（已 flag、不擋）**：新圖內描述文案待院長 §九 簽核；**q14** 圖內描述疑似「耳咽管」誤植為「耳耳嚨管」（圖中解剖標籤本身正確），列入院長校對。
 
 ## 🗓️ 2026-06-08 (session 32) — 衛教專欄 17 張院長核准吉祥物資訊圖配圖上線（文章頁＋卡片）；CLAUDE.md 新增 FAQ/部落格封面插畫風格節
 
