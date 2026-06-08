@@ -2,7 +2,16 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-08 (session 34)_
+_Last updated: 2026-06-08 (session 35)_
+
+## 🗓️ 2026-06-08 (session 35) — 衛教專欄：換 q1 封面為重做版；移除卡片分類膠囊（pill chips）
+
+兩項變更。動到 `faq.html`、`faq-q1.html`、`assets/site.css`、`assets/faq/faq-q1.png`，並刪掉誤放在 repo 根目錄的 `faq q1 image redone.png`。
+
+- **q1 封面換成使用者重做版。** 使用者把 `faq q1 image redone.png`（1672×941，16:9）放在 repo 根目錄；以 `sips -z 768 1376` 下採樣到 **1376×768** 後覆寫 `assets/faq/faq-q1.png`（驗為真 PNG、1376×768、約 1.27MB），再 `git rm` 掉根目錄那張散檔（served 圖只放 `assets/`，不放根目錄）。cache-bust 由 `faq-q1.png?v=2` 升為 **`?v=3`**（`faq.html`＋`faq-q1.html` 各一處）讓新圖顯示。
+- **移除卡片分類膠囊。** `faq.html` 17 張卡片 `.faq-card__body` 第一個子元素的 `<span class="faq-card__tag">…</span>`（小綠圓角膠囊，如 鼻過敏・睡眠、兒童睡眠呼吸中止、中耳・胃食道逆流）**全數刪除**；`assets/site.css` 移除已無用的 `.faq-card__tag{}` 規則（原 ~638 行）。`<h2>` 成為 body 第一個子元素，靠 `.faq-card__body` 既有 `padding:var(--s-5)` 留白，桌機＋手機預覽間距乾淨、未另加 margin。`.faq-card__more`（閱讀全文）與詳情頁 `.tag`（總院／手術中心）等未動。
+- **驗證（本機 `http://localhost:8000`，Chrome headless 桌機 1280／手機 390）。** `faq.html` 17 張卡片皆無膠囊、間距乾淨；q1 新封面滿版填滿卡片框、圓角裁切、無溢出／光暈／漸層；`faq-q1.html` 詳情頁亦顯示新封面。
+- **clinic-audit（report-only）全 PASS**：§九 無禁語（`最` 命中為 最新 nav）／無費用／頁尾免責聲明齊全；設計規則變更檔無 gradient／glow／`transition:all`，`.faq-card__tag` 無殘留引用；無障礙 17 張 `<img>` 皆具 alt、標題 1 h1＋17 h2 無跳級。
 
 ## 🗓️ 2026-06-08 (session 34) — 修正 faq.html 卡片封面 padding：`--filled` 現勝過 `--sm`，封面圖滿版填滿卡片框
 

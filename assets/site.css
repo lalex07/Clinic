@@ -635,17 +635,6 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   flex: 1;
   padding: var(--s-5);
 }
-.faq-card__tag {
-  align-self: flex-start;
-  font-size: 0.74rem;
-  letter-spacing: 0.06em;
-  font-weight: 600;
-  color: var(--primary-deep);
-  background: var(--primary-soft);
-  border-radius: 999px;
-  padding: 0.25rem 0.7rem;
-  margin-bottom: var(--s-3);
-}
 .faq-card h2 {
   font-family: "Noto Serif TC", serif;
   font-size: 1.2rem;
