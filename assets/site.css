@@ -409,6 +409,10 @@ body > * { position: relative; z-index: 1; }
   height: 100%;
   object-fit: cover;
 }
+/* filled cover cards must beat --sm's compact padding (same specificity, later in file),
+   otherwise the image is inset and the cream box shows as a margin */
+.photo-zone--sm.photo-zone--filled { padding: 0; }
+.photo-zone--filled.faq-card__media { border-bottom: 0; }
 
 /* aspect-ratio modifiers — the box previews the target crop */
 .photo-zone--16x9 { aspect-ratio: 16 / 9; }

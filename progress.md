@@ -2,7 +2,16 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-08 (session 33)_
+_Last updated: 2026-06-08 (session 34)_
+
+## 🗓️ 2026-06-08 (session 34) — 修正 faq.html 卡片封面 padding：`--filled` 現勝過 `--sm`，封面圖滿版填滿卡片框
+
+修一個 CSS bug：`faq.html` 卡片封面圖未填滿卡片框，四周露出一圈 cream 邊。成因是卡片 figure 同掛 `photo-zone--sm photo-zone--filled`，`.photo-zone--filled`（~405 行）設 `padding:0`、`.photo-zone--sm`（~420 行）設 `padding:var(--s-4)`，兩者同 specificity，`--sm` 因在檔案後面而勝出，圖被 compact padding 內縮、露出底下 cream 的 `.photo-zone` 框。只動 `assets/site.css`，未動 HTML／圖片。
+
+- **`assets/site.css`（緊接 `.photo-zone--filled img{}` 區塊後，~411 行）新增兩條高 specificity 規則。** `.photo-zone--sm.photo-zone--filled { padding: 0; }`（0,2,0 勝過 `.photo-zone--sm` 的 0,1,0，與來源順序無關）讓滿版卡片去掉 compact padding；`.photo-zone--filled.faq-card__media { border-bottom: 0; }` 移除滿版卡片圖下方殘留的虛線分隔線（`.faq-card__media` 原設 `border-bottom:1px dashed`）。未動詳情頁 `.faq-article__media` 規則（本就正確填滿）。
+- **驗證（本機 `http://localhost:8000/faq.html`，桌機 1280／手機 390）。** 17 張卡片封面皆滿版填滿卡片框、無 cream 邊、圓角仍裁切、無溢出／光暈／漸層；Chrome headless 桌機＋手機截圖確認。
+- **clinic-audit（report-only）**：只改 CSS padding／border，未動文案／顏色／HTML。設計規則：變更檔無 gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow／`transition:all`（命中皆 CSS 註解）。§九 與對比度不受影響。全 PASS、無發現。
+- **備註**：`assets/site.css` 會被快取，部署後需 hard-refresh（Cmd+Shift+R）才看得到變更。
 
 ## 🗓️ 2026-06-08 (session 33) — 衛教專欄 6 張封面以重生成的滿版（full-bleed）版本替換（q4／q17 並修正吉祥物）
 
