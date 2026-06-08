@@ -2,7 +2,14 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-08 (session 35)_
+_Last updated: 2026-06-08 (session 36)_
+
+## 🗓️ 2026-06-08 (session 36) — 衛教專欄：q1 封面還原為原始版
+
+把 session 35 換上的 q1 重做版**還原為原始封面**。使用者把原圖 `faq-q1 copy.png`（已是 1376×768）放在 repo 根目錄；以 `mv "faq-q1 copy.png" assets/faq/faq-q1.png` 一步覆寫重做版並移除根目錄散檔（驗為真 PNG、1376×768）。cache-bust 由 `faq-q1.png?v=3` 升為 **`?v=4`**（`faq.html`＋`faq-q1.html` 各一處）讓瀏覽器／CDN 取回還原後的圖。無其他 markup／CSS 變更。
+
+- **驗證（本機 `http://localhost:8000`，Chrome headless 1280）**：`faq.html` q1 卡片與 `faq-q1.html` 詳情頁皆顯示原始封面、滿版填滿卡片框、無光暈／漸層，header 維持單行。
+- **clinic-audit（report-only）全 PASS**：§九 無禁語（`最` 命中為 最新 nav）／無費用／頁尾免責聲明齊全；`<img>` 皆具 alt（q1 alt 仍與原圖主題相符）；repo 根目錄無散落 `.png`。
 
 ## 🗓️ 2026-06-08 (session 35) — 衛教專欄：換 q1 封面為重做版；移除卡片分類膠囊（pill chips）
 
