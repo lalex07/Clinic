@@ -114,6 +114,19 @@ This is a no-build GitHub Pages site served straight from the repo root by path.
 
 New files follow this categorization by default: a new patient-facing page → root; a new stylesheet/script/image → `assets/`; a new internal note, review, or draft → `docs/`.
 
+### Backend & tooling layout
+
+A Supabase-backed CMS (Phase 1: editable 醫療團隊) lives alongside the static site in dedicated **non-served** directories. None of these are part of the public site — they are excluded from the nav, the language toggle, `sitemap.xml`, `robots.txt` (`/admin/` is `Disallow`ed), and the search index — and the public pages keep zero runtime dependency on them.
+
+- **`supabase/`** — the database backend, not served: `migrations/` (Postgres schema for `profiles`/`doctors`, the `is_admin()` helper, deny-by-default RLS policies, and the `doctor-photos` storage bucket), `functions/regen-team/` (the admin-gated Edge Function that triggers regeneration), and `README.md` (setup + the security checklist). The doctor rows are seeded from the existing `team.html`.
+- **`scripts/`** — Node generate scripts, not served. `generate-team.mjs` reads the `doctors` table (anon key) and rewrites only the `<!-- DOCTORS:START/END -->` block in `team.html`, reproducing the exact card markup and pulling photos local so the published page stays static.
+- **`admin/`** — the login-gated staff admin app (the doctor editor; plain HTML/JS + `supabase-js` via CDN, anon key + Supabase Auth only). **Gated; never linked from the public site.** RLS is the security gate.
+- **`.github/workflows/`** — GitHub Actions. `regen-team.yml` runs the generator and commits the regenerated `team.html` (`workflow_dispatch` + `repository_dispatch`).
+
+**Secrets are NEVER committed** — the service-role key, any GitHub PAT, and account passwords stay out of the repo and the browser entirely. Only browser-safe values (the project URL + the anon/publishable key) appear in committed files (`admin/config.js`), and only `.env.example` with placeholders is tracked; the real `.env` is gitignored. Server-side secrets live in the Edge Function's secrets or the database-webhook config — see `supabase/README.md`.
+
+Older session notes are archived in `docs/progress-archive.md` (a move out of `progress.md`, not a deletion); `progress.md` keeps the orientation note, the most recent sessions, and the evergreen reference/constraints sections.
+
 ## Compliance
 
 Taiwan medical advertising rules apply. See section 九 in `site-spec.md` for the do-not-use word list (no 保證, 最, 根治, 唯一, etc.) and the required footer disclaimer. Treat that section as hard constraints.

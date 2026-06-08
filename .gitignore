@@ -3,3 +3,4 @@ temporary screenshots/
 .claude/settings.local.json
 .gstack/
 .env
+*.env
