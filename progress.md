@@ -2,9 +2,26 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-07 (session 31)_
+_Last updated: 2026-06-08 (session 32)_
 
-## 🗓️ 2026-06-07 (session 31) — 熱門搜尋收成單列；日曆改年→月兩段式選擇、年/月/日範圍一律封頂於今天
+## 🗓️ 2026-06-08 (session 32) — 衛教專欄 17 張院長核准吉祥物資訊圖配圖上線（文章頁＋卡片）；CLAUDE.md 新增 FAQ/部落格封面插畫風格節
+
+把院長核准的 17 張衛教專欄封面插圖（吉祥物 ENT 醫師角色＋情境設定＋主題資訊圖＋中文標題）接進每篇文章頁與 `faq.html` 卡片的 `.photo-zone` 占位槽。動到 `faq.html`、`faq-q1…q17.html`（18 檔）、`assets/site.css`（新增 `.photo-zone--filled`）、`CLAUDE.md`（不 served），新增 `assets/faq/` 17 張 PNG，並把 4 份新工作文件納入 `docs/`。
+
+- **下載與資產（`assets/faq/`，17 張）。** 依 `docs/faq-images-map.md` 的 page→URL 對照，從 CloudFront（連結會過期）即時 `curl` 下載 17 張封面為 `assets/faq/faq-qN.png`（N=1..17）。其中 4 張原始為 JPEG bytes（q4／q9／q14／q17），以 `sips -s format png` 轉成真 PNG 以符合 `.png` 副檔名（GitHub Pages 依副檔名送 `image/png`）。全部驗為 **1376×768（16:9）**。17 個 URL 全部存活、無死連結。
+- **文章頁配圖（17 檔）。** 每篇 `faq-qN.html` 的 `.photo-zone`「配圖建議…」占位（icon＋svg＋label）以 `<img src="assets/faq/faq-qN.png" …>` 取代，figure 加上 `photo-zone--filled` 修飾類；保留 figure 既有的 `photo-zone--16x9 faq-article__media reveal` 類別與 16:9 footprint。圖片 `width=1376 height=768 loading=lazy decoding=async`。**頁面真正的 `<h1>`／title 維持不變**（封面內已烘焙標題，但無障礙標題仍由 `<h1>` 承載）。
+- **卡片縮圖（`faq.html` 17 張卡）。** 每張 `.faq-card` 的 `.photo-zone--sm` 占位同樣換成對應 `faq-qN.png`（以卡片 `href="faq-qN.html"` 為錨點精準對位），加 `photo-zone--filled`。
+- **描述性中文 alt。** 每張 `<img>` 給「概述插圖內容」的 alt（吉祥物醫師＋該題資訊圖主題，如「診所醫師角色搭配上呼吸道矢狀切面對比示意圖，呈現清醒與入睡後咽喉變窄」），**非複製圖內標題**；文章頁與卡片同圖共用同一 alt，17 題各自對應正確主題（已逐張核對）。
+- **`assets/site.css` 新增 `.photo-zone--filled`。** `padding:0; border:0`（拿掉占位虛線框），`img { display:block; width:100%; height:100%; object-fit:cover }`——圖片填滿框並被 `.photo-zone` 既有的 `overflow:hidden`＋`border-radius` 裁切到圓角內，框的 footprint 不變、圖不溢出（符合「圖片須留在占位框內」設計規則）。
+- **`CLAUDE.md`（不 served）新增「## FAQ / blog-cover illustration style (院長-approved)」節**（逐字置於 Design rules 節之後、Technical 節之前），規範衛教專欄／部落格封面插畫：吉祥物固定為 logo 院長 ENT 醫師、資訊圖為主、情境設定（非純色底）、雙色明亮不用紅／深色、§九 仍適用、16:9 等。並在 Design rules 節加一行說明：此封面規則為**刻意例外**，允許比平靜核心站規則更多色彩／活潑，**僅限插畫封面、不適用站台 chrome／版面**。
+
+### 驗證（clinic-audit report-only 全綠）
+- **§九**：`faq.html`＋17 文章頁無 保證／根治／唯一／第一／必須／一定要／最〔上級〕；`最` 命中皆 最新（nav）；無費用；`[0-9]%` 命中為 CSS `border-radius:50%`；18 頁頁尾免責聲明齊全。alt 文案為中性插圖描述、無療效宣稱。
+- **設計規則**：變更檔 gradient／backdrop-filter／filter:blur／drop-shadow／`0 0` glow／`transition:all` 全 0（命中皆 CSS 註解）；`.photo-zone--filled` 圖片 `object-fit:cover` 裁切於圓角框內、未撐大框、未溢出（瀏覽器截圖 faq.html 卡片網格＋faq-q1 文章頁確認）。
+- **無障礙**：18 頁 `<img>` 全具描述性 alt、無空 alt；html lang zh-Hant；每篇文章頁恰 1 `<h1>`＋`h1 h2 h2 h2` 無跳級；`faq.html` 1 h1＋17 h2 無跳級。header 未更動，桌機單行不受影響。
+- **新增工作文件納入 `docs/`**：`faq-images-map.md`、`dafeng-todos.md`、`english-site-plan.md`、`supabase-admin-plan.md`（皆 docs/、不 served、不入 build）。
+
+
 
 多 agent 平行作業（A／B），本 agent 負責整併、clinic-audit（report-only）、瀏覽器（CDP）驗證與唯一 commit。三組全 PASS，無回歸。動到 `assets/search.js`、`assets/site.css`、`news.html`。
 

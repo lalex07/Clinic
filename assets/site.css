@@ -399,6 +399,17 @@ body > * { position: relative; z-index: 1; }
 }
 .photo-zone__label .avoid { color: var(--ink-faint); }
 
+/* a real cover image fills the placeholder box edge-to-edge and is clipped to
+   the box's fixed aspect-ratio + rounded corners (.photo-zone has overflow:hidden).
+   Drops the dashed placeholder border/padding; the box still defines the footprint. */
+.photo-zone--filled { padding: 0; border: 0; }
+.photo-zone--filled img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* aspect-ratio modifiers — the box previews the target crop */
 .photo-zone--16x9 { aspect-ratio: 16 / 9; }
 .photo-zone--4x3  { aspect-ratio: 4 / 3; }

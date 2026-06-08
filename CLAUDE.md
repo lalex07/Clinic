@@ -45,6 +45,8 @@ Use the frontend-design skill in `.claude/skills/frontend-design/` for all UI wo
 
 **No eyebrow pill above page headings.** Page heroes / page-heads go straight to the heading — never add the rounded dot-plus-text "eyebrow" pill (the old "● 新店・木柵・興隆・中山" style) above an `<h1>`. Breadcrumbs and the italic section kickers are fine; this bans only that rounded eyebrow-pill component.
 
+**Exception — FAQ / blog-cover illustrations.** The "FAQ / blog-cover illustration style" rules below are a deliberate exception that allows more colour and liveliness than these calm core-site rules; that exception applies ONLY to illustration covers (衛教專欄 / blog / marketing imagery), never to site chrome or layout.
+
 Goals:
 - Generous vertical breathing room between sections
 - Short paragraphs (2-4 sentences max in body copy)
@@ -52,6 +54,43 @@ Goals:
 - Avoid grid-of-many-feature-cards patterns; prefer 3-6 considered items
 - Photography and illustration carry weight rather than dense text blocks
 - Calm trust over busy energy
+
+## FAQ / blog-cover illustration style (院長-approved)
+
+These govern generated illustration covers for 衛教專欄 (and similar blog/marketing imagery). They
+intentionally allow MORE colour and liveliness than the calm core-site design rules; this exception
+applies ONLY to illustration covers, not to site chrome or layout.
+
+- Mascot is mandatory and fixed: always feature the clinic logo avatar — the 院長 ENT-doctor character —
+  reproduced faithfully: round chubby face, short spiky black hair, thick black rectangular glasses,
+  thick eyebrows, small dot eyes, gentle closed-mouth smile, a round silver ENT head-mirror on the
+  forehead, white coat. The same specific adult man every time; never a young boy/child/woman/generic
+  mascot, never redesigned. He acts as the presenter/host. (When generating, pass the logo as a
+  reference AND describe these features explicitly — the model drifts otherwise.)
+- Reference aesthetic: friendly Taiwanese family-clinic health-education blog (e.g. homepro.com.tw/blog)
+  — warm, approachable, mascot-driven.
+- Infographic-forward: each cover's main element is a tidy, topic-matched infographic (cause-flow,
+  labelled anatomical diagram, comparison, cycle, chart, or timeline); the doctor presents alongside it.
+- On-image copy: a short engaging headline + a fuller one-line description (a content hook), with
+  editorial typographic emphasis (key words bold and in an accent colour). §九 still applies to all
+  on-image text (no 保證/最/根治/唯一/第一/必須/一定要, no fees, no efficacy claims); medical copy gets
+  院長 review before publishing. Proofread all Traditional-Chinese text (headline, description,
+  infographic labels) — AI text rendering can misform characters.
+- Settings, not solid colours: every cover has a designed illustrated real-world setting (bedroom,
+  classroom, clinic room, airplane cabin, nature, day/night split, etc.) — NEVER a flat solid-colour
+  background. Warm semi-realistic illustration (not photoreal); the flat cartoon doctor contrasts with
+  the more detailed setting.
+- Tidy: no confetti, scattered dots, or clutter.
+- Layout variety: vary text placement and composition across the set; don't reuse one template.
+- Colour:
+  - Vary the palette across the set — each cover its own distinct scheme; don't repeat the same combo.
+  - Two clearly distinct, balanced colours per cover — avoid monochromatic / single-colour-dominant.
+  - NO red or red-orange (bad connotation); avoid coral and rust too.
+  - Light, bright, airy colours only — NO dark/navy/deep tones.
+  - Lively but tasteful (the strict calm site palette reads as too flat for covers).
+- Format: 16:9, sized for the .photo-zone slots; images constrained to their box.
+- Process: generate a test or two and confirm before committing a full batch; verify avatar fidelity
+  before publishing.
 
 ## Technical
 
