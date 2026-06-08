@@ -2,7 +2,14 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-08 (session 38)_
+_Last updated: 2026-06-08 (session 39)_
+
+## 🗓️ 2026-06-08 (session 39) — Admin：修正登入畫面登入後不隱藏（`[hidden]` 被 display:grid 蓋過）
+
+`admin/` 後台登入成功後，登入畫面不會消失、蓋住編輯器。成因純 CSS：`admin/admin.css` 的 `.admin-login { display: grid }` 蓋過 HTML `hidden` 屬性的 UA 預設 `display:none`，所以 app.js 執行 `loginView.hidden = true` 後，`<section id="loginView" hidden>` 仍以 grid 顯示。auth／profiles 讀取／is_admin 檢查皆正常，只是 view 沒隱藏。
+
+- **修正（只動 `admin/admin.css`）**：檔案頂部加入防禦性基線 `[hidden] { display: none !important; }`，讓 `hidden` 屬性永遠勝出（`!important` 蓋過非 important 的 `display:grid`，與來源順序／specificity 無關）。未動 `app.js`／`index.html`（邏輯本來就正確）。
+- **驗證**：本機 `http://localhost:8000/admin/` 登入卡正常渲染（grid 置中不變）；以 headless 計算樣式實測——`.admin-login` 帶 `hidden` 計算為 `display:none`、不帶 `hidden` 仍為 `display:grid`，確認覆寫只影響隱藏狀態、不破壞可見登入版面。
 
 ## 🗓️ 2026-06-08 (session 38) — Repo 整理：封存舊進度筆記 + 文件化後端/工具佈局
 

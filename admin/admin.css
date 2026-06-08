@@ -2,6 +2,11 @@
    shadows, radii). Internal tool — calm, crisp, no glow/gradient (still honours
    the project design rules: solid colors, grounded shadows, hover = lift). */
 
+/* The `hidden` attribute must always win — otherwise a layout rule like
+   .admin-login { display: grid } overrides the UA [hidden] default and the
+   login view never disappears after `loginView.hidden = true`. */
+[hidden] { display: none !important; }
+
 body.admin {
   background: var(--bg);
   color: var(--ink);
