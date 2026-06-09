@@ -2,7 +2,16 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-09 (session 40)_
+_Last updated: 2026-06-09 (session 41)_
+
+## 🗓️ 2026-06-09 (session 41) — 修正 Storage 上傳 RLS：/admin/ 上傳封面圖報「new row violates row-level security policy」
+
+`/admin/` 消息編輯器上傳封面圖失敗，報 `new row violates row-level security policy for table objects`；`news-images`（與 `doctor-photos`）皆受影響。只新增 1 個 migration（`supabase/migrations/20260609163534_storage_admin_select_for_upload_returning.sql`）＋更新 `progress.md`；未動 app 程式。
+
+- **真因（非「缺 INSERT policy」）。** 兩 bucket 的 admin INSERT/UPDATE/DELETE policy **本來就在、且對 admin 有效**（經模擬 admin JWT 實測：純 `INSERT` 通過）。真正缺的是 **SELECT**：supabase-js `.upload()` 走 `INSERT ... RETURNING`，而 PostgreSQL 會以 **SELECT(USING) policy 檢查 RETURNING 回傳列**；Phase 1 強化（`20260608204735`）把 storage.objects 上唯一的 SELECT policy 移除（為擋 anon 列舉），導致登入的 admin 對自己剛寫入的列**無讀回可見性** → RETURNING 被擋 → 報出上述 RLS 錯誤（純 INSERT 不帶 RETURNING 會過，所以只在瀏覽器上傳時炸）。
+- **修法（經 MCP，已套用）。** 為兩 bucket 各加一條 **admin 限定** 的 SELECT policy：`for select to authenticated using (bucket_id='<bucket>' and public.is_admin())`。並把 6 條寫入 policy（兩 bucket 的 INSERT/UPDATE/DELETE）以 drop-if-exists＋create **冪等重述**，讓此 migration 自成完整、可重現的「storage admin 存取」聲明。**未加任何 anon 寫入或廣域列舉 policy**，公開 READ（公開物件 URL，本就不經 policy）不受影響，**保留 Phase 1 強化意圖**（anon 仍 0 可見、不可列舉）。
+- **驗證（模擬各角色 JWT，於交易內 rollback）。** 修法後：admin `INSERT ... RETURNING` 於 **news-images ✓ 與 doctor-photos ✓ 皆成功**（即真正的上傳路徑）；anon 寫入**被擋**、anon 列舉**0 列可見**；authenticated **非 admin** 寫入**被擋**、列舉**0 列可見**（SELECT policy 確為 is_admin 限定）。security advisor 無新增項（僅剩既有 2 個設計必要 WARN）。
+- **未實測（需 admin 憑證）**：未以真實瀏覽器登入 admin 跑完整上傳 end-to-end（無密碼）；以上為 DB 層 RLS 模擬（含 RETURNING），與 storage-api 實際執行的 SQL 等價。**下次強化 storage 時務必保留這兩條 admin SELECT policy**，否則上傳會再次失效。
 
 ## 🗓️ 2026-06-09 (session 40) — Supabase 後端 Phase 2：最新消息（公告）可編輯化（news 表＋RLS＋news-images bucket、/admin/ 消息編輯器、generate-news.mjs、Action 一次重生成兩頁）
 
