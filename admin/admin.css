@@ -55,6 +55,26 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   outline: 2px solid var(--primary); outline-offset: 1px; border-color: var(--primary);
 }
 
+/* ---- MFA (two-step verification: enroll + challenge) ---- */
+/* QR sits on a plain white field so authenticator apps scan it reliably. */
+.admin-mfa__qr {
+  display: flex; justify-content: center;
+  padding: var(--s-4);
+  background: #fff;
+  border: 1px solid var(--line); border-radius: var(--radius-md, 8px);
+}
+.admin-mfa__qr img { display: block; width: 180px; height: 180px; }
+.admin-mfa__secret {
+  display: block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.95rem; letter-spacing: 0.04em; word-break: break-all;
+  background: var(--bg-2); color: var(--ink);
+  padding: 0.45rem 0.6rem; border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--line-strong);
+}
+/* Single 6-digit code field — roomy, centred, spaced for legibility. */
+.admin-mfa__code { letter-spacing: 0.3em; font-size: 1.05rem; text-align: center; }
+
 /* ---- topbar ---- */
 .admin-topbar {
   display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);

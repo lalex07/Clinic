@@ -9,11 +9,32 @@ const BUCKET = 'doctor-photos';
 
 const $ = (id) => document.getElementById(id);
 const loginView = $('loginView'), appView = $('appView');
+const mfaEnrollView = $('mfaEnrollView'), mfaChallengeView = $('mfaChallengeView');
 
 let doctors = [];
 let current = null;        // currently edited doctor object (or null for new)
 
-/* ---------- auth ---------- */
+/* ---------- auth + MFA (TOTP two-step verification) ----------
+ * App-level enforcement: the admin must reach session AAL2 (password + a
+ * verified TOTP factor) AND pass isAdmin() before the editor (showApp) is shown.
+ *
+ * NOTE — this is APP-LEVEL ONLY. RLS still gates writes on is_admin(), NOT on
+ * aal2. Tightening RLS to require aal2 is a deliberate follow-up AFTER the admin
+ * has enrolled a factor — doing it before enrollment would lock the admin out of
+ * their own database. See progress.md.
+ *
+ * RECOVERY — if the authenticator is lost or enrollment/login breaks, an admin
+ * can delete the factor in the Supabase dashboard → Authentication → Users →
+ * (the user) → Factors, then log in again to re-enrol. (The browser anon key
+ * cannot remove another session's verified factor, so the dashboard is the path.)
+ */
+function setView(name) {
+  loginView.hidden = name !== 'login';
+  mfaEnrollView.hidden = name !== 'enroll';
+  mfaChallengeView.hidden = name !== 'challenge';
+  appView.hidden = name !== 'app';
+}
+
 async function isAdmin() {
   const { data: { user } } = await sb.auth.getUser();
   if (!user) return false;
@@ -27,22 +48,99 @@ async function isAdmin() {
   return false;
 }
 
+// Current Authenticator Assurance Level: { currentLevel, nextLevel } or null on error.
+async function currentAAL() {
+  const { data, error } = await sb.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (error || !data) return null;
+  return data;
+}
+
 async function showApp() {
-  loginView.hidden = true;
-  appView.hidden = false;
+  setView('app');
   await loadDoctors();
 }
 function showLogin(msg) {
-  appView.hidden = true;
-  loginView.hidden = false;
+  setView('login');
+  $('loginBtn').disabled = false;
   $('loginError').textContent = msg || '';
 }
 
+// Route a signed-in (password) session by its AAL. Never shows the app directly —
+// only the aal2 branch reaches gateAndShowApp().
+async function routeByAAL() {
+  const aal = await currentAAL();
+  if (!aal) { await sb.auth.signOut(); return showLogin('無法確認驗證狀態，請重新登入。'); }
+  if (aal.currentLevel === 'aal2') return gateAndShowApp();   // second factor already satisfied
+  if (aal.nextLevel === 'aal2') return showChallenge();       // a verified factor exists → challenge
+  return showEnroll();                                        // no factor yet → first-time setup
+}
+
+// Final gate: require BOTH aal2 (second factor verified this session) AND admin.
+async function gateAndShowApp() {
+  const aal = await currentAAL();
+  if (!aal || aal.currentLevel !== 'aal2') return showLogin('需要完成兩步驟驗證。');
+  if (await isAdmin()) return showApp();
+  await sb.auth.signOut();
+  return showLogin('此帳號沒有管理員權限。');
+}
+
+/* ----- challenge an existing, verified TOTP factor ----- */
+let challengeFactorId = null;
+async function showChallenge() {
+  const { data, error } = await sb.auth.mfa.listFactors();
+  if (error) { await sb.auth.signOut(); return showLogin('無法載入驗證因子：' + error.message); }
+  const totp = (data && data.totp && data.totp[0]) || null;   // listFactors().totp = verified TOTP only
+  if (!totp) return showEnroll();                             // none verified → fall back to enroll
+  challengeFactorId = totp.id;
+  $('mfaChallengeCode').value = '';
+  $('mfaChallengeError').textContent = '';
+  setView('challenge');
+  $('mfaChallengeCode').focus();
+}
+
+/* ----- first-time TOTP enrollment ----- */
+let enrollFactorId = null;
+async function showEnroll() {
+  $('mfaEnrollError').textContent = '';
+  try {
+    // Clear any leftover UNVERIFIED factor from an abandoned earlier attempt so they
+    // don't accumulate (listFactors().all includes unverified; .totp lists verified only).
+    const { data: list } = await sb.auth.mfa.listFactors();
+    for (const f of (list && list.all) || []) {
+      if (f.factor_type === 'totp' && f.status !== 'verified') {
+        await sb.auth.mfa.unenroll({ factorId: f.id });
+      }
+    }
+    const { data, error } = await sb.auth.mfa.enroll({ factorType: 'totp' });
+    if (error) throw error;
+    enrollFactorId = data.id;
+    $('mfaQr').src = data.totp.qr_code;       // SVG data URI from Supabase
+    $('mfaSecret').textContent = data.totp.secret;
+    $('mfaEnrollCode').value = '';
+    setView('enroll');
+    $('mfaEnrollCode').focus();
+  } catch (err) {
+    await sb.auth.signOut();
+    showLogin('無法開始兩步驟驗證設定：' + (err.message || err));
+  }
+}
+
+// Shared verify: challenge the factor, then verify the 6-digit code. Throws on failure.
+// On success supabase-js upgrades the stored session to aal2.
+async function verifyFactor(factorId, code) {
+  const { data: ch, error: chErr } = await sb.auth.mfa.challenge({ factorId });
+  if (chErr) throw chErr;
+  const { error: vErr } = await sb.auth.mfa.verify({ factorId, challengeId: ch.id, code });
+  if (vErr) throw vErr;
+}
+
+/* ---------- view handlers ---------- */
 async function init() {
   const { data: { session } } = await sb.auth.getSession();
-  if (session && await isAdmin()) return showApp();
-  if (session) { await sb.auth.signOut(); return showLogin('此帳號沒有管理員權限。'); }
-  showLogin('');
+  if (!session) return showLogin('');
+  // Re-check AAL on every load (not just session presence) so a password-only
+  // (aal1) session can't reach the editor simply by reloading the page.
+  await routeByAAL();
 }
 
 $('loginForm').addEventListener('submit', async (e) => {
@@ -52,14 +150,43 @@ $('loginForm').addEventListener('submit', async (e) => {
   const { error } = await sb.auth.signInWithPassword({
     email: $('email').value.trim(), password: $('password').value,
   });
-  if (error) { $('loginBtn').disabled = false; return showLogin('登入失敗：' + error.message); }
-  if (await isAdmin()) { $('loginBtn').disabled = false; return showApp(); }
-  await sb.auth.signOut();
   $('loginBtn').disabled = false;
-  showLogin('此帳號沒有管理員權限。');
+  if (error) return showLogin('登入失敗：' + error.message);
+  await routeByAAL();
 });
 
-$('logoutBtn').addEventListener('click', async () => { await sb.auth.signOut(); showLogin(''); });
+$('mfaChallengeForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  $('mfaChallengeBtn').disabled = true;
+  $('mfaChallengeError').textContent = '';
+  try {
+    await verifyFactor(challengeFactorId, $('mfaChallengeCode').value.trim());
+    await gateAndShowApp();                  // session is now aal2
+  } catch (err) {
+    $('mfaChallengeError').textContent = '驗證失敗：' + (err.message || err) + '（請確認驗證碼後重試）';
+  } finally {
+    $('mfaChallengeBtn').disabled = false;
+  }
+});
+
+$('mfaEnrollForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  $('mfaEnrollBtn').disabled = true;
+  $('mfaEnrollError').textContent = '';
+  try {
+    await verifyFactor(enrollFactorId, $('mfaEnrollCode').value.trim());
+    await gateAndShowApp();                  // factor verified → session upgraded to aal2
+  } catch (err) {
+    $('mfaEnrollError').textContent = '啟用失敗：' + (err.message || err) + '（請確認驗證碼後重試）';
+  } finally {
+    $('mfaEnrollBtn').disabled = false;
+  }
+});
+
+async function logout() { await sb.auth.signOut(); challengeFactorId = enrollFactorId = null; showLogin(''); }
+$('logoutBtn').addEventListener('click', logout);
+$('mfaChallengeCancel').addEventListener('click', logout);
+$('mfaEnrollCancel').addEventListener('click', logout);
 
 /* ---------- list ---------- */
 async function loadDoctors() {

@@ -2,7 +2,23 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-09 (session 44)_
+_Last updated: 2026-06-09 (session 45)_
+
+## 🗓️ 2026-06-09 (session 45) — /admin/ 加上 TOTP 兩步驟驗證（MFA，app 層強制；RLS aal2 為後續）
+
+回應 session 44 安全審查 M1（admin 帳號未啟用 MFA）。在 `/admin/` 登入加上 TOTP 第二因子，密碼登入後必須完成 TOTP 才能進入編輯器。只動 `admin/`（index/app/css）＋ progress；未碰 RLS／auth config／後端／產生器／公開站。用既有 supabase-js client（sb）的 MFA API：`enroll`／`challenge`／`verify`／`getAuthenticatorAssuranceLevel`／`listFactors`／`unenroll`。TOTP 在 Supabase 預設可用，無需 dashboard 開關。
+
+- **流程（app.js 重寫 auth 區塊）。** 密碼登入成功後 `routeByAAL()` 讀 `getAuthenticatorAssuranceLevel()`：
+  - `currentLevel='aal2'` → 直接 `gateAndShowApp()`（重載時不再要求重輸 TOTP，因 session 已是 aal2）。
+  - `currentLevel='aal1' & nextLevel='aal2'`（已有已驗證因子）→ 顯示**輸入驗證碼**視圖：`challenge({factorId})`＋`verify({factorId,challengeId,code})`。
+  - `currentLevel='aal1' & nextLevel='aal1'`（尚無因子）→ 顯示**設定兩步驟驗證**視圖：`enroll({factorType:'totp'})`→顯示 QR（`totp.qr_code`）＋手動金鑰（`totp.secret`）→輸入 6 碼→`challenge`＋`verify` 完成啟用。進入前先 `unenroll` 清掉先前未完成的 unverified 因子，避免堆積。
+  - 成功後一律經 **GATE `gateAndShowApp()`：session 必為 aal2 且 `isAdmin()` 通過才 `showApp()`**。`init()` 於每次載入「重查 AAL」（非僅看 session），password-only(aal1) session 無法靠重整進入編輯器。登出（含兩個 MFA 視圖的「取消（登出）」）清空 factorId 並回登入。錯誤以既有 `.admin-error` 顯示、可重試。
+- **UI（index.html＋admin.css）。** 新增 `#mfaChallengeView`／`#mfaEnrollView` 兩個 `.admin-login` 卡片，沿用既有 token（solid 色、grounded shadow、hover=lift，無 glow／gradient）。新 `.admin-mfa__qr`（白底磚利於掃描）／`.admin-mfa__secret`（等寬金鑰框）／`.admin-mfa__code`（置中、字距加大的 6 碼輸入）。
+- **安全範圍（重要）。** **本次僅 app 層強制**；RLS 仍以 `is_admin()` 把關、**未**改為要求 aal2。**收緊 RLS 要求 aal2 是刻意的後續工作，須等 admin 實際完成 TOTP enrollment 後再做**，否則會把 admin 鎖在自己的 DB 外。復原路徑（遺失驗證器）：Supabase dashboard → Authentication → Users →（該帳號）→ Factors 刪除因子後重新登入再 enrol；已寫入 app.js 註解。
+- **驗證（headless Chrome；無驗證器無法跑真實 TOTP 登入）。**
+  - **實測**：以 `--headless=new --dump-dom` 載入真實頁面——模組（CDN supabase-js）載入、`init()` 無例外執行、無 session → 正確路由到 **loginView 顯示、其餘三視圖 hidden**（同時驗證 `setView()` 正確切換四視圖）。以真實 markup＋CSS 的暫存預覽檔截圖 enroll／challenge 兩視圖：標題、QR 白磚、等寬金鑰框、置中 6 碼輸入、primary／ghost 按鈕、`.admin-error` 皆正確呈現、符合設計規則。醫師／消息／FAQ 編輯器邏輯未更動（僅換 auth 區塊）。
+  - **未實測（需驗證器與 admin 憑證）**：真實 TOTP enroll→verify→aal2→showApp 的 end-to-end；aal2 session 重載直接進入；錯誤碼重試。AAL 分支邏輯以回傳值推演＋上述 DOM/視圖實測涵蓋。
+  - **後續 TODO**：admin 完成 enrollment 後，評估將 RLS 寫入政策收緊為要求 aal2（避免鎖死，須在 enrollment 之後）。
 
 ## 🗓️ 2026-06-09 (session 44) — 全系統安全審查（report-only，未改任何 code/RLS/auth/config）
 

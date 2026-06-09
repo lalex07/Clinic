@@ -32,6 +32,42 @@
   </form>
 </section>
 
+<!-- ===== MFA: second-factor challenge (a verified TOTP factor already exists) ===== -->
+<section id="mfaChallengeView" class="admin-login" hidden>
+  <form id="mfaChallengeForm" class="admin-card admin-login__card" autocomplete="off">
+    <h1>兩步驟驗證</h1>
+    <p class="admin-muted">請開啟驗證器 App（Google Authenticator／Authy／1Password），輸入目前顯示的 6 位數驗證碼。</p>
+    <label>驗證碼
+      <input type="text" id="mfaChallengeCode" class="admin-mfa__code" inputmode="numeric"
+             autocomplete="one-time-code" pattern="[0-9]*" maxlength="6" required />
+    </label>
+    <button type="submit" class="admin-btn admin-btn--primary" id="mfaChallengeBtn">驗證並登入</button>
+    <button type="button" class="admin-btn admin-btn--ghost" id="mfaChallengeCancel">取消（登出）</button>
+    <p id="mfaChallengeError" class="admin-error" role="alert" aria-live="polite"></p>
+  </form>
+</section>
+
+<!-- ===== MFA: first-time TOTP enrollment (no factor yet) ===== -->
+<section id="mfaEnrollView" class="admin-login" hidden>
+  <form id="mfaEnrollForm" class="admin-card admin-login__card admin-mfa" autocomplete="off">
+    <h1>設定兩步驟驗證</h1>
+    <p class="admin-muted">為保護後台，請用驗證器 App（Google Authenticator／Authy／1Password）掃描下方 QR code，或手動輸入金鑰，再填入 App 產生的 6 位數驗證碼完成設定。</p>
+    <div class="admin-mfa__qr">
+      <img id="mfaQr" alt="兩步驟驗證 QR code" width="180" height="180" />
+    </div>
+    <label>或手動輸入此金鑰（secret）
+      <code id="mfaSecret" class="admin-mfa__secret"></code>
+    </label>
+    <label>驗證碼
+      <input type="text" id="mfaEnrollCode" class="admin-mfa__code" inputmode="numeric"
+             autocomplete="one-time-code" pattern="[0-9]*" maxlength="6" required />
+    </label>
+    <button type="submit" class="admin-btn admin-btn--primary" id="mfaEnrollBtn">確認並啟用</button>
+    <button type="button" class="admin-btn admin-btn--ghost" id="mfaEnrollCancel">取消（登出）</button>
+    <p id="mfaEnrollError" class="admin-error" role="alert" aria-live="polite"></p>
+  </form>
+</section>
+
 <!-- ===== App ===== -->
 <section id="appView" hidden>
   <header class="admin-topbar">
