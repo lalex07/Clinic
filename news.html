@@ -579,8 +579,8 @@
       </div>
 
       <div class="news-grid" id="newsGrid">
+        <!-- NEWS:START — cards regenerated from Supabase by scripts/generate-news.mjs; do not edit by hand -->
 
-        <!-- 公告：中山院區開幕（未來式，無手術招攬語） -->
         <article class="news-card reveal in" data-clinic="zhongshan" data-date="2026-06-01">
           <!-- no image → default 公告 placeholder tile (decorative; the heading + body carry the announcement) -->
           <div class="news-card__media news-card__media--placeholder" aria-hidden="true">
@@ -600,13 +600,7 @@
           </div>
         </article>
 
-        <!-- 之後的公告依相同結構新增，並設定 data-clinic（xindian｜muzha｜xinglong｜zhongshan）與 data-date（YYYY-MM-DD）。
-             媒體框二選一：
-             ① 有圖片 → 放 <img> 並以 object-fit: cover 裁切、不溢出：
-                <div class="news-card__media">
-                  <img class="news-card__img" src="assets/news/xxx.jpg" alt="公告主視覺說明" loading="lazy" />
-                </div>
-             ② 沒有圖片 → 沿用上方中山卡片的「公告」預設磚 .news-card__media--placeholder（含 aria-hidden）。 -->
+        <!-- NEWS:END -->
 
         <p class="news-empty" id="newsEmpty" hidden>查無符合的消息，請調整院區或日期條件，或改看「全部」。</p>
       </div>

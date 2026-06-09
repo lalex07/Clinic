@@ -1,0 +1,2 @@
+# Holds news-card images downloaded from the Supabase news-images bucket by scripts/generate-news.mjs.
+# Tracked so the regen Action can `git add assets/news` even before any image exists.

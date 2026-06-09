@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <!-- Internal admin tool — keep crawlers out -->
 <meta name="robots" content="noindex, nofollow" />
-<title>醫療團隊編輯後台｜大豐耳鼻喉科</title>
+<title>內容編輯後台｜大豐耳鼻喉科</title>
 <link rel="icon" type="image/png" href="../assets/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,8 +19,8 @@
 <!-- ===== Login ===== -->
 <section id="loginView" class="admin-login" hidden>
   <form id="loginForm" class="admin-card admin-login__card" autocomplete="on">
-    <h1>醫療團隊編輯後台</h1>
-    <p class="admin-muted">僅限管理員登入。</p>
+    <h1>內容編輯後台</h1>
+    <p class="admin-muted">僅限管理員登入。管理醫療團隊與最新消息。</p>
     <label>電子郵件
       <input type="email" id="email" required autocomplete="username" />
     </label>
@@ -35,18 +35,23 @@
 <!-- ===== App ===== -->
 <section id="appView" hidden>
   <header class="admin-topbar">
-    <div>
-      <strong>醫療團隊編輯</strong>
+    <div class="admin-topbar__lead">
+      <strong>編輯後台</strong>
       <span class="admin-muted" id="whoami"></span>
+      <nav class="admin-switch" role="tablist" aria-label="編輯區段">
+        <button type="button" class="admin-switch__btn" id="navDoctors" role="tab" aria-selected="true" aria-controls="doctorView">醫療團隊</button>
+        <button type="button" class="admin-switch__btn" id="navNews" role="tab" aria-selected="false" aria-controls="newsView">最新消息</button>
+      </nav>
     </div>
     <div class="admin-topbar__actions">
-      <button class="admin-btn" id="publishBtn" title="觸發網站重新產生 team.html">發佈到網站</button>
+      <button class="admin-btn" id="publishBtn" title="觸發網站重新產生 team.html 與 news.html">發佈到網站</button>
       <button class="admin-btn admin-btn--ghost" id="logoutBtn">登出</button>
     </div>
   </header>
 
   <p id="publishMsg" class="admin-publishmsg" role="status" aria-live="polite" hidden></p>
 
+  <div id="doctorView" role="tabpanel" aria-label="醫療團隊">
   <main class="admin-main">
     <aside class="admin-list" aria-label="醫師清單">
       <div class="admin-list__head">
@@ -121,6 +126,74 @@
       </form>
     </section>
   </main>
+  </div><!-- /#doctorView -->
+
+  <div id="newsView" role="tabpanel" aria-label="最新消息" hidden>
+  <main class="admin-main">
+    <aside class="admin-list" aria-label="消息清單">
+      <div class="admin-list__head">
+        <h2>消息</h2>
+        <button class="admin-btn admin-btn--sm" id="newsNewBtn">＋ 新增</button>
+      </div>
+      <ul id="newsList"></ul>
+    </aside>
+
+    <section class="admin-editor" aria-label="編輯消息">
+      <p id="newsEditorEmpty" class="admin-muted admin-editor__empty">從左側選擇一則消息，或新增一筆。</p>
+
+      <form id="newsForm" hidden>
+        <input type="hidden" id="newsId" />
+
+        <p class="admin-note" role="note">
+          §九 醫療廣告規範適用於所有公告：請勿使用 保證／最／根治／唯一／第一 等字詞，
+          不刊登收費與療效。醫療內容沿用「草稿 → 院長審閱 → 發佈」流程，審閱後再切換為「已發佈」。
+        </p>
+
+        <div class="admin-grid">
+          <label class="admin-span2">標題 (h2)
+            <input type="text" id="n_title" required />
+          </label>
+          <label>院區 data-clinic
+            <select id="n_clinic">
+              <option value="xindian">新店</option>
+              <option value="muzha">木柵</option>
+              <option value="xinglong">興隆</option>
+              <option value="zhongshan">中山</option>
+            </select>
+          </label>
+          <label>日期 data-date
+            <input type="date" id="n_date" required />
+          </label>
+          <label class="admin-span2">內文 (p)
+            <textarea id="n_body" rows="5"></textarea>
+          </label>
+          <label>狀態 status
+            <select id="n_status">
+              <option value="draft">草稿 draft（不公開）</option>
+              <option value="published">已發佈 published（公開）</option>
+            </select>
+          </label>
+          <div class="admin-span2 admin-photo" id="newsImageRow">
+            <div class="admin-photo__preview admin-photo__preview--wide" id="newsImagePreview" aria-hidden="true"></div>
+            <div>
+              <label class="admin-muted">封面圖片（選填，存入 news-images bucket，發佈時下載到 assets/news/）
+                <input type="file" id="n_image" accept="image/*" />
+              </label>
+              <p class="admin-muted admin-photo__path" id="newsImagePathLabel"></p>
+              <button type="button" class="admin-btn admin-btn--sm" id="newsImageClear" hidden>移除圖片（改用「公告」預設磚）</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-actions">
+          <button type="submit" class="admin-btn admin-btn--primary" id="newsSaveBtn">儲存</button>
+          <button type="button" class="admin-btn admin-btn--danger" id="newsDeleteBtn">刪除</button>
+          <span id="newsSaveMsg" class="admin-savemsg" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+  </main>
+  </div><!-- /#newsView -->
 </section>
 
 <script src="config.js"></script>

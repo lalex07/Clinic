@@ -63,7 +63,21 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   position: sticky; top: 0; z-index: 10;
 }
 .admin-topbar strong { color: var(--primary-deep); }
+.admin-topbar__lead { display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem; }
 .admin-topbar__actions { display: flex; gap: 0.6rem; }
+
+/* section switcher (醫療團隊 / 最新消息) — pill tabs, solid active fill, no glow */
+.admin-switch { display: inline-flex; gap: 0.4rem; }
+.admin-switch__btn {
+  font: inherit; font-weight: 600; font-size: 0.9rem; cursor: pointer;
+  background: var(--surface); color: var(--primary-deep);
+  border: 1px solid var(--line-strong); border-radius: 999px;
+  padding: 0.35rem 0.95rem;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, background 0.2s ease-out, border-color 0.2s ease-out, color 0.2s ease-out;
+}
+.admin-switch__btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.admin-switch__btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.admin-switch__btn[aria-selected="true"] { background: var(--primary); border-color: var(--primary); color: #fff; }
 .admin-publishmsg {
   margin: 0; padding: var(--s-3) var(--s-5);
   background: var(--primary-soft); color: var(--primary-deep); font-size: 0.9rem;
@@ -110,7 +124,18 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius-md, 8px);
   background-size: cover; background-position: center 18%;
 }
+/* wide variant for news covers (16:9, mirrors .news-card__media) */
+.admin-photo__preview--wide { width: 192px; height: 108px; background-position: center; }
 .admin-photo__path { margin: 0.4rem 0 0; word-break: break-all; }
+
+/* §九 reminder note inside the news form — calm primary-soft tile, no glow */
+.admin-note {
+  margin: 0 0 var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  background: var(--primary-soft); color: var(--primary-deep);
+  border-radius: var(--radius-md, 8px);
+  font-size: 0.82rem; line-height: 1.7;
+}
 
 .admin-actions { display: flex; align-items: center; gap: 0.6rem; margin-top: var(--s-4); }
 .admin-savemsg { font-size: 0.88rem; color: var(--primary-deep); }

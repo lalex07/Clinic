@@ -2,7 +2,23 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-08 (session 39)_
+_Last updated: 2026-06-09 (session 40)_
+
+## 🗓️ 2026-06-09 (session 40) — Supabase 後端 Phase 2：最新消息（公告）可編輯化（news 表＋RLS＋news-images bucket、/admin/ 消息編輯器、generate-news.mjs、Action 一次重生成兩頁）
+
+接續 Phase 1（醫師可編輯化），以**完全相同的模型**讓「最新消息」可編輯：單一管理員全權；公開只可讀 **published** 消息；編輯在既有 `/admin/` 進行；`news.html` 維持靜態，發佈時由 Supabase 重生成（approach A）。新增 3 個 migration、`scripts/generate-news.mjs`、`assets/news/`，並改 `admin/`（index/app/css）、`news.html`（加標記）、`.github/workflows/regen-team.yml`。**未動既有醫師編輯器與 team.html 重生成；未改 news.html 的版面／篩選器／日曆 JS，只填資料區塊。** 瀏覽器只用 anon key＋Auth，無 service-role／PAT。
+
+- **Part A — Schema＋安全（經 Supabase MCP，已套用 3 個 migration）。** `news`（id、title、body、clinic check∈xindian/muzha/xinglong/zhongshan、date、image_path 可空、status check∈draft/published 預設 draft、author_id→auth.users、published_at、created_at/updated_at＋`set_updated_at` 觸發器；date desc／status 索引）。RLS deny-by-default、重用 Phase 1 的 `is_admin()`：anon＋authenticated **僅可 SELECT status='published'**；admin 全 CRUD（含草稿）；其餘拒絕。Storage：`news-images` bucket（公開 READ、寫入限 `is_admin()`，比照 doctor-photos 強化後狀態——不設過寬列舉 SELECT policy）。security advisor 無新增項（僅剩 Phase 1 既有的 2 個設計必要 WARN）。
+- **Part B — 由現有內容 seed（不杜撰）。** 解析 news.html 唯一一張 `article.news-card`，寫入 1 列：title（中山…開幕…）、body（該段）、clinic=zhongshan、date=2026-06-01、image_path=null、status=published、author_id=該 admin。未杜撰其他公告。§九 與中山「敬請期待」狀態仍適用。
+- **Part C — `/admin/` 消息編輯器（與醫師模組並存）。** topbar 加「醫療團隊／最新消息」分頁切換（`role=tablist`）；醫師編輯器原封不動。消息視圖鏡像醫師模式：清單（`#newsList`＋新增）＋表單（標題、內文 textarea、院區下拉、日期、選填封面上傳至 news-images、狀態 draft/published）。儲存寫回 news（RLS 把關；新列以 `crypto.randomUUID()` 為 id＋上傳鍵、author_id=登入者）、可刪除。重用 admin.css tokens、crisp 無光暈／漸層。表單內加 §九 審閱提醒小字（草稿→院長審閱→發佈）。既有「發佈到網站」鈕不變（觸發全站重生成）。
+- **Part D — 重生成 news.html（approach A）。** `news.html` 的 `#newsGrid` 內加 `<!-- NEWS:START/END -->`（保留 grid 容器＋id 與 `#newsEmpty` 空狀態於標記外）。`scripts/generate-news.mjs`（鏡像 generate-team.mjs，純 fetch、無 npm 依賴）以 anon key 讀 published 消息（date desc），重現**完全相同的 `.news-card` markup**：`data-clinic`／`data-date`、`.news-card__meta`（`<time datetime=YYYY-MM-DD>YYYY.MM.DD</time>`＋中文院區 tag）、h2、p；有圖→`.news-card__img` 變體並把 bucket 圖下載進 `assets/news/` 引用**本地路徑**，無圖→`公告／Announcement` 預設磚。只換標記間區塊，篩選／日曆 JS 不動。`regen-team.yml` 加一步 `node scripts/generate-news.mjs`（同 env），git add 併入 `news.html assets/news`——**一次 dispatch 重生成 team.html 與 news.html**；`repository_dispatch` 事件名 `doctors-changed` 維持不變（相容）。
+- **Part E — 驗證＋文件。** 見下方實測；`supabase/README.md` 補 Phase 2 段；`.env` 仍 gitignored、`.env.example` 用 placeholder；無 secrets 進 repo。
+
+### 驗證（實測 vs 未實測）
+- **實測（DB/RLS，以 anon key 實打 REST）**：anon SELECT news（不帶 status 過濾）**只回 published 那 1 列**、草稿被 RLS 隱藏；anon **INSERT 被擋（HTTP 401）**；anon 寫 news-images bucket **被擋（HTTP 400）**。臨時插入的測試草稿驗畢即刪。security advisor 無新增。
+- **實測（重生成）**：`node scripts/generate-news.mjs` 對既有 seed 卡片重生成，`diff` **零變更**（產出 byte-for-byte 等於現有 markup——預設磚、日期 2026.06.01、中山 tag 皆相符）。
+- **實測（前端，本機 `http://localhost:8000`，headless Chromium）**：`/admin/` 無 console error、登入卡正常、分頁切換鈕（醫療團隊／最新消息）皆在；強制顯示消息視圖確認表單 chrome 正常（§九 提醒、各欄、狀態、封面預覽、儲存/刪除）。`news.html` 無自身 console error（僅第三方 cloudflareinsights CORS，與本變更無關）、中山卡正確渲染、5 個院區篩選＋日期選擇器在、按「木柵」會隱藏中山卡並顯示空狀態（篩選 JS 仍正常）。
+- **未實測（需 admin 憑證）**：登入後的消息**新增/編輯/刪除/上傳 end-to-end** 尚未實跑（admin user 於 dashboard 手動建立、註冊已關閉）；其寫入由 RLS（admin 全 CRUD＋storage 限 is_admin、anon 實測被擋）保證。Action 需在實際 repo 由 workflow_dispatch／發佈鈕觸發後才會提交重生成的 news.html。
 
 ## 🗓️ 2026-06-08 (session 39) — Admin：修正登入畫面登入後不隱藏（`[hidden]` 被 display:grid 蓋過）
 

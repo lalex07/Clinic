@@ -153,11 +153,48 @@ auto-regenerates; the "Publish" button becomes optional.
 
 ---
 
+## Phase 2 — editable 最新消息 (news)
+
+Same model as Phase 1, applied to 公告 / 最新消息: single admin writes; **public reads
+PUBLISHED news only**; `news.html` stays static and is regenerated on publish.
+
+**Table (`news`):** `title`, `body`, `clinic` (`xindian`/`muzha`/`xinglong`/`zhongshan`),
+`date`, `image_path` (nullable), `status` (`draft`/`published`, default `draft`),
+`author_id` (→ `auth.users`), `published_at`, timestamps + `updated_at` trigger.
+
+**Security:** RLS deny-by-default, reusing `is_admin()`. Policies: **anon + authenticated
+`SELECT` only where `status = 'published'`**; **admin full CRUD** (sees drafts too). Storage
+bucket **`news-images`** — public READ (public object URLs), **writes restricted to
+`is_admin()`** (parallel to `doctor-photos`; no broad listing policy). No new advisories.
+
+**Admin:** the `/admin/` app gained a topbar switcher (醫療團隊 / 最新消息). The news view
+mirrors the doctor editor — list + form (title, body, clinic, date, optional cover upload to
+`news-images`, draft/published status). The doctor editor is unchanged.
+
+**Regeneration:** `news.html` has `<!-- NEWS:START/END -->` markers inside `#newsGrid` (the
+grid container, its `id`, and the `#newsEmpty` empty-state stay outside the markers, so the
+page's clinic-filter + custom date-calendar JS keep working). `scripts/generate-news.mjs`
+(mirror of `generate-team.mjs`) reads published news (date desc) with the anon key and renders
+the exact `.news-card` markup; cover images are downloaded from the bucket into `assets/news/`
+and referenced locally (zero runtime Supabase dependency). The Action
+(`regen-team.yml`) now runs **both** generators on one dispatch and commits
+`team.html assets/doctors news.html assets/news`. The `repository_dispatch` event name stays
+`doctors-changed` (back-compat); it now regenerates both pages.
+
+**§九 still governs published news.** Announcements follow draft → 院長 review → publish (a
+reminder is shown in the admin news form). No patient testimonials. The 中山 announcement keeps
+its「敬請期待」status. Run `clinic-audit` on the regenerated `news.html`.
+
+---
+
 ## Files
 
-- `migrations/` — the three Phase-1 migrations (schema, storage, hardening).
-- `functions/regen-team/` — the admin-gated regeneration trigger (Edge Function).
-- `../admin/` — the login-gated editor (`index.html`, `app.js`, `admin.css`, `config.js`).
-- `../scripts/generate-team.mjs` — the static regenerator (approach A).
-- `../.github/workflows/regen-team.yml` — the GitHub Action.
+- `migrations/` — Phase-1 (schema, storage, hardening) + Phase-2 (news schema, news-images
+  storage, news seed) migrations.
+- `functions/regen-team/` — the admin-gated regeneration trigger (Edge Function; one dispatch
+  now regenerates both team.html and news.html).
+- `../admin/` — the login-gated editor (`index.html`, `app.js`, `admin.css`, `config.js`) —
+  doctors **and** news.
+- `../scripts/generate-team.mjs`, `../scripts/generate-news.mjs` — the static regenerators (approach A).
+- `../.github/workflows/regen-team.yml` — the GitHub Action (regenerates both pages).
 - `../.env.example` — template for `SUPABASE_URL` / `SUPABASE_ANON_KEY`.
