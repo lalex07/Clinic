@@ -2,7 +2,19 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-09 (session 46)_
+_Last updated: 2026-06-10 (session 47)_
+
+## 🗓️ 2026-06-10 (session 47) — RLS 層強制 admin 寫入需 MFA（aal2）—— 收掉 M1
+
+admin 已完成 TOTP enrollment（DB 確認 verified_mfa_factors=1），故把 session 45 預留的後續落實：**在 RLS 層要求 admin 的 INSERT/UPDATE/DELETE 必須是 MFA 升級過的 session（aal2），不再只是 `is_admin()`**。讀取完全不動（公開站、anon、登入時的 profile 自讀照舊）。一個新 migration：`supabase/migrations/20260609220017_phase4_require_aal2_for_admin_writes.sql`（經 MCP apply）。
+
+- **新 helper `is_admin_mfa()`**：與 `is_admin()` 同型（SECURITY DEFINER、pinned `search_path=public`、STABLE），回傳 `is_admin() AND coalesce(auth.jwt()->>'aal','aal1')='aal2'`。grant 僅給 authenticated、revoke anon/public（鏡像 is_admin）。
+- **public 表（doctors／profiles／news／faq_articles）**：原本是單一 `*_admin_all`（FOR ALL，is_admin）。拆成四條：`*_admin_select`（SELECT，**維持 is_admin()** → admin 仍可讀草稿／自身 profile，讀取行為零變化）＋ `*_admin_insert`／`*_admin_update`／`*_admin_delete`（**改用 is_admin_mfa()** → 寫入需 aal2）。anon／public 的 select_published／self_select 一律不動。
+- **storage.objects（doctor-photos／news-images／faq-images）**：本來就是分開的 per-command policy。只把三個 bucket 的 INSERT/UPDATE/DELETE 換成 is_admin_mfa()；admin 讀回的 `*_admin_select`（upload RETURNING 用，維持 is_admin()）與公開讀（無 policy、走 public URL）皆不動。
+- **未動**：`is_admin()` 本體（讀取＋Edge Function gate 仍用）、anon、任何 SELECT、Edge Function。專案無 `public.audit_log` 表，故不涉及。
+- **驗證（經 MCP）**：套用成功；policy 清單確認所有 write 皆為 is_admin_mfa()、所有 read/anon 不變；is_admin_mfa 定義／grant 正確。**anon 實打**：讀 doctors／已發佈 news／faq（17 篇）正常、草稿仍隱藏、anon INSERT 仍 42501 擋下、anon 呼叫 is_admin_mfa rpc 為 permission denied。security advisor 僅多一筆 is_admin_mfa 的 SECURITY-DEFINER-executable（與 is_admin 同屬 by-design：RLS 要呼叫它、只洩漏呼叫者自身 admin+aal2 狀態）。
+- **未實測（需 admin 活 session）**：aal2 寫入成功路徑要登入＋過 TOTP 才能完整確認——**由 admin 在前台實測一次儲存／上傳**。若儲存失敗，migration 檔尾附**完整 ROLLBACK SQL**（把 write policy 換回 is_admin()、drop is_admin_mfa），可即時還原。
+- **承接**：session 45（app 層 MFA gate）＋ session 46（CSP／pin+SRI／bucket 限制）。**M1 至此於 RLS 層關閉**。
 
 ## 🗓️ 2026-06-09 (session 46) — 安全強化：四項 Low 修補（FAQ 產生器跳脫、pin+SRI supabase-js、bucket 限制、meta CSP）
 
