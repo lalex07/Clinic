@@ -2,6 +2,9 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8" />
+<!-- CSP for the admin tool: allows the pinned jsDelivr supabase-js (script-src),
+     Supabase API (connect-src), and image previews via data:/blob: (QR + file picks). -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; connect-src 'self' https://*.supabase.co" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <!-- Internal admin tool — keep crawlers out -->
 <meta name="robots" content="noindex, nofollow" />
@@ -312,6 +315,14 @@
 </section>
 
 <script src="config.js"></script>
+<!-- supabase-js: pinned to an exact 2.x and integrity-checked (Subresource Integrity).
+     This is the ORIGINAL package UMD file (dist/umd/supabase.js), served byte-for-byte
+     from npm via jsDelivr — NOT jsDelivr's on-the-fly .min.js (whose bytes can change and
+     break SRI). It exposes the global `supabase` (window.supabase.createClient). A classic
+     <script> runs before the deferred module below, so the global is ready for app.js. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.1/dist/umd/supabase.js"
+        integrity="sha384-EjUdIVmzWliPzdzhxZ9ZoO0etXLKWuUPUftAGxP6qH6Lm4oLwoLaJR0Ba4pIDiDL"
+        crossorigin="anonymous"></script>
 <script type="module" src="app.js"></script>
 </body>
 </html>

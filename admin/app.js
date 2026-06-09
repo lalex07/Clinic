@@ -1,7 +1,10 @@
 /* Admin app — login-gated doctor editor.
  * Uses ONLY the anon key + Supabase Auth. RLS enforces that only an admin can
  * write; the anon key is browser-safe. No service-role key, no PAT here. */
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+// supabase-js is loaded as a pinned, SRI-checked UMD <script> in index.html (it
+// exposes the global `supabase`). Bare ESM `import` URLs can't carry an integrity
+// attribute, so we use the global instead of importing from the CDN here.
+const { createClient } = window.supabase;
 
 const CFG = window.SUPABASE_CONFIG;
 const sb = createClient(CFG.url, CFG.anonKey);

@@ -69,6 +69,15 @@ async function loadConfig() {
   return { url: url.replace(/\/$/, ''), key };
 }
 
+// ---- minimal HTML-escaping for text nodes/attributes (mirrors generate-team/news.mjs) ----
+// Applied to every DB-sourced value injected below — EXCEPT body_html, which is the
+// canonical admin-authored HTML and is emitted VERBATIM by design. escAttr() also
+// neutralises the breakout chars for the ld+json <script> and the search-index.js JS
+// strings (a stray " / < / > can't escape the string or close the <script>).
+const esc = (s) => String(s ?? '')
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const escAttr = (s) => esc(s).replace(/"/g, '&quot;');
+
 // Replace the bytes between an opening marker and a closing marker with `block`.
 function replaceRegion(text, startMarker, endMarker, block, label) {
   const s = text.indexOf(startMarker);
@@ -94,11 +103,11 @@ function renderCard(a) {
   return [
     `        <a class="faq-card reveal" href="${pageUrl(a)}">`,
     `          <figure class="photo-zone photo-zone--16x9 photo-zone--sm photo-zone--filled faq-card__media">`,
-    `            <img src="${a.cover_path}" alt="${a.cover_alt}" ${IMG_ATTRS}>`,
+    `            <img src="${escAttr(a.cover_path)}" alt="${escAttr(a.cover_alt)}" ${IMG_ATTRS}>`,
     `          </figure>`,
     `          <div class="faq-card__body">`,
-    `            <h2>${a.title}</h2>`,
-    `            <p>${a.excerpt}</p>`,
+    `            <h2>${esc(a.title)}</h2>`,
+    `            <p>${esc(a.excerpt)}</p>`,
     `            <span class="faq-card__more">閱讀全文 <span aria-hidden="true">→</span></span>`,
     `          </div>`,
     `        </a>`,
@@ -108,12 +117,12 @@ function renderCard(a) {
 function renderArticleRegion(a) {
   const figure = [
     `      <figure class="photo-zone photo-zone--16x9 photo-zone--filled faq-article__media reveal">`,
-    `        <img src="${a.cover_path}" alt="${a.cover_alt}" ${IMG_ATTRS}>`,
+    `        <img src="${escAttr(a.cover_path)}" alt="${escAttr(a.cover_alt)}" ${IMG_ATTRS}>`,
     `      </figure>`,
   ].join('\n');
   const article =
     `      <article class="faq-article faq-article--solo reveal">\n` +
-    `        <h1>${a.title}</h1>${a.body_html}</article>`;
+    `        <h1>${esc(a.title)}</h1>${a.body_html}</article>`;  // body_html VERBATIM — canonical, by design
   return `\n\n${figure}\n\n${article}\n\n    `;
 }
 
@@ -123,8 +132,8 @@ function renderLdJson(a) {
     `{`,
     `  "@context": "https://schema.org",`,
     `  "@type": "Article",`,
-    `  "headline": "${a.title}",`,
-    `  "description": "${a.description}",`,
+    `  "headline": "${escAttr(a.title)}",`,
+    `  "description": "${escAttr(a.description)}",`,
     `  "inLanguage": "zh-Hant",`,
     `  "author": { "@type": "Organization", "name": "大豐耳鼻喉科聯合診所" },`,
     `  "publisher": { "@type": "MedicalClinic", "name": "大豐耳鼻喉科聯合診所" },`,
@@ -142,14 +151,14 @@ const searchSummaryOf = (a) =>
   (a.search_summary != null && a.search_summary !== '') ? a.search_summary : (a.excerpt || a.title);
 
 function renderSearchEntry(a) {
-  const kw = searchKeywordsOf(a).map((k) => `"${k}"`).join(', ');
+  const kw = searchKeywordsOf(a).map((k) => `"${escAttr(k)}"`).join(', ');
   return [
     `  {`,
     `    type: "faq",`,
-    `    title: "${a.title}",`,
+    `    title: "${escAttr(a.title)}",`,
     `    url: "${pageUrl(a)}",`,
     `    keywords: [${kw}],`,
-    `    summary: "${searchSummaryOf(a)}"`,
+    `    summary: "${escAttr(searchSummaryOf(a))}"`,
     `  },`,
   ].join('\n');
 }
@@ -167,16 +176,20 @@ function renderSitemapEntry(a) {
 
 // Regenerate the per-article <head> fields (byte-identical when unchanged).
 function applyHead(html, a) {
-  const titleFull = `${a.title}${TITLE_SUFFIX}`;
+  // <title> is a text node (esc); the og/twitter/description meta values are
+  // attribute values (escAttr). url is constructed from the constrained slug.
+  const titleText = `${esc(a.title)}${TITLE_SUFFIX}`;
+  const titleAttr = `${escAttr(a.title)}${TITLE_SUFFIX}`;
+  const descAttr = escAttr(a.description);
   const url = `https://lalex07.github.io/Clinic/${pageUrl(a)}`;
-  html = html.replace(/<title>[^<]*<\/title>/, () => `<title>${titleFull}</title>`);
-  html = setAttrValue(html, /(<meta name="description" content=")[^"]*"/, a.description, 'meta description');
+  html = html.replace(/<title>[^<]*<\/title>/, () => `<title>${titleText}</title>`);
+  html = setAttrValue(html, /(<meta name="description" content=")[^"]*"/, descAttr, 'meta description');
   html = setAttrValue(html, /(<link rel="canonical" href=")[^"]*"/, url, 'canonical');
-  html = setAttrValue(html, /(<meta property="og:title" content=")[^"]*"/, titleFull, 'og:title');
-  html = setAttrValue(html, /(<meta property="og:description" content=")[^"]*"/, a.description, 'og:description');
+  html = setAttrValue(html, /(<meta property="og:title" content=")[^"]*"/, titleAttr, 'og:title');
+  html = setAttrValue(html, /(<meta property="og:description" content=")[^"]*"/, descAttr, 'og:description');
   html = setAttrValue(html, /(<meta property="og:url" content=")[^"]*"/, url, 'og:url');
-  html = setAttrValue(html, /(<meta name="twitter:title" content=")[^"]*"/, titleFull, 'twitter:title');
-  html = setAttrValue(html, /(<meta name="twitter:description" content=")[^"]*"/, a.description, 'twitter:description');
+  html = setAttrValue(html, /(<meta name="twitter:title" content=")[^"]*"/, titleAttr, 'twitter:title');
+  html = setAttrValue(html, /(<meta name="twitter:description" content=")[^"]*"/, descAttr, 'twitter:description');
   return html;
 }
 
@@ -257,7 +270,7 @@ async function main() {
     else { html = await getTemplate(); isNew = true; }
     html = applyHead(html, a);
     html = replaceRegion(html, '<!-- ARTICLE:START -->', '<!-- ARTICLE:END -->', renderArticleRegion(a), `${pageUrl(a)} article`);
-    html = replaceRegion(html, '<!-- BREADCRUMB:START -->', '<!-- BREADCRUMB:END -->', `\n        <span aria-current="page">${a.title}</span>\n        `, `${pageUrl(a)} breadcrumb`);
+    html = replaceRegion(html, '<!-- BREADCRUMB:START -->', '<!-- BREADCRUMB:END -->', `\n        <span aria-current="page">${esc(a.title)}</span>\n        `, `${pageUrl(a)} breadcrumb`);
     html = replaceRegion(html, '<!-- LDJSON:START -->', '<!-- LDJSON:END -->', renderLdJson(a), `${pageUrl(a)} ldjson`);
     if (isNew) { await writeFile(p, html); console.log(`CREATED ${pageUrl(a)}`); }
     else await writeIfChanged(p, html, pageUrl(a));

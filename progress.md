@@ -2,7 +2,18 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-09 (session 45)_
+_Last updated: 2026-06-09 (session 46)_
+
+## 🗓️ 2026-06-09 (session 46) — 安全強化：四項 Low 修補（FAQ 產生器跳脫、pin+SRI supabase-js、bucket 限制、meta CSP）
+
+落實 session 44 安全審查的四項 Low/防禦縱深修補。改 `scripts/generate-faq.mjs`、`admin/index.html`＋`admin/app.js`、全部 35 個對外 HTML（root＋en/）＋ admin 的 CSP meta、三個 storage bucket 設定（經 MCP，非檔案）、progress。**未動 RLS／auth 政策／Edge Function／公開頁文案**。
+
+- **#1 FAQ 產生器輸出跳脫（逐位元組閘門必須維持）。** `generate-faq.mjs` 對所有 DB 來源值加上 `esc()`／`escAttr()`（鏡像 generate-team/news.mjs）：卡片／文章的 title・excerpt・cover_path・cover_alt、麵包屑 title、head 的 description／og／twitter、ld+json 的 headline／description、search-index.js 的 title／keywords／summary。**`body_html` 維持逐字輸出（正典，依設計不跳脫）**。ld+json 與 search-index.js 為 JSON／JS 字串情境，用 escAttr（中和 `"`／`<`／`>`，防止跳出字串或關閉 `</script>`）。**閘門：改完後重跑三個產生器，faq.html＋17 篇 faq-qN.html＋search-index.js＋sitemap.xml 全部「No change」（20 個檔案逐位元組相同）**——現有 17 篇無 HTML 特殊字元，故輸出不變；git diff 僅 `scripts/generate-faq.mjs`。
+- **#2 pin＋SRI admin 的 supabase-js。** 原本 `import ...@supabase/supabase-js@2/+esm`（只釘 major、無完整性）。改為在 `index.html` 以 classic `<script>` 載入**釘死版本 2.108.1 的原始套件 UMD 檔 `dist/umd/supabase.js`**（非 jsDelivr 動態壓縮的 `.min.js`——後者 bytes 會變動而破壞 SRI），帶 `integrity="sha384-EjUdIV…"`＋`crossorigin="anonymous"`（SRI 經兩次抓取確認穩定）。`app.js` 改用全域 `const { createClient } = window.supabase;`（classic script 先於 deferred module 執行，全域已就緒）。headless Chrome 實測：無 SRI／blocked 錯誤、loginView 顯示＝client 已建立、init() 正常。
+- **#3 bucket size＋MIME 限制（經 MCP）。** doctor-photos／news-images／faq-images 設 `file_size_limit=5242880`（5MB）＋`allowed_mime_types=[image/png,image/jpeg,image/webp]`，維持 public。現有物件皆 png 且 ≤249KB（涵蓋於白名單與限額內）；設定後實測既有 public 物件讀取仍 HTTP 200。**註：合法 admin 上傳的接受／超量拒絕為 storage 層伺服器端強制，但需 admin 登入才能實跑——本期無 admin 憑證，僅驗證設定值與既有讀取。**
+- **#4 保守 meta CSP（不可破壞任何頁）。** 對外頁政策：`default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com; frame-src https://www.google.com`。涵蓋實際所需：Google Fonts、location 頁的 Google Maps iframe、site.js 注入的 **Cloudflare Web Analytics beacon**（刻意保留——隱私友善、目前 placeholder token）。inline `<style>`／inline `<script>`（news/faq 分頁）需 `'unsafe-inline'`——因有 inline script，無法在不放 `'unsafe-inline'` 下做更嚴格策略（已知限制，於 commit 註記）。**admin 另用較緊政策**（script-src 加 `https://cdn.jsdelivr.net`、connect-src 加 `https://*.supabase.co`、img-src 加 `data: blob:` 供 QR／預覽）。CSP meta 插在每頁 `<meta charset>` 之後；對 faq/news/team 產生頁加在產生器不會改寫的位置——重跑產生器仍「No change」。**實測：headless Chrome 載入 index／faq／faq-q1／news／team／location-xindian／about／contact／services／en/index／admin——全部 0 CSP violation 且正常 render**（首版漏了 Cloudflare beacon 被擋，已加入 origin 後復測通過）。
+- **clinic-audit（report-only）PASS**：§九（最＝最新、無禁語／收費／療效；免責聲明齊全）、設計（0 gradient／glow／transition:all——命中皆為註解或 CSS 百分比誤報）、a11y（img 皆有 alt、lang 齊全、skip-link 30/30）皆無回歸。
+- **後續**：admin 完成 MFA enrollment 後再評估把 RLS 寫入政策收緊為要求 aal2（承 session 45）。SRI 在升級 supabase-js 版本時需一併更新 hash。
 
 ## 🗓️ 2026-06-09 (session 45) — /admin/ 加上 TOTP 兩步驟驗證（MFA，app 層強制；RLS aal2 為後續）
 
