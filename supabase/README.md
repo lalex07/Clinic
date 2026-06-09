@@ -187,6 +187,43 @@ its「敬請期待」status. Run `clinic-audit` on the regenerated `news.html`.
 
 ---
 
+## Phase 3a — 衛教專欄 (FAQ) migrated to Supabase (generator only; editor is 3b)
+
+Same model again, for the 17 衛教專欄 articles. **This phase changed ZERO words** of
+the existing articles — it migrated them into Supabase and built a byte-faithful
+generator. There is **no admin editor and no new-article flow yet** (that is Phase 3b).
+
+**Table (`faq_articles`):** `slug` (`q1`…`q17`), `title`, `excerpt` (the faq.html card
+paragraph), `description` (meta + ld+json), `body_html` (the verbatim inner HTML of
+`<article>` after the `<h1>`), `cover_path` (incl. any `?v=`), `cover_alt`, `category`,
+`search_keywords`/`search_summary` (curated `search-index.js` data — only q1–q7 have
+entries today), `sitemap_lastmod`, `status`, `display_order`, `author_id`, timestamps.
+`description`/`search_*`/`sitemap_lastmod` exist so the static files reproduce exactly.
+
+**Security:** RLS deny-by-default reusing `is_admin()` — anon `SELECT` published only,
+admin full CRUD. Storage bucket **`faq-images`** mirrors the others (public read, admin
+write + admin read-back SELECT for upload RETURNING).
+
+**Byte-faithful generator (`scripts/generate-faq.mjs`):** regenerates ONLY the
+marker-delimited regions from the DB, reproducing the current markup byte-for-byte:
+- `faq.html` — `<!-- FAQ:START/END -->` around the `.faq-card` grid (the grid container,
+  `#faqPagination`, and the pagination `<script>` stay outside the markers).
+- each `faq-qN.html` — `<!-- ARTICLE:START/END -->` (hero `<figure>` + `<article>`),
+  `<!-- BREADCRUMB:START/END -->` (the breadcrumb title), `<!-- LDJSON:START/END -->`
+  (the `<head>` ld+json Article).
+- `assets/search-index.js` — `/* FAQ:START/END */` around the `type:"faq"` entries
+  (only articles that have curated `search_keywords`/`search_summary` are emitted).
+- `sitemap.xml` — `<!-- FAQ:START/END -->` around the `faq-qN.html` `<url>`s.
+
+Covers download from `faq-images` into `assets/faq/` (bucket wins) and are referenced by
+local path — zero runtime Supabase dependency. The Action (`regen-team.yml`) now runs all
+three generators on one dispatch and commits the FAQ files too. **§九 governs all
+articles; 院長-approved copy is inserted verbatim and never reworded.** The Phase-3a seed
+(`migrations/…_phase3a_seed_faq_articles.sql`) holds the 17 articles verbatim and was
+verified md5-equal to the static files, field by field.
+
+---
+
 ## Files
 
 - `migrations/` — Phase-1 (schema, storage, hardening) + Phase-2 (news schema, news-images

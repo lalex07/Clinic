@@ -61,6 +61,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <!-- FAQ:START -->
   <url>
     <loc>https://lalex07.github.io/Clinic/faq-q1.html</loc>
     <lastmod>2026-06-06</lastmod>
@@ -163,6 +164,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+  <!-- FAQ:END -->
   <url>
     <loc>https://lalex07.github.io/Clinic/news.html</loc>
     <lastmod>2026-06-06</lastmod>

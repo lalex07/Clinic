@@ -1,7 +1,8 @@
-name: Regenerate team.html + news.html
+name: Regenerate team.html + news.html + 衛教專欄
 
-# Approach A: regenerate the static team.html AND news.html from Supabase whenever
-# content changes. One dispatch rebuilds both pages. Two triggers:
+# Approach A: regenerate the static team.html, news.html AND the 衛教專欄 (FAQ)
+# files from Supabase whenever content changes. One dispatch rebuilds them all.
+# Two triggers:
 #   - workflow_dispatch       — manual "Run workflow" button (baseline; always works)
 #   - repository_dispatch     — fired by the Supabase webhook / Edge Function on a
 #                               'doctors-changed' event (the admin "發佈到網站" button).
@@ -45,14 +46,21 @@ jobs:
           SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
         run: node scripts/generate-news.mjs
 
+      - name: Regenerate FAQ (衛教專欄) from Supabase
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+        run: node scripts/generate-faq.mjs
+
       - name: Commit & push if changed
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add team.html assets/doctors news.html assets/news
+          git add team.html assets/doctors news.html assets/news \
+                  faq.html faq-q*.html assets/faq assets/search-index.js sitemap.xml
           if git diff --staged --quiet; then
             echo "No changes to publish."
           else
-            git commit -m "Regenerate team.html + news.html from Supabase (doctors-changed)"
+            git commit -m "Regenerate team.html + news.html + 衛教專欄 from Supabase (doctors-changed)"
             git push
           fi

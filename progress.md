@@ -2,7 +2,20 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-09 (session 41)_
+_Last updated: 2026-06-09 (session 42)_
+
+## 🗓️ 2026-06-09 (session 42) — Supabase 後端 Phase 3a：衛教專欄遷入 Supabase ＋逐位元組忠實的產生器（零內容變更；編輯器／新增文章為 3b）
+
+把 17 篇 衛教專欄遷入 Supabase，並建立「從 DB 重生成、與現有檔案逐位元組相同」的產生器。**硬規則：本階段不更動任何一篇文章的一個字**——成功標準＝跑完產生器後 `git diff` 只顯示新增的標記註解，faq.html／任何 faq-qN.html／search-index.js／sitemap.xml 的醫療文字、標記、屬性、空白皆不變。**本階段無 admin 編輯器、無新增文章功能（屬 3b）。**
+
+- **Part A — Schema＋安全（經 MCP，3 個 migration）。** `faq_articles`（slug 唯一 q1…q17、title、excerpt〔faq.html 卡片 <p>〕、description〔meta／ld+json〕、body_html〔<article> 內 h1 之後的原始 HTML〕、cover_path〔含 ?v=〕、cover_alt、category、search_keywords jsonb、search_summary、sitemap_lastmod、status draft/published、display_order、author_id、published_at、updated_at 觸發器）。為逐位元組重現而**新增** description／search_keywords／search_summary／sitemap_lastmod 欄位。RLS deny-by-default、重用 is_admin()：anon＋authenticated 僅 SELECT published；admin 全 CRUD。Storage `faq-images` bucket：公開 READ、寫入限 is_admin()＋admin SELECT 讀回（沿用上一階段 upload RETURNING 修法）。
+- **Part B — 忠實遷移 17 篇（不杜撰、不修改）。** 以 Node 抽取腳本逐位元組擷取每篇的 title（h1）／description／excerpt／body_html（h1 之後到 </article> 之前的原文）／cover_path＋cover_alt（hero <img>，含 ?v=）／display_order，並從 faq.html 卡片取 excerpt、從 search-index.js 取 q1–q7 的 keywords＋summary、從 sitemap.xml 取 lastmod（q1–q12=06-06、q13–q17=06-07）。**先以「重建區塊＝原檔子字串」預檢全部通過**，再 seed。seed 經 MCP 套用後以 **md5 逐欄位核對 DB vs 本地擷取，17 篇全部相符**（含 q1–q7 keywords 陣列）。
+- **Part C — 標記＋產生器。** 以一次性腳本（精確錨點、單一匹配斷言）在 5 類檔案插入標記：faq.html `<!-- FAQ:START/END -->`（僅卡片，grid 容器＋#faqPagination＋分頁 <script> 留在標記外）；每篇 faq-qN.html `<!-- ARTICLE:START/END -->`（hero figure＋article）、`<!-- BREADCRUMB:START/END -->`（麵包屑標題 span）、`<!-- LDJSON:START/END -->`（<head> ld+json Article）；search-index.js `/* FAQ:START/END *​/`（type:"faq" 區段，僅 q1–q7 有索引者輸出）；sitemap.xml `<!-- FAQ:START/END -->`（faq-qN url）。`scripts/generate-faq.mjs`（鏡像 generate-team/news.mjs、純 fetch、無 npm 依賴、env SUPABASE_URL/ANON_KEY）以 anon key 讀 published、依 display_order 重生成各區塊（值原樣輸出、body_html 為原始 HTML）；cover 以 faq-images bucket 為來源下載進 assets/faq/、引用本地路徑（公開站零執行期依賴）。`regen-team.yml` 加 `node scripts/generate-faq.mjs` 步驟，git add 併入 `faq.html faq-q*.html assets/faq assets/search-index.js sitemap.xml`——一次 dispatch 重生成三頁群。
+- **Part D — 驗證（閘門）＋提交。**
+  - **逐位元組閘門**：跑 `node scripts/generate-faq.mjs` 後，全部 20 個檔案皆「No change」；`git diff` 僅 108 行新增、**全為標記註解**（faq.html 2＋sitemap 2＋search 2＋每篇 6×17=102），無任何醫療文字／markup／空白變更。
+  - **clinic-audit（report-only）PASS**：§九 無禁語（`最` 命中皆 最新 nav）、頁尾免責聲明齊全；設計規則變更檔無 gradient／glow／transition:all；無障礙 `<img>` 皆具 alt。標記為註解、不可見、無影響。
+  - **RLS（anon 實打）**：anon 只讀到 17 篇 published、草稿被隱藏（臨時插入測試草稿驗畢即刪）；anon INSERT 401、anon 寫 faq-images bucket 400。security advisor 無新增項。
+  - **預覽（本機，headless）**：faq.html 17 張卡、分頁 6 篇/頁正常；faq-q1 文章頁 h1／3 個 faq-sub／faq-cta／封面（?v=4）／麵包屑標題皆正確。
 
 ## 🗓️ 2026-06-09 (session 41) — 修正 Storage 上傳 RLS：/admin/ 上傳封面圖報「new row violates row-level security policy」
 
