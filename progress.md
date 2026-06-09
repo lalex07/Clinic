@@ -2,7 +2,17 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-09 (session 43)_
+_Last updated: 2026-06-09 (session 44)_
+
+## 🗓️ 2026-06-09 (session 44) — 全系統安全審查（report-only，未改任何 code/RLS/auth/config）
+
+對整個系統（靜態站＋Supabase 後端＋發佈管線）做一次完整安全審查，**僅報告、不修改**。報告存於 `docs/security-review-2026-06-09.md`（依嚴重度分級，含「已做對的事」與 live-vs-inferred 標註）。本次只對 anon 角色做了 RLS 探測請求（皆被擋、**零資料變更**，已回讀驗證）。
+
+- **結論：無 Critical／High。** Secret 衛生乾淨（含 `git log -p --all` 全史掃描——唯一 JWT 解碼為 `role:anon`，無 service-role／PAT／密碼／私鑰；`github_pat_` 命中為註解佔位字）。RLS 確為 deny-by-default 且經 anon 實打驗證（讀 profiles→`[]`、讀草稿→`[]`、INSERT/UPDATE/DELETE 皆 0 列、is_admin RPC 對 anon 401、storage 上傳 403）。公開註冊已關閉（live signup→422 `signup_disabled`、僅 email provider、單一 user）。`is_admin()` SECURITY DEFINER＋pinned `search_path=public`、anon EXECUTE 已撤。Edge Function `regen-team` 驗 JWT＋admin、固定 event/repo、PAT 僅在 function secret。
+- **Medium（2，皆為專案 checklist 已列的營運項）**：M1 admin 帳號**未啟用 MFA**（`auth.mfa_factors` verified=0）；M2 **leaked-password protection 關閉**（security advisor WARN）。
+- **Low**：L1 `generate-faq.mjs` 對 title/description/cover_*（非 body_html）未跳脫（與 team/news 產生器不一致，防禦縱深）；L2 admin 由 jsdelivr 載 supabase-js，僅釘 major、無 SRI；L3 三個 bucket 無 size/MIME 限制；L4 無 meta CSP。
+- **Informational**：is_admin 對 authenticated 可執行＝by-design（已確認安全）；Edge Function CORS `*`（後端仍驗權，影響低）；效能 advisor（unindexed FK／initplan／multiple permissive policies，皆 scale-only）。
+- **未實測（環境外）**：GitHub 細粒度 PAT 的 scope/expiry、Action repo variables、session-JWT TTL——report 中標為 inferred；建議記錄 PAT 到期日。
 
 ## 🗓️ 2026-06-09 (session 43) — Supabase 後端 Phase 3b：/admin/ 衛教專欄編輯器＋新增文章流程（建立在 3a 逐位元組基礎上）
 
