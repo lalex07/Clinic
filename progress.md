@@ -2,7 +2,19 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-09 (session 42)_
+_Last updated: 2026-06-09 (session 43)_
+
+## 🗓️ 2026-06-09 (session 43) — Supabase 後端 Phase 3b：/admin/ 衛教專欄編輯器＋新增文章流程（建立在 3a 逐位元組基礎上）
+
+在 3a（衛教專欄遷入 Supabase＋逐位元組產生器）之上，加上 `/admin/` 的衛教專欄編輯器與新增文章流程。**不更動任何既有核可文章文字**：body_html 仍是產生器逐字輸出的正典來源，未改動 body 輸出路徑；既有 17 篇仍逐位元組重生成（3a 閘門重跑通過）。改 `admin/`（index/app/css）、`scripts/generate-faq.mjs`、`regen-team.yml`、`assets/search-index.js`（新增 q8–q17 索引）、progress/README；無新 migration（沿用 3a schema）。
+
+- **Part A — /admin/ 衛教專欄編輯器（鏡像醫師／消息編輯器）。** topbar 加第三個分頁「衛教專欄」（醫師／消息編輯器原封不動）。清單（#faqList＋新增）＋表單：標題、卡片摘要 excerpt、內文、封面上傳（faq-images bucket）＋cover_alt、搜尋關鍵字、分類、狀態（draft/published）、排序、自動指派 slug（q18…）。顯眼的 §九＋院長審閱提醒（最敏感的編輯器）。**內文以 Markdown 作為 body_html 的便利層**：新文章 Markdown→標準 faq-article HTML（前言 <p>；`##`→<h2 class="faq-sub">；段落→<p>；自動附加標準 `.faq-cta`）。既有文章 body_html→Markdown 載入 textarea，**安全閘門**：Markdown 轉回 HTML 必須與儲存的 body_html 逐位元組相同，否則顯示原始 HTML（read-mostly）並標示警告——絕不讓有損轉換默默改寫核可文字。17 篇 body 全部實測 round-trip 乾淨。僅用 anon key＋登入 session（RLS 把關），無 service-role／PAT。
+- **Part B — generate-faq.mjs 升級（既有頁輸出維持逐位元組相同）。** 新頁：已發佈但 faq-<slug>.html 不存在者，以既有 faq-qN.html 為**模板**（header/footer/nav/breadcrumb/hero/ld+json/CTA chrome 完全相同）建立新頁，填入 head（title/description/canonical/og/twitter）＋ ARTICLE/BREADCRUMB/LDJSON 標記內容；封面由 faq-images bucket 下載進 assets/faq/ 引用本地路徑。head 欄位對「所有頁」以 regex 重生成（既有頁因 DB==檔案而逐位元組無變化）。卡片：已自動含全部已發佈。搜尋＋sitemap：對**每一篇已發佈**輸出（現在也納入 q8–q17）；無策展 keywords/summary 者以標題／excerpt 衍生合理預設。下架／刪除：不在已發佈集合內的 faq-q<N>.html 會被移除（卡片／搜尋／sitemap 自動消失），**移除嚴格限定 faq-q<N>.html 檔名**，不碰其他頁。Action 的 `git add -A -- 'faq-q*.html'` 正確提交新增與移除的頁。
+- **Part C — 驗證＋提交。**
+  - **3a 迴歸閘門**：DB 無變更時跑產生器，既有 17 篇 faq-qN.html＋faq.html＋sitemap **逐位元組相同**；唯一合理變更＝search-index.js 新增 q8–q17（70 行新增、0 刪除，q1–q7 與非 FAQ 條目不動）。head regex 重生成對既有頁為 no-op。
+  - **完整流程（以 MCP 模擬 admin 寫入＋跑產生器，因無 admin 瀏覽器憑證）**：新增並發佈 q18 → 建立 faq-q18.html（chrome 與 q1 的 header/footer 完全相同、head/breadcrumb/h1/ld+json 皆填入 q18 與其 slug、3/3 標記、本機實測渲染含封面）、faq.html 出現卡片、搜尋＋sitemap 各加一筆；**編輯既有 q5 一個詞（明顯→較重）→ faq-q5.html 僅該行該詞變動、其餘零變更**；**下架 q18 → faq-q18.html 移除、卡片／搜尋／sitemap 條目消失**；刪除 q18 清理；q5 還原為逐位元組相同。Markdown round-trip 對 17 篇全部實測通過。
+  - **未實測（需 admin 憑證）**：登入後的 admin 編輯器 end-to-end 寫入／封面上傳尚未實跑（與前幾期相同，無密碼）；以上以 MCP 模擬其 DB 寫入並跑真實產生器（產出即提交檔案）涵蓋整條輸出路徑。
+  - **clinic-audit（report-only）PASS**：新搜尋條目（衍生自既有 excerpt）無 §九 禁語；admin/ 無 gradient／glow／transition:all。醫師／消息編輯器無迴歸（三分頁、三模組皆在）。無 secrets。
 
 ## 🗓️ 2026-06-09 (session 42) — Supabase 後端 Phase 3a：衛教專欄遷入 Supabase ＋逐位元組忠實的產生器（零內容變更；編輯器／新增文章為 3b）
 

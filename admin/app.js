@@ -234,11 +234,11 @@ $('publishBtn').addEventListener('click', async () => {
   try {
     const { error } = await sb.functions.invoke(CFG.regenFunction, { body: { reason: 'admin-publish' } });
     if (error) throw error;
-    msg.textContent = '已觸發重新產生：GitHub Action 會更新 team.html 與 news.html 並重新部署（約 1–2 分鐘）。';
+    msg.textContent = '已觸發重新產生：GitHub Action 會更新 team.html、news.html 與 衛教專欄 並重新部署（約 1–2 分鐘）。';
   } catch (err) {
     msg.textContent =
       '無法自動觸發（Edge Function 尚未部署或未設定 PAT）。' +
-      '可改用：GitHub → Actions →「Regenerate team.html + news.html」→ Run workflow 手動發佈。詳見 supabase/README.md。';
+      '可改用：GitHub → Actions →「Regenerate team.html + news.html + 衛教專欄」→ Run workflow 手動發佈。詳見 supabase/README.md。';
   }
 });
 
@@ -253,20 +253,25 @@ let newsItems = [];
 let currentNews = null;     // currently edited news object (or null for new)
 let newsLoaded = false;     // lazy-load the list on first switch to the news view
 
-/* ---------- section switcher (醫療團隊 / 最新消息) ---------- */
-const doctorView = $('doctorView'), newsView = $('newsView');
-const navDoctorsBtn = $('navDoctors'), navNewsBtn = $('navNews');
-
+/* ---------- section switcher (醫療團隊 / 最新消息 / 衛教專欄) ---------- */
+let faqLoaded = false;
+const VIEWS = {
+  doctors: { view: $('doctorView'), btn: $('navDoctors') },
+  news:    { view: $('newsView'),   btn: $('navNews') },
+  faq:     { view: $('faqView'),    btn: $('navFaq') },
+};
 function showSection(which) {
-  const isNews = which === 'news';
-  doctorView.hidden = isNews;
-  newsView.hidden = !isNews;
-  navDoctorsBtn.setAttribute('aria-selected', isNews ? 'false' : 'true');
-  navNewsBtn.setAttribute('aria-selected', isNews ? 'true' : 'false');
-  if (isNews && !newsLoaded) { newsLoaded = true; loadNews(); }
+  for (const [k, v] of Object.entries(VIEWS)) {
+    const on = k === which;
+    v.view.hidden = !on;
+    v.btn.setAttribute('aria-selected', on ? 'true' : 'false');
+  }
+  if (which === 'news' && !newsLoaded) { newsLoaded = true; loadNews(); }
+  if (which === 'faq' && !faqLoaded) { faqLoaded = true; loadFaq(); }
 }
-navDoctorsBtn.addEventListener('click', () => showSection('doctors'));
-navNewsBtn.addEventListener('click', () => showSection('news'));
+VIEWS.doctors.btn.addEventListener('click', () => showSection('doctors'));
+VIEWS.news.btn.addEventListener('click', () => showSection('news'));
+VIEWS.faq.btn.addEventListener('click', () => showSection('faq'));
 
 /* ---------- list ---------- */
 async function loadNews() {
@@ -408,6 +413,230 @@ $('newsDeleteBtn').addEventListener('click', async () => {
   $('newsForm').hidden = true;
   $('newsEditorEmpty').hidden = false;
   await loadNews();
+});
+
+/* ===================== FAQ (衛教專欄) module ===================== */
+/* Mirrors the doctor/news editors. body_html is the canonical source the
+ * generator emits verbatim; Markdown is a convenience layer ON TOP of it with a
+ * strict round-trip safety gate (never let a lossy conversion rewrite approved
+ * copy). §九 + 院長-review apply — see the reminder in the form. */
+const FAQ_BUCKET = 'faq-images';
+const FAQ_CTA = '        <a class="faq-cta" href="locations.html">若您有相關困擾，歡迎至大豐耳鼻喉科門診評估 <span aria-hidden="true">→</span></a>';
+
+let faqItems = [];
+let currentFaq = null;
+let faqBodyMode = 'md';   // 'md' = editable Markdown; 'raw' = raw body_html (read-mostly)
+
+/* ---- Markdown <-> the standard faq-article body_html (exact inverses) ---- */
+function faqHtmlToMd(body) {
+  if (typeof body !== 'string' || !body.startsWith('\n')) return null;
+  const tail = '\n\n' + FAQ_CTA;
+  if (!body.endsWith(tail)) return null;
+  const inner = body.slice(1, body.length - tail.length);
+  const out = [];
+  for (const b of inner.split('\n\n')) {
+    let m;
+    if ((m = b.match(/^        <p>(.*)<\/p>$/))) { out.push(m[1]); continue; }
+    if ((m = b.match(/^        <h2 class="faq-sub">(.*)<\/h2>\n        <p>(.*)<\/p>$/))) { out.push(`## ${m[1]}\n\n${m[2]}`); continue; }
+    return null; // unrecognized shape -> not safely round-trippable
+  }
+  return out.join('\n\n');
+}
+function faqMdToHtml(md) {
+  const blocks = md.split(/\n\n+/).map((s) => s.trim()).filter((s) => s.length);
+  const out = [];
+  for (let i = 0; i < blocks.length; i++) {
+    const b = blocks[i];
+    if (b.startsWith('## ')) {
+      const h = b.slice(3).trim();
+      const next = blocks[i + 1];
+      if (next != null && !next.startsWith('## ')) { out.push(`        <h2 class="faq-sub">${h}</h2>\n        <p>${next}</p>`); i++; }
+      else { out.push(`        <h2 class="faq-sub">${h}</h2>`); }
+    } else {
+      out.push(`        <p>${b}</p>`);
+    }
+  }
+  return '\n' + out.join('\n\n') + '\n\n' + FAQ_CTA;
+}
+
+/* ---------- list ---------- */
+async function loadFaq() {
+  const { data, error } = await sb.from('faq_articles').select('*').order('display_order', { ascending: true });
+  if (error) { alert('讀取衛教文章失敗：' + error.message); return; }
+  faqItems = data || [];
+  const ul = $('faqList');
+  ul.innerHTML = '';
+  for (const a of faqItems) {
+    const li = document.createElement('li');
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-current', currentFaq && currentFaq.id === a.id ? 'true' : 'false');
+    b.innerHTML = `<span class="dl-name"></span><span class="dl-role"></span>`;
+    b.querySelector('.dl-name').textContent = a.title;
+    b.querySelector('.dl-role').textContent = `${a.slug}・${a.status === 'published' ? '已發佈' : '草稿'}`;
+    b.addEventListener('click', () => editFaq(a));
+    li.appendChild(b);
+    ul.appendChild(li);
+  }
+}
+
+function nextFaqSlug() {
+  let max = 0;
+  for (const a of faqItems) { const m = /^q(\d+)$/.exec(a.slug || ''); if (m) max = Math.max(max, +m[1]); }
+  return `q${max + 1}`;
+}
+
+/* ---------- editor ---------- */
+function syncFaqCoverUi(coverPath) {
+  const prev = $('faqCoverPreview');
+  if (coverPath) {
+    prev.style.backgroundImage = `url(../${coverPath.split('?')[0]})`;
+    $('faqCoverPathLabel').textContent = coverPath;
+  } else {
+    prev.style.backgroundImage = 'none';
+    $('faqCoverPathLabel').textContent = '';
+  }
+}
+
+function editFaq(a) {
+  currentFaq = a || null;
+  $('faqEditorEmpty').hidden = true;
+  $('faqForm').hidden = false;
+  $('faqId').value = a?.id || '';
+  $('f_faq_title').value = a?.title || '';
+  $('f_faq_excerpt').value = a?.excerpt || '';
+  $('f_faq_category').value = a?.category || '';
+  $('f_faq_status').value = a?.status || 'draft';
+  $('f_faq_order').value = a?.display_order ?? '';
+  $('f_faq_slug').value = a?.slug || (a ? '' : `（將指派：${nextFaqSlug()}）`);
+  $('f_faq_keywords').value = Array.isArray(a?.search_keywords) ? a.search_keywords.join(', ') : '';
+  $('f_faq_cover').value = '';
+  $('f_faq_cover_alt').value = a?.cover_alt || '';
+  syncFaqCoverUi(a?.cover_path || null);
+
+  // body: prefer editable Markdown, but only if it round-trips byte-for-byte
+  const flag = $('faqBodyFlag');
+  if (a && a.body_html) {
+    const md = faqHtmlToMd(a.body_html);
+    if (md != null && faqMdToHtml(md) === a.body_html) {
+      faqBodyMode = 'md';
+      $('f_faq_body').value = md;
+      flag.hidden = false; flag.className = 'admin-bodyflag admin-span2 is-md';
+      flag.textContent = 'Markdown 模式：段落空行分隔、## 為章節小標，結尾 CTA 自動附加。';
+    } else {
+      faqBodyMode = 'raw';
+      $('f_faq_body').value = a.body_html;
+      flag.hidden = false; flag.className = 'admin-bodyflag admin-span2';
+      flag.textContent = '⚠ 此文無法安全轉為 Markdown，顯示原始 HTML（read-mostly）。請勿改動已核可文字，僅在必要時謹慎編輯。';
+    }
+  } else {
+    faqBodyMode = 'md';
+    $('f_faq_body').value = '';
+    flag.hidden = false; flag.className = 'admin-bodyflag admin-span2 is-md';
+    flag.textContent = 'Markdown 模式：第一段為前言；## 小標自成章節；結尾 CTA 自動附加（請勿自行輸入）。';
+  }
+
+  $('f_faq_body').readOnly = faqBodyMode === 'raw';
+  $('faqSaveMsg').textContent = '';
+  $('faqDeleteBtn').hidden = !a;
+  loadFaq();
+}
+
+$('faqNewBtn').addEventListener('click', () => editFaq(null));
+$('f_faq_cover').addEventListener('change', () => {
+  const file = $('f_faq_cover').files[0];
+  if (file) $('faqCoverPreview').style.backgroundImage = `url(${URL.createObjectURL(file)})`;
+});
+
+async function uploadFaqCoverIfAny(slug) {
+  const file = $('f_faq_cover').files[0];
+  if (!file) return undefined;
+  const ext = (file.name.split('.').pop() || 'png').toLowerCase().replace(/[^a-z0-9]/g, '') || 'png';
+  const key = `faq-${slug}.${ext}`;
+  const { error } = await sb.storage.from(FAQ_BUCKET).upload(key, file, { upsert: true, contentType: file.type });
+  if (error) throw new Error('封面上傳失敗：' + error.message);
+  return `assets/faq/${key}`;
+}
+
+$('faqForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  $('faqSaveBtn').disabled = true;
+  $('faqSaveMsg').textContent = '儲存中…';
+  try {
+    const existingId = $('faqId').value;
+    const slug = existingId ? currentFaq.slug : nextFaqSlug();
+
+    // body: Markdown -> canonical HTML, or raw HTML as-is
+    const bodyText = $('f_faq_body').value;
+    const body_html = faqBodyMode === 'raw' ? bodyText : faqMdToHtml(bodyText);
+
+    // cover (required so the hero <figure> has a real image)
+    let cover_path = currentFaq?.cover_path ?? null;
+    const uploaded = await uploadFaqCoverIfAny(slug);
+    if (uploaded !== undefined) cover_path = uploaded;
+    if (!cover_path) throw new Error('請先上傳封面圖片');
+
+    const kws = $('f_faq_keywords').value.split(',').map((s) => s.trim()).filter(Boolean);
+    const title = $('f_faq_title').value.trim();
+    const excerpt = $('f_faq_excerpt').value.trim() || null;
+    const status = $('f_faq_status').value;
+    const common = {
+      title,
+      excerpt,
+      body_html,
+      cover_path,
+      cover_alt: $('f_faq_cover_alt').value.trim() || null,
+      category: $('f_faq_category').value.trim() || null,
+      search_keywords: kws.length ? kws : null,
+      display_order: $('f_faq_order').value === '' ? null : Number($('f_faq_order').value),
+      status,
+    };
+
+    let res;
+    if (existingId) {
+      // preserve description / sitemap_lastmod / search_summary / slug / author_id;
+      // stamp published_at on first publish only
+      const patch = { ...common };
+      if (status === 'published' && !currentFaq.published_at) patch.published_at = new Date().toISOString();
+      res = await sb.from('faq_articles').update(patch).eq('id', existingId).select().single();
+    } else {
+      const { data: { user } } = await sb.auth.getUser();
+      res = await sb.from('faq_articles').insert({
+        ...common,
+        slug,
+        description: excerpt,                       // new articles: card summary doubles as meta description
+        search_summary: null,                       // generator derives a default from the excerpt
+        sitemap_lastmod: new Date().toISOString().slice(0, 10),
+        author_id: user?.id ?? null,
+        published_at: status === 'published' ? new Date().toISOString() : null,
+      }).select().single();
+    }
+    if (res.error) throw new Error(res.error.message);
+
+    $('faqSaveMsg').textContent = `已儲存 ✓（${res.data.slug}）——記得「發佈到網站」讓變更上線`;
+    $('f_faq_cover').value = '';
+    currentFaq = res.data;
+    $('faqId').value = res.data.id;
+    $('f_faq_slug').value = res.data.slug;
+    $('faqDeleteBtn').hidden = false;
+    syncFaqCoverUi(res.data.cover_path);
+    await loadFaq();
+  } catch (err) {
+    $('faqSaveMsg').textContent = '✗ ' + err.message;
+  } finally {
+    $('faqSaveBtn').disabled = false;
+  }
+});
+
+$('faqDeleteBtn').addEventListener('click', async () => {
+  const id = $('faqId').value;
+  if (!id || !confirm('確定刪除這篇文章？發佈後其頁面與卡片也會在下次重生成時移除。此動作無法復原。')) return;
+  const { error } = await sb.from('faq_articles').delete().eq('id', id);
+  if (error) { $('faqSaveMsg').textContent = '✗ ' + error.message; return; }
+  currentFaq = null;
+  $('faqForm').hidden = true;
+  $('faqEditorEmpty').hidden = false;
+  await loadFaq();
 });
 
 init();

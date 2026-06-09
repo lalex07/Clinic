@@ -41,10 +41,11 @@
       <nav class="admin-switch" role="tablist" aria-label="編輯區段">
         <button type="button" class="admin-switch__btn" id="navDoctors" role="tab" aria-selected="true" aria-controls="doctorView">醫療團隊</button>
         <button type="button" class="admin-switch__btn" id="navNews" role="tab" aria-selected="false" aria-controls="newsView">最新消息</button>
+        <button type="button" class="admin-switch__btn" id="navFaq" role="tab" aria-selected="false" aria-controls="faqView">衛教專欄</button>
       </nav>
     </div>
     <div class="admin-topbar__actions">
-      <button class="admin-btn" id="publishBtn" title="觸發網站重新產生 team.html 與 news.html">發佈到網站</button>
+      <button class="admin-btn" id="publishBtn" title="觸發網站重新產生 team.html、news.html 與 衛教專欄">發佈到網站</button>
       <button class="admin-btn admin-btn--ghost" id="logoutBtn">登出</button>
     </div>
   </header>
@@ -194,6 +195,84 @@
     </section>
   </main>
   </div><!-- /#newsView -->
+
+  <div id="faqView" role="tabpanel" aria-label="衛教專欄" hidden>
+  <main class="admin-main">
+    <aside class="admin-list" aria-label="文章清單">
+      <div class="admin-list__head">
+        <h2>文章</h2>
+        <button class="admin-btn admin-btn--sm" id="faqNewBtn">＋ 新增</button>
+      </div>
+      <ul id="faqList"></ul>
+    </aside>
+
+    <section class="admin-editor" aria-label="編輯文章">
+      <p id="faqEditorEmpty" class="admin-muted admin-editor__empty">從左側選擇一篇文章，或新增一筆。</p>
+
+      <form id="faqForm" hidden>
+        <input type="hidden" id="faqId" />
+
+        <p class="admin-note" role="note">
+          §九＋ 院長審閱：衛教內容務必先由 院長審閱、核可後再切換為「已發佈」（草稿 → 院長審閱 → 發佈）。
+          院長核可文字逐字刊登，不得改寫——若疑有錯字請另行回報，不要自行修改。
+          請勿使用 保證／最／根治／唯一／第一 等字詞，不刊登收費與療效。
+        </p>
+
+        <div class="admin-grid">
+          <label class="admin-span2">標題（h1／卡片標題／麵包屑／ld+json）
+            <input type="text" id="f_faq_title" required />
+          </label>
+          <label class="admin-span2">卡片摘要 excerpt（faq.html 卡片內文；新文章亦作為 meta description）
+            <textarea id="f_faq_excerpt" rows="2"></textarea>
+          </label>
+
+          <label class="admin-span2">內文（Markdown：段落以空行分隔；<code>## 小標</code> → 章節小標；結尾 CTA 會自動附加）
+            <textarea id="f_faq_body" rows="16"></textarea>
+          </label>
+          <p id="faqBodyFlag" class="admin-bodyflag admin-span2" role="alert" hidden></p>
+
+          <label>狀態 status
+            <select id="f_faq_status">
+              <option value="draft">草稿 draft（不公開）</option>
+              <option value="published">已發佈 published（公開）</option>
+            </select>
+          </label>
+          <label>排序 display_order
+            <input type="number" id="f_faq_order" />
+          </label>
+          <label>院區分類 category（選填）
+            <input type="text" id="f_faq_category" />
+          </label>
+          <label>代稱 slug（自動指派，如 q18）
+            <input type="text" id="f_faq_slug" readonly />
+          </label>
+          <label class="admin-span2">搜尋關鍵字（以逗號分隔；留空則自動以標題為關鍵字）
+            <input type="text" id="f_faq_keywords" />
+          </label>
+
+          <div class="admin-span2 admin-photo" id="faqCoverRow">
+            <div class="admin-photo__preview admin-photo__preview--wide" id="faqCoverPreview" aria-hidden="true"></div>
+            <div>
+              <label class="admin-muted">封面圖片（存入 faq-images bucket，發佈時下載到 assets/faq/）
+                <input type="file" id="f_faq_cover" accept="image/*" />
+              </label>
+              <p class="admin-muted admin-photo__path" id="faqCoverPathLabel"></p>
+              <label class="admin-muted">封面替代文字 cover_alt
+                <input type="text" id="f_faq_cover_alt" />
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-actions">
+          <button type="submit" class="admin-btn admin-btn--primary" id="faqSaveBtn">儲存</button>
+          <button type="button" class="admin-btn admin-btn--danger" id="faqDeleteBtn">刪除</button>
+          <span id="faqSaveMsg" class="admin-savemsg" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+  </main>
+  </div><!-- /#faqView -->
 </section>
 
 <script src="config.js"></script>

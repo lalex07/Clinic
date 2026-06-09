@@ -187,6 +187,34 @@ its「敬請期待」status. Run `clinic-audit` on the regenerated `news.html`.
 
 ---
 
+## Phase 3b — /admin/ FAQ editor + new-article flow
+
+On top of 3a: the `/admin/` app gained a third switcher section **衛教專欄** (the
+doctor/news editors are unchanged). It has the usual list + form (title, excerpt,
+**Markdown body**, cover upload to `faq-images` + cover_alt, search keywords,
+category, status, display_order) with a prominent §九 / 院長-review reminder.
+
+- **Markdown is a convenience layer over the canonical `body_html`.** New articles:
+  Markdown → the standard faq-article HTML (intro `<p>`; `##` → `<h2 class="faq-sub">`;
+  paragraphs → `<p>`; the standard `.faq-cta` is auto-appended). Existing articles:
+  `body_html` → Markdown for the textarea, behind a **round-trip safety gate** — if
+  converting that Markdown back to HTML doesn't reproduce the stored `body_html`
+  byte-for-byte, the raw HTML is shown instead (read-mostly) and flagged. The
+  generator's `body_html` output path is never reshaped, so unchanged articles still
+  regenerate byte-identically.
+- **`generate-faq.mjs` (3b):** creates `faq-<slug>.html` for a published article whose
+  page doesn't exist yet (from a faithful existing-page template — identical chrome —
+  with head fields + markers filled); emits search + sitemap entries for **every**
+  published article (q8–q17 now surfaced; defaults derived from title/excerpt when not
+  curated); and **removes** `faq-q<N>.html` whose slug is no longer published (cards/
+  search/sitemap drop out automatically). The Action stages new + removed pages via
+  `git add -A -- 'faq-q*.html'`. New-article slugs are assigned sequentially (q18, …)
+  by the admin; covers upload to `faq-images` and download into `assets/faq/`.
+
+§九 + 院長 review still gate every article; approved copy is inserted verbatim.
+
+---
+
 ## Phase 3a — 衛教專欄 (FAQ) migrated to Supabase (generator only; editor is 3b)
 
 Same model again, for the 17 衛教專欄 articles. **This phase changed ZERO words** of

@@ -4,24 +4,31 @@
  * -----------------------------------------------------------------------------
  * Mirror of generate-team.mjs / generate-news.mjs (approach A). Reads the
  * `faq_articles` table with the BROWSER-SAFE anon key (RLS allows anon SELECT
- * only on status='published' rows) and regenerates ONLY the marker-delimited
- * regions, reproducing the existing markup BYTE-FOR-BYTE:
+ * only on status='published' rows) and regenerates the FAQ static files from the
+ * DB, reproducing the existing markup BYTE-FOR-BYTE for unchanged articles:
  *
- *   faq.html              <!-- FAQ:START/END -->        the .faq-card grid
- *   faq-qN.html           <!-- ARTICLE:START/END -->    hero <figure> + <article>
+ *   faq.html              <!-- FAQ:START/END -->        the .faq-card grid (all published)
+ *   faq-<slug>.html       <!-- ARTICLE:START/END -->    hero <figure> + <article>
  *                         <!-- BREADCRUMB:START/END -->  the breadcrumb title span
  *                         <!-- LDJSON:START/END -->      the <head> ld+json Article
- *   assets/search-index.js  /* FAQ:START/END *​/         the type:"faq" entries
- *   sitemap.xml           <!-- FAQ:START/END -->        the faq-qN.html <url>s
+ *                         + head <title>/meta/canonical regenerated from title/description/slug
+ *   assets/search-index.js  /* FAQ:START/END *​/         the type:"faq" entries (ALL published)
+ *   sitemap.xml           <!-- FAQ:START/END -->        the faq-<slug>.html <url>s (ALL published)
  *
- * Values are emitted VERBATIM (the DB was seeded verbatim from these files);
- * body_html is raw HTML. The page chrome, pagination JS, search-index header and
- * all non-FAQ entries stay OUTSIDE the markers and are never touched.
+ * Phase 3b additions (existing-page output stays byte-identical):
+ *   - NEW pages: a published article with no faq-<slug>.html yet is created from a
+ *     faithful template (an existing faq-qN.html — identical chrome) with the same
+ *     markers, filled from the article.
+ *   - SEARCH + SITEMAP entries are emitted for EVERY published article (surfacing
+ *     q8–q17 etc.); articles without curated search_keywords/search_summary get a
+ *     sensible default derived from the title / excerpt.
+ *   - UNPUBLISH/DELETE: a faq-<slug>.html whose slug is NOT in the current
+ *     published set is removed (cards/search/sitemap drop out automatically). File
+ *     removal is scoped STRICTLY to faq-q<N>.html paths — no other page is touched.
  *
- * Covers: for an article with a cover image, the file is referenced at its LOCAL
- * repo path. If the faq-images bucket holds an object at that basename (an admin
- * upload) it wins and is downloaded into assets/faq/; otherwise the committed
- * local file is kept. The published site keeps ZERO runtime Supabase dependency.
+ * body_html is the canonical source and is emitted VERBATIM (raw HTML) — the body
+ * output path is never reshaped. Covers download from faq-images into assets/faq/
+ * (bucket wins) and are referenced by local path: zero runtime Supabase dependency.
  *
  * No npm dependencies — Node 18+ global fetch. Config: env SUPABASE_URL /
  * SUPABASE_ANON_KEY, falling back to a local .env file.
@@ -29,7 +36,7 @@
  * Usage:  node scripts/generate-faq.mjs
  * ========================================================================== */
 
-import { readFile, writeFile, mkdir, access } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, access, readdir, unlink } from 'node:fs/promises';
 import { constants as FS } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, basename } from 'node:path';
@@ -63,7 +70,6 @@ async function loadConfig() {
 }
 
 // Replace the bytes between an opening marker and a closing marker with `block`.
-// `block` reproduces the EXACT original content (markers stay in place).
 function replaceRegion(text, startMarker, endMarker, block, label) {
   const s = text.indexOf(startMarker);
   const e = text.indexOf(endMarker);
@@ -74,8 +80,15 @@ function replaceRegion(text, startMarker, endMarker, block, label) {
   return text.slice(0, s + startMarker.length) + block + text.slice(e);
 }
 
-/* ---------- renderers (raw values; DB seeded verbatim) ---------- */
+// Replace one attribute's value (string replacement, $-safe via a function).
+function setAttrValue(text, re, value, label) {
+  if (!re.test(text)) { console.error(`ERROR: head field not found: ${label}`); process.exit(1); }
+  return text.replace(re, (_, p1) => `${p1}${value}"`);
+}
+
+/* ---------- renderers (raw values; body_html emitted verbatim) ---------- */
 const pageUrl = (a) => `faq-${a.slug}.html`;
+const TITLE_SUFFIX = '｜衛教專欄｜大豐耳鼻喉科聯合診所';
 
 function renderCard(a) {
   return [
@@ -122,15 +135,21 @@ function renderLdJson(a) {
   return `\n${ld}\n`;
 }
 
+// Search: emit for EVERY published article; derive defaults when not curated.
+const searchKeywordsOf = (a) =>
+  (Array.isArray(a.search_keywords) && a.search_keywords.length) ? a.search_keywords : [a.title];
+const searchSummaryOf = (a) =>
+  (a.search_summary != null && a.search_summary !== '') ? a.search_summary : (a.excerpt || a.title);
+
 function renderSearchEntry(a) {
-  const kw = (a.search_keywords || []).map((k) => `"${k}"`).join(', ');
+  const kw = searchKeywordsOf(a).map((k) => `"${k}"`).join(', ');
   return [
     `  {`,
     `    type: "faq",`,
     `    title: "${a.title}",`,
     `    url: "${pageUrl(a)}",`,
     `    keywords: [${kw}],`,
-    `    summary: "${a.search_summary}"`,
+    `    summary: "${searchSummaryOf(a)}"`,
     `  },`,
   ].join('\n');
 }
@@ -146,14 +165,42 @@ function renderSitemapEntry(a) {
   ].join('\n');
 }
 
+// Regenerate the per-article <head> fields (byte-identical when unchanged).
+function applyHead(html, a) {
+  const titleFull = `${a.title}${TITLE_SUFFIX}`;
+  const url = `https://lalex07.github.io/Clinic/${pageUrl(a)}`;
+  html = html.replace(/<title>[^<]*<\/title>/, () => `<title>${titleFull}</title>`);
+  html = setAttrValue(html, /(<meta name="description" content=")[^"]*"/, a.description, 'meta description');
+  html = setAttrValue(html, /(<link rel="canonical" href=")[^"]*"/, url, 'canonical');
+  html = setAttrValue(html, /(<meta property="og:title" content=")[^"]*"/, titleFull, 'og:title');
+  html = setAttrValue(html, /(<meta property="og:description" content=")[^"]*"/, a.description, 'og:description');
+  html = setAttrValue(html, /(<meta property="og:url" content=")[^"]*"/, url, 'og:url');
+  html = setAttrValue(html, /(<meta name="twitter:title" content=")[^"]*"/, titleFull, 'twitter:title');
+  html = setAttrValue(html, /(<meta name="twitter:description" content=")[^"]*"/, a.description, 'twitter:description');
+  return html;
+}
+
 async function fileExists(p) {
   try { await access(p, FS.F_OK); return true; } catch { return false; }
 }
 
-// Bucket object (if any) wins as source of truth; else keep the committed local file.
+let templateCache = null;
+async function getTemplate() {
+  if (templateCache) return templateCache;
+  const pages = (await readdir(ROOT))
+    .filter((f) => /^faq-q\d+\.html$/.test(f))
+    .sort((a, b) => (+a.match(/\d+/)[0]) - (+b.match(/\d+/)[0]));
+  for (const f of pages) {
+    const p = resolve(ROOT, f);
+    if (await fileExists(p)) { templateCache = await readFile(p, 'utf8'); return templateCache; }
+  }
+  console.error('ERROR: no existing faq-qN.html to use as a template for new pages.');
+  process.exit(1);
+}
+
 async function syncImage(cfg, a) {
   if (!a.cover_path) return;
-  const base = basename(a.cover_path.split('?')[0]); // strip ?v= cache-bust
+  const base = basename(a.cover_path.split('?')[0]);
   const localPath = resolve(ROOT, a.cover_path.split('?')[0]);
   const publicUrl = `${cfg.url}/storage/v1/object/public/${BUCKET}/${encodeURIComponent(base)}`;
   let res;
@@ -187,49 +234,63 @@ async function main() {
   }
   const articles = await res.json();
   if (!Array.isArray(articles) || articles.length === 0) {
-    console.error('ERROR: no published faq_articles returned — refusing to wipe the blocks.');
+    console.error('ERROR: no published faq_articles returned — refusing to wipe the blocks / remove pages.');
     process.exit(1);
   }
   console.log(`Fetched ${articles.length} published FAQ article(s).`);
 
   for (const a of articles) await syncImage(cfg, a);
 
-  // 1) faq.html — the card grid
+  // 1) faq.html — the card grid (all published)
   {
-    const cards = articles.map(renderCard).join('\n\n');
-    const block = `\n\n${cards}\n\n        `;
+    const block = `\n\n${articles.map(renderCard).join('\n\n')}\n\n        `;
     let html = await readFile(resolve(ROOT, 'faq.html'), 'utf8');
     html = replaceRegion(html, '<!-- FAQ:START -->', '<!-- FAQ:END -->', block, 'faq.html cards');
     await writeIfChanged(resolve(ROOT, 'faq.html'), html, 'faq.html');
   }
 
-  // 2) each faq-qN.html — article region + breadcrumb title + ld+json
+  // 2) each faq-<slug>.html — head + article + breadcrumb + ld+json (create if new)
   for (const a of articles) {
     const p = resolve(ROOT, pageUrl(a));
-    let html = await readFile(p, 'utf8');
+    let html, isNew = false;
+    if (await fileExists(p)) html = await readFile(p, 'utf8');
+    else { html = await getTemplate(); isNew = true; }
+    html = applyHead(html, a);
     html = replaceRegion(html, '<!-- ARTICLE:START -->', '<!-- ARTICLE:END -->', renderArticleRegion(a), `${pageUrl(a)} article`);
     html = replaceRegion(html, '<!-- BREADCRUMB:START -->', '<!-- BREADCRUMB:END -->', `\n        <span aria-current="page">${a.title}</span>\n        `, `${pageUrl(a)} breadcrumb`);
     html = replaceRegion(html, '<!-- LDJSON:START -->', '<!-- LDJSON:END -->', renderLdJson(a), `${pageUrl(a)} ldjson`);
-    await writeIfChanged(p, html, pageUrl(a));
+    if (isNew) { await writeFile(p, html); console.log(`CREATED ${pageUrl(a)}`); }
+    else await writeIfChanged(p, html, pageUrl(a));
   }
 
-  // 3) assets/search-index.js — type:"faq" entries (only articles with curated search data)
+  // 3) assets/search-index.js — type:"faq" entries (ALL published)
   {
-    const withSearch = articles.filter((a) => Array.isArray(a.search_keywords) && a.search_summary != null);
-    const entries = withSearch.map(renderSearchEntry).join('\n');
-    const block = `\n${entries}\n  `;
+    const block = `\n${articles.map(renderSearchEntry).join('\n')}\n  `;
     let js = await readFile(resolve(ROOT, 'assets', 'search-index.js'), 'utf8');
     js = replaceRegion(js, '/* FAQ:START */', '/* FAQ:END */', block, 'search-index.js faq');
     await writeIfChanged(resolve(ROOT, 'assets', 'search-index.js'), js, 'assets/search-index.js');
   }
 
-  // 4) sitemap.xml — faq-qN.html <url> entries
+  // 4) sitemap.xml — faq-<slug>.html <url>s (ALL published)
   {
-    const entries = articles.map(renderSitemapEntry).join('\n');
-    const block = `\n${entries}\n  `;
+    const block = `\n${articles.map(renderSitemapEntry).join('\n')}\n  `;
     let xml = await readFile(resolve(ROOT, 'sitemap.xml'), 'utf8');
     xml = replaceRegion(xml, '<!-- FAQ:START -->', '<!-- FAQ:END -->', block, 'sitemap.xml faq');
     await writeIfChanged(resolve(ROOT, 'sitemap.xml'), xml, 'sitemap.xml');
+  }
+
+  // 5) UNPUBLISH/DELETE: remove faq-q<N>.html whose slug is not published.
+  //    Scoped strictly to faq-q<N>.html filenames — never any other page.
+  {
+    const publishedSlugs = new Set(articles.map((a) => a.slug));
+    for (const f of await readdir(ROOT)) {
+      const m = /^faq-(q\d+)\.html$/.exec(f);
+      if (!m) continue;
+      if (!publishedSlugs.has(m[1])) {
+        await unlink(resolve(ROOT, f));
+        console.log(`REMOVED ${f} (slug ${m[1]} not in the published set).`);
+      }
+    }
   }
 }
 
