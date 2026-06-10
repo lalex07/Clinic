@@ -189,6 +189,13 @@ window.DAFENG_SEARCH_INDEX = [
     keywords: ["簡易的打呼判讀方式：如何初步察覺睡眠呼吸中止？"],
     summary: "有些鼾聲背後可能藏著睡眠呼吸中止——留意「停—喘—停」的間歇鼾聲，在就醫前先初步察覺值得注意的徵兆。"
   },
+  {
+    type: "faq",
+    title: "Test",
+    url: "faq-q18.html",
+    keywords: ["Test"],
+    summary: "Test"
+  },
   /* FAQ:END */
 
   /* ------------------------------------------------------------------ 院區 */
