@@ -2,7 +2,17 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-10 (session 47)_
+_Last updated: 2026-06-10 (session 48)_
+
+## 🗓️ 2026-06-10 (session 48) — 修 bug：衛教專欄上傳封面後，發佈頁顯示健保標誌（NHI logo）而非上傳的圖
+
+**症狀**：/admin/ 衛教專欄上傳封面→儲存→發佈，公開頁（卡片＋hero）顯示 `assets/nhi-logo.png` 而非上傳圖。**根因（forensics 確認）**：封面以**固定 bucket key**（`faq-q18.png`、upsert）上傳、`cover_path` 無版本參數，於是**三層快取都鎖在第一次的內容**：(1) Supabase storage CDN 對 public URL 快取 `max-age=3600`——CI 的 `generate-faq.mjs` 在封面被替換後一小時內可能下載到**舊版**；(2)(3) GitHub Pages CDN＋瀏覽器對 `assets/faq/faq-q18.png` 這個**不變的 URL** 永遠用舊圖。最初的壞內容：6/9 21:22（CEST）首次 q18 測試上傳的檔案**本身就是 nhi-logo.png**（commit `61d3f48` 提交的 bytes 與 `assets/nhi-logo.png` SHA-256 完全相同；CI 抓取時是該 URL 首次請求＝cache miss＝origin 內容，故非快取造成）——之後 6/10 早上即使重新上傳了正確的吉祥物圖（09:01 的 regen `d6d456e` 已提交**正確** bytes），瀏覽器／Pages 快取仍繼續顯示 NHI logo，看起來就像「上傳什麼都變健保標誌」。**site.js 的 footer NHI 注入完全無關**（selector 只配對 `.site-footer .footer__brand .footer__logo`，未誤掛任何封面）。
+
+- **修法（cache-busting，三層一起解）**：`admin/app.js` `uploadFaqCoverIfAny()` 改回傳 `assets/faq/faq-<slug>.<ext>?v=<Date.now()>`——**只在真的有挑新檔案時**才產生新 `?v=`（無檔案時回傳 undefined、cover_path 原樣保留，不會每次儲存都變）。`scripts/generate-faq.mjs` `syncImage()` 把 cover_path 的 query **帶上 bucket public URL**（CDN 以完整 URL 為 key，新 `?v=` 必為 cache miss→必抓到剛上傳的內容）；本地檔名照舊去掉 query。與既有手動 `?v=2`／`?v=4` 慣例一致。
+- **逐位元組閘門**：基準跑（17 篇、未動 DB）全部「No change」。端到端重測（經 MCP 模擬 admin 寫入）：新文章 q18（`?v=1001`）→產生器下載到的是 bucket 的吉祥物圖（SHA-256 `0c96cc75…`，**非** nhi-logo 的 `dae2955c…`）、卡片＋hero src 都帶 `?v=1001`；換封面（`?v=2002`）→兩處 src 同步更新、以新 URL 重抓；刪除→頁／卡／search／sitemap 自動移除，**17 篇既有頁全程零變化**。
+- **孤兒清理＋防再發**：刪除本地孤兒 `assets/faq/faq-q18.png`（Test 文章已刪但產生器不刪圖）。`admin/app.js` 刪除文章後**順手刪 bucket 封面物件**（best-effort、不阻擋刪文）——slug 會回收（nextFaqSlug=max+1），舊物件殘留會被下一篇同 slug 文章繼承。**bucket 內既有孤兒 `faq-images/faq-q18.png` 需 admin 手動刪一次**（dashboard → Storage → faq-images；本 session 無 admin 憑證、direct SQL 被 storage 防護 trigger 擋下且不應動 RLS）。另：`doctor-photos/test.png` 也是測試孤兒，可一併刪。
+- **UI 提示**：admin 封面欄位 label 加註「建議 16:9、1376×768；非 16:9 會被置中裁切」——方形圖（如標誌）被 `object-fit: cover` 裁切是預期行為、非 bug。
+- **clinic-audit（report-only）PASS**：公開頁本次零位元組變動；§九／設計／a11y 命中皆為規則註解或 admin 編輯器自身的提醒文字。doctor／news 流程未動（news 圖檔名本來就是每次上傳唯一的 UUID，無此問題；doctor 照片同樣是固定檔名，**有同款潛在風險**，後續可比照加 `?v=`）。
 
 ## 🗓️ 2026-06-10 (session 47) — RLS 層強制 admin 寫入需 MFA（aal2）—— 收掉 M1
 

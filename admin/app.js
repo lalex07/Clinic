@@ -685,7 +685,12 @@ async function uploadFaqCoverIfAny(slug) {
   const key = `faq-${slug}.${ext}`;
   const { error } = await sb.storage.from(FAQ_BUCKET).upload(key, file, { upsert: true, contentType: file.type });
   if (error) throw new Error('封面上傳失敗：' + error.message);
-  return `assets/faq/${key}`;
+  // ?v= cache-buster: the bucket key is fixed per slug (upsert), so without a
+  // fresh version every cache layer (visitor browser, GitHub Pages CDN, and the
+  // storage CDN the generator downloads from — max-age=3600) keeps serving the
+  // PREVIOUS cover after a replacement. Same convention as the manual ?v=2/?v=4
+  // on existing articles; generate-faq.mjs strips it for the local filename.
+  return `assets/faq/${key}?v=${Date.now()}`;
 }
 
 $('faqForm').addEventListener('submit', async (e) => {
@@ -763,6 +768,14 @@ $('faqDeleteBtn').addEventListener('click', async () => {
   if (!id || !confirm('確定刪除這篇文章？發佈後其頁面與卡片也會在下次重生成時移除。此動作無法復原。')) return;
   const { error } = await sb.from('faq_articles').delete().eq('id', id);
   if (error) { $('faqSaveMsg').textContent = '✗ ' + error.message; return; }
+  // Best-effort: also remove the bucket cover. Slug numbers are recycled
+  // (nextFaqSlug = max+1), so a leftover object would be inherited by the next
+  // article that reuses this slug. Row deletion above is the critical part —
+  // a failed object removal must not block it.
+  if (currentFaq?.cover_path) {
+    const base = currentFaq.cover_path.split('?')[0].split('/').pop();
+    if (base) await sb.storage.from(FAQ_BUCKET).remove([base]);
+  }
   currentFaq = null;
   $('faqForm').hidden = true;
   $('faqEditorEmpty').hidden = false;

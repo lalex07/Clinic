@@ -215,7 +215,11 @@ async function syncImage(cfg, a) {
   if (!a.cover_path) return;
   const base = basename(a.cover_path.split('?')[0]);
   const localPath = resolve(ROOT, a.cover_path.split('?')[0]);
-  const publicUrl = `${cfg.url}/storage/v1/object/public/${BUCKET}/${encodeURIComponent(base)}`;
+  // Keep the cover_path's ?v= cache-buster on the bucket URL: the storage CDN
+  // caches public objects for an hour per full URL, so without it a replaced
+  // cover (same key, upsert) can download as the stale previous image.
+  const ver = a.cover_path.includes('?') ? `?${a.cover_path.split('?')[1]}` : '';
+  const publicUrl = `${cfg.url}/storage/v1/object/public/${BUCKET}/${encodeURIComponent(base)}${ver}`;
   let res;
   try { res = await fetch(publicUrl); } catch { res = null; }
   if (res && res.ok) {
