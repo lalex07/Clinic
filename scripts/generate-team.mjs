@@ -143,9 +143,14 @@ async function fileExists(p) {
 // Ensure the local photo file exists; bucket object (if any) wins as source of truth.
 async function syncPhoto(cfg, d) {
   if (d.photo_mode !== 'photo' || !d.photo_path) return;
-  const base = basename(d.photo_path);
-  const localPath = resolve(ROOT, d.photo_path);
-  const publicUrl = `${cfg.url}/storage/v1/object/public/doctor-photos/${encodeURIComponent(base)}`;
+  const base = basename(d.photo_path.split('?')[0]);
+  const localPath = resolve(ROOT, d.photo_path.split('?')[0]);
+  // Keep the photo_path's ?v= cache-buster on the bucket URL: the storage CDN caches
+  // public objects (~1h) per full URL, so without it a replaced photo (same key,
+  // upsert) can download as the stale previous image. Stripped above for the local
+  // filename; the published <img src> keeps ?v= (see renderPhoto). Mirrors generate-faq.
+  const ver = d.photo_path.includes('?') ? `?${d.photo_path.split('?')[1]}` : '';
+  const publicUrl = `${cfg.url}/storage/v1/object/public/doctor-photos/${encodeURIComponent(base)}${ver}`;
   let res;
   try { res = await fetch(publicUrl); } catch { res = null; }
   if (res && res.ok) {

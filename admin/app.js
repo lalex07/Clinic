@@ -11,6 +11,36 @@ const sb = createClient(CFG.url, CFG.anonKey);
 const BUCKET = 'doctor-photos';
 
 const $ = (id) => document.getElementById(id);
+
+/* ---------- shared image-upload + preview helpers ----------
+ * The image buckets (doctor-photos / faq-images / news-images) allow ONLY
+ * image/png|jpeg|webp. Passing a raw file.type that is empty or a near-miss
+ * (e.g. "image/jpg", a HEIC, an odd OS picker value) makes the bucket's mime
+ * allowlist reject the upload with HTTP 415 — so the object never lands and the
+ * "封面/照片上傳失敗" error fires. Resolve a guaranteed-allowed Content-Type from
+ * the file's reported type, falling back to the file extension, before uploading. */
+const IMG_MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp' };
+function safeImageType(file, ext) {
+  if (['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) return file.type;
+  return IMG_MIME[ext] || 'image/png';
+}
+
+// Preview an image from its Storage PUBLIC URL — which exists the instant a cover/
+// photo is uploaded, unlike the local assets/ copy that only appears after a
+// publish/generate. Optimistically shows the local served path first (so seeded
+// files that predate the bucket still render), then swaps in the bucket public URL
+// once it loads (a just-uploaded image), preserving any ?v= cache-buster.
+function previewFromBucket(prevEl, bucket, storedPath) {
+  if (!storedPath) { prevEl.style.backgroundImage = 'none'; return; }
+  const [pathPart, query] = storedPath.split('?');
+  prevEl.style.backgroundImage = `url("../${pathPart}")`;     // seeded files exist locally
+  const base = pathPart.split('/').pop();
+  const publicUrl =
+    `${CFG.url}/storage/v1/object/public/${bucket}/${encodeURIComponent(base)}${query ? `?${query}` : ''}`;
+  const probe = new Image();
+  probe.onload = () => { prevEl.style.backgroundImage = `url("${publicUrl}")`; };
+  probe.src = publicUrl;                                       // just-uploaded image → swap in
+}
 const loginView = $('loginView'), appView = $('appView');
 const mfaEnrollView = $('mfaEnrollView'), mfaChallengeView = $('mfaChallengeView');
 
@@ -263,12 +293,11 @@ function editDoctor(d) {
 function syncPhotoUi(photoPath) {
   const mode = $('f_photo_mode').value;
   $('photoRow').style.display = mode === 'photo' ? 'flex' : 'none';
-  const prev = $('photoPreview');
   if (mode === 'photo' && photoPath) {
-    prev.style.backgroundImage = `url(../${photoPath})`;
+    previewFromBucket($('photoPreview'), BUCKET, photoPath);   // public URL → shows just-uploaded photo
     $('photoPathLabel').textContent = photoPath;
   } else {
-    prev.style.backgroundImage = 'none';
+    $('photoPreview').style.backgroundImage = 'none';
     $('photoPathLabel').textContent = '';
   }
 }
@@ -287,9 +316,15 @@ async function uploadPhotoIfAny(slug) {
   if (!file) return null;
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
   const key = `${slug}.${ext}`;
-  const { error } = await sb.storage.from(BUCKET).upload(key, file, { upsert: true, contentType: file.type });
+  const { error } = await sb.storage.from(BUCKET).upload(key, file, { upsert: true, contentType: safeImageType(file, ext) });
   if (error) throw new Error('照片上傳失敗：' + error.message);
-  return `assets/doctors/${key}`;
+  // ?v= cache-buster: the bucket key is fixed per slug (upsert), so a replacement
+  // reuses the key and every cache layer (visitor browser, GitHub Pages CDN, and the
+  // storage CDN the generator downloads from — max-age) would otherwise keep serving
+  // the PREVIOUS photo. Added ONLY on a real upload (this fn returns null when no
+  // file is picked), so unchanged doctors keep a byte-identical photo_path — plain
+  // saves don't churn team.html. generate-team.mjs strips it for the local filename.
+  return `assets/doctors/${key}?v=${Date.now()}`;
 }
 
 $('editForm').addEventListener('submit', async (e) => {
@@ -350,6 +385,14 @@ $('deleteBtn').addEventListener('click', async () => {
   if (!id || !confirm('確定刪除這位醫師？此動作無法復原。')) return;
   const { error } = await sb.from('doctors').delete().eq('id', id);
   if (error) { $('saveMsg').textContent = '✗ ' + error.message; return; }
+  // Best-effort: also remove the bucket photo. Photo keys are slug-based and can be
+  // recycled by a future doctor reusing the same slug, so a leftover object would be
+  // inherited. The row delete above is the critical part — a failed object removal
+  // must not block it (mirrors the FAQ cover cleanup).
+  if (current?.photo_path) {
+    const base = current.photo_path.split('?')[0].split('/').pop();
+    if (base) await sb.storage.from(BUCKET).remove([base]);
+  }
   current = null;
   $('editForm').hidden = true;
   $('editorEmpty').hidden = false;
@@ -618,14 +661,12 @@ function nextFaqSlug() {
 
 /* ---------- editor ---------- */
 function syncFaqCoverUi(coverPath) {
-  const prev = $('faqCoverPreview');
-  if (coverPath) {
-    prev.style.backgroundImage = `url(../${coverPath.split('?')[0]})`;
-    $('faqCoverPathLabel').textContent = coverPath;
-  } else {
-    prev.style.backgroundImage = 'none';
-    $('faqCoverPathLabel').textContent = '';
-  }
+  // Preview from the bucket public URL (exists right after upload); falls back to the
+  // local served path for the seeded covers that predate the bucket. The published
+  // static page keeps using the local assets/faq path (post-download) — only this
+  // admin preview reads from Storage so the box never goes blank after a save.
+  previewFromBucket($('faqCoverPreview'), FAQ_BUCKET, coverPath);
+  $('faqCoverPathLabel').textContent = coverPath || '';
 }
 
 function editFaq(a) {
@@ -683,7 +724,7 @@ async function uploadFaqCoverIfAny(slug) {
   if (!file) return undefined;
   const ext = (file.name.split('.').pop() || 'png').toLowerCase().replace(/[^a-z0-9]/g, '') || 'png';
   const key = `faq-${slug}.${ext}`;
-  const { error } = await sb.storage.from(FAQ_BUCKET).upload(key, file, { upsert: true, contentType: file.type });
+  const { error } = await sb.storage.from(FAQ_BUCKET).upload(key, file, { upsert: true, contentType: safeImageType(file, ext) });
   if (error) throw new Error('封面上傳失敗：' + error.message);
   // ?v= cache-buster: the bucket key is fixed per slug (upsert), so without a
   // fresh version every cache layer (visitor browser, GitHub Pages CDN, and the

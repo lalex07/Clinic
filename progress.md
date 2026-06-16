@@ -2,7 +2,20 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-06-10 (session 48)_
+_Last updated: 2026-06-16 (session 49)_
+
+## 🗓️ 2026-06-16 (session 49) — 修 admin 圖片兩問：FAQ 封面 bucket 持久化＋預覽，doctor 照片 cache-buster
+
+承 session 48 的 FAQ 封面修復，處理兩個相關 bug。只動 `admin/app.js`＋`scripts/generate-team.mjs`＋progress；**未碰 RLS／auth／已核可文案；公開頁本期零位元組變動**（17 篇 faq-qN.html＋team.html 重跑產生器全部「No change」）。
+
+- **PART 1a 診斷（經 MCP 實證）：FAQ 封面確實沒進 bucket（非 dashboard 殘影）。** `storage.buckets` 三桶（faq-images／news-images／doctor-photos）設定**完全相同**（public、5MB、`allowed_mime_types=[image/png,image/jpeg,image/webp]`）；`storage.objects` 顯示 faq-images **空**、news-images 有 2 物件、doctor-photos 有 1（test.png）。RLS 政策三桶亦對稱（write 需 `is_admin_mfa()`、select 需 `is_admin()`）。**對 storage API 實打**（anon、無 admin session）：合法 PNG → `403 RLS`（＝MIME／size 都過、唯一關卡是 RLS，正式 admin 登入即可寫入→會持久化）；`image/gif`（不在白名單）→ **`415 invalid_mime_type`，且此檢查發生在 RLS 之前**。**根因**：上傳呼叫傳 `contentType: file.type` 原值，當瀏覽器回報的 type 為空字串或近似值（如 `image/jpg`、HEIC、特殊檔案選擇器）即被 bucket MIME 白名單以 415 拒絕→封面永遠落不了地。錯誤有 throw（顯示於 faqSaveMsg）、**非靜默吞掉**，但確實擋住持久化。既有 17 篇封面 `cover_path` 皆為本地 `assets/faq/faq-qN.png`（seed 的插畫檔，從未經 bucket 上傳）——這才是 bucket 空的原因。
+- **PART 1a 修法：** `admin/app.js` 新增共用 `safeImageType(file, ext)`——`file.type` 已是白名單三型之一就用它，否則由副檔名映射（png→image/png、jpg/jpeg→image/jpeg、webp→image/webp，預設 png）。`uploadFaqCoverIfAny`／`uploadPhotoIfAny` 改用它，保證 Content-Type 一定落在 bucket 白名單→合法圖片可靠持久化。
+- **PART 1b 修法：admin 預覽改讀 Storage public URL。** 新增共用 `previewFromBucket(el, bucket, storedPath)`：先樂觀顯示本地 `../<path>`（seed 檔在本地存在），再以 `new Image()` 探測 `<SUPABASE_URL>/storage/v1/object/public/<bucket>/<basename>?v=…`，載入成功即換成 bucket public URL（剛上傳的圖**立即可見**，不必等發佈生成本地檔）。保留 `?v=`。`syncFaqCoverUi` 改呼叫之——儲存後不再留白框。**'change' 時仍顯示剛挑檔案的 objectURL（原本就 work）；發佈的靜態頁照舊用本地 `assets/faq` 路徑（產生器下載後）——只有 admin 預覽改讀 Storage。**
+- **PART 2 修法：doctor 照片比照 FAQ。** (1) `uploadPhotoIfAny` 回傳 `assets/doctors/<slug>.<ext>?v=<Date.now()>`，**只在真的挑了新檔案時**才加 `?v=`（無檔案回傳 null、photo_path 原樣保留→未改動的 doctor byte-identical、plain save 不 churn team.html）。(2) `scripts/generate-team.mjs` `syncPhoto()` 把 `?v=` 帶上 bucket download URL（CDN 以完整 URL 為 key→替換照片必 cache miss→抓到新圖）、本地檔名去 query；發佈 `<img src>` 保留 `?v=`（同 FAQ）。(3) doctor 刪除後 best-effort 刪 bucket 物件（slug 會回收，殘留物件會被下一位同 slug 醫師繼承；不阻擋刪列）。(4) `syncPhotoUi` 預覽改走 `previewFromBucket`。
+- **news 不動（依指示）：** news 上傳鍵為列 id（`<rowUUID>.<ext>`）——**新文章**每列為新 UUID 故首傳唯一、不受影響；惟同列**替換**圖片會重用鍵，理論上與 FAQ／doctor 同款 stale-CDN 風險（id 為每列穩定、非每次上傳唯一）。本期依指示不改 news，僅誠實記錄此細節。
+- **逐位元組閘門：** 重跑 `generate-team.mjs`＋`generate-faq.mjs`（未動 DB）→team.html＋17 篇＋search-index＋sitemap 全部「No change」；`git status` 僅 `admin/app.js`＋`scripts/generate-team.mjs`。`node --check` 三檔皆過。
+- **clinic-audit（report-only）PASS：** 公開頁零變動；diff 內無 §九 禁語、無 gradient／glow／transition:all。
+- **承接 session 48**：bucket 內 `faq-images`（空）無孤兒；`doctor-photos/test.png` 仍是測試孤兒，admin 可於 dashboard 手動刪。
 
 ## 🗓️ 2026-06-10 (session 48) — 修 bug：衛教專欄上傳封面後，發佈頁顯示健保標誌（NHI logo）而非上傳的圖
 
