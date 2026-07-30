@@ -141,6 +141,7 @@ Before committing any change, run the `clinic-audit` skill in `.claude/skills/cl
 
 ## Multi-agent workflow
 
+- **Build → test → update pipeline: run a scoped change with `/feature <task>` (builder → tester → updater; the human does every commit). See `docs/workflow.md`.**
 - Two parallel agents must never edit the same file (last-write-wins silently loses changes).
 - Only ONE agent commits per batch; remove any stale `.git/index.lock` first; don't force-push.
 - Serialize edits to shared chrome (header/footer, `site.css`, `site.js`) into one agent; build site-wide UI by injecting via `site.js` so it lands on every page without per-page edits.
