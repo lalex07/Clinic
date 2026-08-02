@@ -1,5 +1,19 @@
 /* 大豐耳鼻喉科 — shared behaviour for every page */
 (function () {
+  // Root-relative path helper for site-wide INJECTED links/assets.
+  // This file is loaded as "assets/site.js" from the repo-root pages and as
+  // "../assets/site.js" from /en/*, so anything injected here must resolve its
+  // href/src against the site root rather than hard-coding a relative path.
+  // (Hard-coded relative paths 404 on /en/* — see the .nhi-mark note below.)
+  var selfScript = document.currentScript || document.querySelector('script[src$="assets/site.js"]');
+  var ROOT_PREFIX = (function () {
+    try {
+      var m = /^(.*?)assets\/site\.js/.exec((selfScript && selfScript.getAttribute('src')) || '');
+      return m ? m[1] : '';
+    } catch (e) { return ''; }
+  })();
+  function sitePath(p) { return ROOT_PREFIX + p; }
+
   // sticky header border on scroll
   var header = document.getElementById('header');
   if (header) {
@@ -96,6 +110,25 @@
     markRow.appendChild(nhiMark);
   }
 
+  // 隱私權政策 footer link — injected site-wide (same pattern as the NHI emblem)
+  // so it appears in the footer menu of every page, including /en/*, without 36
+  // per-page edits and with no way for the pages to desync. /en/* has no English
+  // policy page yet, so it links to the Chinese privacy.html via sitePath().
+  var footerNav = document.querySelector('.site-footer .footer__base nav');
+  if (footerNav && !footerNav.querySelector('.footer__privacy')) {
+    var privacyLink = document.createElement('a');
+    privacyLink.className = 'footer__privacy';
+    privacyLink.href = sitePath('privacy.html');
+    privacyLink.textContent = '隱私權政策';
+    // the label is Traditional Chinese even inside the /en/* documents
+    // (<html lang="en">) — annotate it so screen readers switch voice (SC 3.1.2)
+    privacyLink.lang = 'zh-Hant';
+    // /en/* labels this nav "Language" (it held only the 中文 link); once the
+    // policy link joins it, that label no longer describes the group.
+    if (footerNav.getAttribute('aria-label') === 'Language') footerNav.setAttribute('aria-label', 'Footer');
+    footerNav.appendChild(privacyLink);
+  }
+
   // Cloudflare Web Analytics — privacy-friendly, cookieless. No cookies, no
   // other trackers. SITE OWNER: replace __CF_BEACON_TOKEN__ below with your
   // real token from the Cloudflare dashboard (Web Analytics → your site →
@@ -105,6 +138,136 @@
   cfBeacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';
   cfBeacon.setAttribute('data-cf-beacon', '{"token":"__CF_BEACON_TOKEN__"}');
   document.body.appendChild(cfBeacon);
+
+  /* ===== 第一方・無 Cookie 的互動統計（Phase A：僅收集，尚無後台報表）=====
+     隱私優先（醫療網站的硬性要求）：不使用 cookie、不寫 localStorage、不收集 IP、
+     User-Agent、姓名或任何可識別病人的資料；不送 query string 與 hash（path 只取
+     location.pathname）；referrer 只取「主機名」，絕不外送完整來源網址。
+     session_id 是每次造訪隨機產生、僅存在 sessionStorage 的 UUID（關閉分頁即消失
+     → 無跨造訪／跨裝置追蹤）。
+     寫入 Supabase 的 events 表，只用可公開的 anon key；RLS 只允許 INSERT（無法讀
+     取／修改／刪除）。整段 fire-and-forget 且靜默失敗——被擋、離線、CSP 拒絕、或
+     伺服器回錯，都不會 throw 進頁面、不 log 可見錯誤、不影響任何 render。
+     另有 isLocalHost() 守門：本機開發（localhost／127.0.0.1／::1／0.0.0.0／*.local／
+     file://）一律略過，避免測試流量污染正式資料。
+     本站的資料蒐集說明公開於 privacy.html〈隱私權政策〉，兩者內容需保持一致。 */
+  var track = function () {}; // 預設 no-op：呼叫端在任何情況下都不會出錯
+  try {
+    var AN_ENDPOINT = 'https://ysnrrkpusgdgzwkywddu.supabase.co/rest/v1/events';
+    // 瀏覽器可公開的 anon key（與 admin/config.js 相同的值）；RLS 才是安全閘門。
+    // 絕不可放 service-role key。
+    var AN_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlzbnJya3B1c2dkZ3p3a3l3ZGR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3Mjk5MTIsImV4cCI6MjA5NjMwNTkxMn0.pZbXVHYOa9yc4kOjwN2DtSkWIUV7SFDfPHrysjcPQ58';
+    var AN_SID_KEY = 'df_sid';
+    var anMemoSid = null;
+
+    // 本機開發不得寫入正式資料表：在 localhost／區域網路測試時整段統計靜默略過，
+    // 讓 events 表只留下真實訪客的資料。判斷不出來時一律視為「本機」而不送出（保守）。
+    var AN_LOCAL_HOSTNAMES = ['localhost', '127.0.0.1', '::1', '[::1]', '0.0.0.0'];
+    function isLocalHost() {
+      try {
+        if (location.protocol === 'file:') return true; // 直接開檔（file://）
+        var h = (location.hostname || '').toLowerCase();
+        if (!h) return true; // 沒有 host 的 origin（about:／blob: 等）
+        if (AN_LOCAL_HOSTNAMES.indexOf(h) !== -1) return true;
+        return /\.local$/.test(h); // Bonjour／區域網路主機名，如 macbook.local
+      } catch (e) { return true; }
+    }
+
+    function anUuid() {
+      try {
+        if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
+      } catch (e) { /* 靜默降級 */ }
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (Math.random() * 16) | 0;
+        return (c === 'x' ? r : ((r & 0x3) | 0x8)).toString(16);
+      });
+    }
+
+    // 每次造訪一組 id，只放 sessionStorage（非 cookie、非 localStorage）。無痕模式／
+    // 停用儲存時 sessionStorage 存取會 throw → 退回僅存於記憶體，靜默降級不中斷。
+    function anSession() {
+      try {
+        var s = window.sessionStorage.getItem(AN_SID_KEY);
+        if (!s) { s = anUuid(); window.sessionStorage.setItem(AN_SID_KEY, s); }
+        return s;
+      } catch (e) {
+        if (!anMemoSid) anMemoSid = anUuid();
+        return anMemoSid;
+      }
+    }
+
+    // 手機／桌機只以視窗寬度判定（760px＝本站既有的 mobile 斷點），不讀 User-Agent。
+    function anDevice() {
+      try {
+        if (!window.matchMedia) return null;
+        return window.matchMedia('(max-width: 760px)').matches ? 'mobile' : 'desktop';
+      } catch (e) { return null; }
+    }
+
+    // 只取來源的主機名；無來源或同源則不記錄。永不外送完整網址（含路徑／參數）。
+    function anReferrerHost() {
+      try {
+        if (!document.referrer) return null;
+        var h = new URL(document.referrer).hostname;
+        if (!h || h === location.hostname) return null;
+        return h;
+      } catch (e) { return null; }
+    }
+
+    function anSend(payload) {
+      var body = JSON.stringify(payload);
+      // 首選 fetch + keepalive + credentials:'omit'：可正確帶 apikey／Authorization
+      // header，且明確「不送出也不接受任何 cookie」（Supabase 邊緣的 Cloudflare 會回
+      // Set-Cookie: __cf_bm，credentials:'omit' 讓瀏覽器忽略它 → 真正無 cookie）。
+      // keepalive 使請求在頁面切換後仍會送達，可靠度等同 sendBeacon。
+      if (window.fetch) {
+        window.fetch(AN_ENDPOINT, {
+          method: 'POST',
+          keepalive: true,
+          credentials: 'omit',
+          mode: 'cors',
+          headers: {
+            apikey: AN_KEY,
+            Authorization: 'Bearer ' + AN_KEY,
+            'Content-Type': 'application/json',
+            Prefer: 'return=minimal'
+          },
+          body: body
+        })['catch'](function () { /* 靜默：離線／被擋／CSP 拒絕皆不影響頁面 */ });
+        return;
+      }
+      // 後備：sendBeacon（無法帶自訂 header，故 apikey 以 query string 傳遞）
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(
+          AN_ENDPOINT + '?apikey=' + encodeURIComponent(AN_KEY),
+          new Blob([body], { type: 'application/json' })
+        );
+      }
+    }
+
+    track = function (eventType, extra) {
+      try {
+        if (isLocalHost()) return; // 本機開發：不送出、不留下任何紀錄
+        var payload = {
+          event_type: eventType,
+          path: location.pathname, // 只有路徑，不含 ?query 與 #hash
+          session_id: anSession()
+        };
+        var dev = anDevice();
+        if (dev) payload.device = dev;
+        var ref = anReferrerHost();
+        if (ref) payload.referrer_host = ref;
+        if (extra && extra.faq_slug) payload.faq_slug = extra.faq_slug;
+        anSend(payload);
+      } catch (e) { /* 靜默 */ }
+    };
+
+    track('pageview');
+
+    // 衛教專欄文章頁：faq-q7.html → faq_slug 'q7'（與 faq_articles.slug 同一慣例）
+    var anFaq = /(?:^|\/)faq-(q\d+)\.html$/.exec(location.pathname);
+    if (anFaq) track('faq_view', { faq_slug: anFaq[1] });
+  } catch (e) { /* 靜默：統計層絕不可影響頁面 */ }
 
   /* ===== 線上預約掛號 modal — built once on every page, opened by every booking CTA =====
      Reuses the search overlay's accessible-dialog pattern + dark backdrop.
@@ -191,6 +354,7 @@
       if (!overlay.hidden) return;
       if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
       lastFocus = opener || document.activeElement;
+      track('booking_click'); // 統計：涵蓋 header 立即預約／footer 預約掛號／首頁 qcard／行動選單 CTA
       overlay.hidden = false;
       requestAnimationFrame(function () { overlay.classList.add('is-open'); });
       modal.focus(); // dialog 容器 (tabindex=-1) → 螢幕報讀器播報標題與說明

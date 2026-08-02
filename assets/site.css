@@ -694,6 +694,20 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   line-height: 1.95;
   margin: 0 0 var(--s-4);
 }
+/* inline links inside article body copy (e.g. 隱私權政策 的聯絡管道連結) — the
+   underline is the primary affordance so the link is distinguishable without
+   relying on colour alone (WCAG 2.2 SC 1.4.1). Scoped to <p> so the
+   article-end .faq-cta (a direct child of .faq-article) keeps its own style. */
+.faq-article p a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: color 0.25s var(--ease), text-decoration-thickness 0.25s var(--ease);
+}
+.faq-article p a:hover { color: var(--primary-deep); text-decoration-thickness: 2px; }
+.faq-article p a:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+
 /* bold subheading questions — serif, primary-deep, breathing room above */
 .faq-sub {
   font-family: "Noto Serif TC", serif;

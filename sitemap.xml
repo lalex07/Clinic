@@ -171,6 +171,13 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  <!-- 隱私權政策（非 FAQ：刻意放在 FAQ:START/END 標記區塊之外，避免被 generate-faq.mjs 覆寫） -->
+  <url>
+    <loc>https://lalex07.github.io/Clinic/privacy.html</loc>
+    <lastmod>2026-07-31</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
   <!-- English placeholder pages (/en/) -->
   <url>
     <loc>https://lalex07.github.io/Clinic/en/about.html</loc>
