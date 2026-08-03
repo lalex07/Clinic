@@ -28,23 +28,6 @@
 <style>
   /* ============ Services-specific ============ */
 
-  /* anchor nav under the page head */
-  .svc-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: var(--s-5); }
-  .svc-nav a {
-    display: inline-flex; align-items: center; gap: 0.4rem;
-    font-size: 0.9rem; font-weight: 500;
-    color: var(--primary-deep);
-    background: var(--surface);
-    border: 1px solid var(--line-strong);
-    border-radius: 999px;
-    padding: 0.45rem 0.95rem;
-    transition: background 0.25s ease-out, border-color 0.25s ease-out, transform 0.25s ease-out;
-  }
-  .svc-nav a:hover { background: var(--primary-soft); border-color: var(--primary); transform: translateY(-2px); }
-  .svc-nav a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-  .svc-nav .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
-  .svc-nav .dot--accent { background: var(--accent); }
-
   /* block list */
   .svc-list { display: flex; flex-direction: column; gap: var(--s-5); padding: var(--s-2) 0 var(--s-7); }
   .svc {
@@ -267,13 +250,6 @@
       </nav>
       <h1 class="reveal in d1">診療項目</h1>
       <p class="page-head__lead reveal in d2">從耳、鼻、喉到頭頸，大豐照顧成人與兒童的日常與特殊耳鼻喉需求。除一般門診外，另設睡眠呼吸中止症、眩暈與頭頸部專業評估門診；第四家旗艦院區「中山手術中心」將於 2026 年 10 月開幕。</p>
-      <nav class="svc-nav reveal in d3" aria-label="診療項目快速連結">
-        <a href="#general"><span class="dot"></span>一般耳鼻喉診療</a>
-        <a href="#sleep"><span class="dot dot--accent"></span>睡眠呼吸中止症</a>
-        <a href="#vertigo"><span class="dot dot--accent"></span>眩暈評估</a>
-        <a href="#headneck"><span class="dot dot--accent"></span>頭頸部腫瘤</a>
-        <a href="#zhongshan"><span class="dot"></span>中山手術中心</a>
-      </nav>
     </div>
   </section>
 
