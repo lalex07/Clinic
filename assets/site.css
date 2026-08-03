@@ -119,7 +119,10 @@ body > * { position: relative; z-index: 1; }
 .nav {
   display: flex;
   align-items: center;
-  gap: var(--s-4);
+  /* 16px (not 24px) between brand · links · search · 中文|EN · 立即預約 so the whole
+     bar's intrinsic width fits INSIDE the 1092px .wrap content column — the CTA then
+     lines up with the page gutter at every desktop width instead of overhanging it. */
+  gap: var(--s-3);
   height: 72px;
 }
 .brand {
@@ -162,7 +165,9 @@ body > * { position: relative; z-index: 1; }
   gap: 0.35rem;
 }
 .nav__links a {
-  padding: 0.5rem 0.85rem;
+  /* horizontal padding trimmed 0.85→0.75rem (part of the same header diet as .nav's
+     gap); font-size and labels are untouched. */
+  padding: 0.5rem 0.75rem;
   border-radius: 8px;
   font-size: 0.95rem;
   color: var(--ink-soft);
@@ -215,7 +220,7 @@ body > * { position: relative; z-index: 1; }
 
 .nav__cta { flex-shrink: 0; }
 /* mobile-menu booking CTA (injected into #navLinks by site.js): hidden on desktop,
-   shown only inside the open hamburger menu at <=760px (see media query below) */
+   shown only inside the open hamburger menu at <=1129px (see media query below) */
 .nav__menu-cta { display: none; }
 
 /* language toggle (中文 | EN) — no flags; active in primary, inactive in ink-faint */
@@ -252,6 +257,10 @@ body > * { position: relative; z-index: 1; }
   cursor: pointer;
   align-items: center; justify-content: center;
 }
+/* site.js now returns focus here whenever the menu closes (Esc / second click), so the
+   hamburger needs the same house focus ring as every other control — the UA default is
+   not guaranteed to read against --surface. Crisp outline, no glow. */
+.nav__toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .nav__toggle span, .nav__toggle span::before, .nav__toggle span::after {
   content: "";
   display: block;
@@ -541,15 +550,17 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   .footer__top { grid-template-columns: 1fr; gap: var(--s-5); }
 }
 /* Collapsed (hamburger) navigation.
-   Breakpoint measured, not guessed: the desktop header bar needs 1127px of
-   intrinsic width (brand 195 + 6 nav links 575 + search 40 + 中文|EN 92 + 立即預約 129,
-   plus 4×24px flex gaps). Measured on a served page with the search trigger injected:
-   below 1163px viewport the 立即預約 CTA / 中文|EN / search icon start going off-screen
-   (body{overflow-x:hidden} used to hide that, leaving them silently unreachable), and a
-   full 24px page gutter — the same gutter .wrap gives every other element — only exists
-   from 1211px up. So the collapsed menu owns everything up to 1210px; the one-line
-   desktop header only runs where it genuinely fits. */
-@media (max-width: 1210px) {
+   Breakpoint measured, not guessed. After the header diet above (.nav gap 24→16px,
+   nav-link padding-inline 0.85→0.75rem) the desktop bar's intrinsic width is 1076.06px
+   (brand 195.08 + 6 nav links 556.05 + search 40 + 中文|EN 91.88 + 立即預約 129.05,
+   plus 4×16px flex gaps) — down from 1127.18px, so it now fits INSIDE the 1092px .wrap
+   content column and the CTA's right edge lands exactly on the page gutter.
+   Below --maxw (1140px) the content column is viewport−48px, so the bar needs
+   1076.06+48 = 1124.06 → a 1125px viewport is the hard floor at which the full one-line
+   header still keeps both 24px gutters. Breakpoint set just under 1130px (the floor plus
+   a 5px buffer): the collapsed menu owns everything up to 1129px, and 1152×864 desktops
+   and iPad landscape (1180 / 1194) get the full header including the visible 立即預約. */
+@media (max-width: 1129px) {
   .nav__links, .nav__cta { display: none; }
   .nav__toggle { display: inline-flex; }
   /* tighten so brand + language toggle + hamburger all fit the bar */

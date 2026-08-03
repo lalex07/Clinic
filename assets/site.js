@@ -29,7 +29,8 @@
   var links = document.getElementById('navLinks');
   if (toggle && links) {
     // Surface the 立即預約 booking CTA inside the mobile menu — the header .nav__cta
-    // is display:none at <=760px, so on phones there was no way to book. Clone it as a
+    // is display:none at <=1129px (NAV_COLLAPSE_MQ below / assets/site.css collapsed-nav
+    // media query), so on phones and small laptops there was no way to book. Clone it as a
     // prominent full-width action at the bottom of the menu; its contact.html href is
     // intercepted by the booking-modal handler below, so it opens the modal on mobile too.
     var headerCta = document.querySelector('.nav__cta');
@@ -40,17 +41,82 @@
       menuCta.innerHTML = headerCta.innerHTML; // calendar icon + 立即預約 label
       links.appendChild(menuCta);
     }
-    toggle.addEventListener('click', function () {
-      var open = links.classList.toggle('open');
+    /* ---- 收合選單的鍵盤可用性（disclosure pattern，全部在 JS 處理）----
+       #navLinks 在每一頁的 DOM 順序都排在 .nav__toggle 之前，所以從漢堡鈕按 Tab 會
+       「跳過」選單裡的 7 個項目直接落到內文，只有 Shift+Tab 才回得去。header 標記共用
+       於 31 個頁面（team/news/faq/faq-q* 由產生器產出），實體調整 DOM 順序會造成無謂的
+       產生器變動，因此改由這裡管理焦點：
+         · 開啟 → 焦點移到第一個項目
+         · 開啟期間 Tab／Shift+Tab 只在「漢堡鈕 + 選單項目」之間循環
+         · Esc（或再次點擊漢堡鈕）→ 關閉並把焦點交回漢堡鈕
+       NAV_COLLAPSE_MQ 必須與 assets/site.css 收合導覽的 media query 保持一致。 */
+    var NAV_COLLAPSE_MQ = '(max-width: 1129px)';
+
+    // 選單內可聚焦的項目：6 個導覽連結 + 注入的 .nav__menu-cta（收合時 display:none →
+    // offsetParent 為 null，自動被濾掉）
+    var menuItems = function () {
+      return Array.prototype.slice.call(links.querySelectorAll('a[href]')).filter(function (el) {
+        return el.offsetParent !== null;
+      });
+    };
+    var menuIsOpen = function () { return links.classList.contains('open'); };
+    // class 與 aria 一律一起更新，兩者永不脫鉤
+    var setMenuState = function (open) {
+      links.classList.toggle('open', open);
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       toggle.setAttribute('aria-label', open ? '關閉選單' : '開啟選單');
+    };
+    var openMenu = function () {
+      setMenuState(true);
+      var items = menuItems();
+      if (items.length) items[0].focus();
+    };
+    var closeMenu = function (returnFocus) {
+      if (!menuIsOpen()) return;
+      setMenuState(false);
+      if (returnFocus && toggle.focus) toggle.focus();
+    };
+
+    toggle.addEventListener('click', function () {
+      if (menuIsOpen()) closeMenu(true); else openMenu();
     });
-    links.querySelectorAll('a').forEach(function (a) {
-      a.addEventListener('click', function () {
-        links.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-      });
+
+    // 漢堡鈕上的鍵盤操作：開啟時 Tab → 第一個項目、Shift+Tab → 最後一個項目、Esc → 關閉
+    toggle.addEventListener('keydown', function (e) {
+      if (!menuIsOpen()) return;
+      if (e.key === 'Escape') { closeMenu(true); e.preventDefault(); return; }
+      if (e.key !== 'Tab') return;
+      var items = menuItems();
+      if (!items.length) return;
+      e.preventDefault();
+      (e.shiftKey ? items[items.length - 1] : items[0]).focus();
     });
+
+    // 選單內的鍵盤操作：頭尾接回漢堡鈕形成封閉循環；Esc 關閉並交回焦點
+    links.addEventListener('keydown', function (e) {
+      if (!menuIsOpen()) return;
+      if (e.key === 'Escape') { closeMenu(true); e.preventDefault(); return; }
+      if (e.key !== 'Tab') return;
+      var items = menuItems();
+      if (!items.length) return;
+      var atFirst = document.activeElement === items[0];
+      var atLast = document.activeElement === items[items.length - 1];
+      if ((e.shiftKey && atFirst) || (!e.shiftKey && atLast)) { toggle.focus(); e.preventDefault(); }
+    });
+
+    // 點選單內的連結後關閉（焦點交給即將載入的頁面，不搶回漢堡鈕）
+    links.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('a[href]')) closeMenu(false);
+    });
+
+    // 跨越收合斷點時重置狀態：先前在手機寬度開啟選單、放大到桌機、再縮回手機，
+    // 殘留的 .open／aria-expanded="true" 會讓選單自己「重新打開」。
+    try {
+      var navMq = window.matchMedia(NAV_COLLAPSE_MQ);
+      var onNavMq = function () { setMenuState(false); };
+      if (navMq.addEventListener) navMq.addEventListener('change', onNavMq);
+      else if (navMq.addListener) navMq.addListener(onNavMq);
+    } catch (e) { /* 靜默：matchMedia 不可用時不影響其他行為 */ }
   }
 
   // back-to-top button — built here so it appears on every page (incl. the
@@ -196,7 +262,9 @@
       }
     }
 
-    // 手機／桌機只以視窗寬度判定（760px＝本站既有的 mobile 斷點），不讀 User-Agent。
+    // 手機／桌機只以視窗寬度判定（760px＝手機門檻），不讀 User-Agent。此 760px 是統計用
+    // 的分類門檻，刻意與 header 的收合斷點（1129px）脫鉤——改動導覽斷點時不要跟著改，
+    // 否則歷史資料的 device 分類會斷層。
     function anDevice() {
       try {
         if (!window.matchMedia) return null;
