@@ -57,7 +57,8 @@
   }
   .svc-tag {
     font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
-    color: #fff; background: var(--accent);
+    /* 深一階暖棕（非 --accent #CC7A45，白字僅 3.26:1）→ 白字 5.67:1，通過 WCAG AA */
+    color: #fff; background: #9a5527;
     padding: 0.2rem 0.62rem; border-radius: 6px;
     font-family: "Noto Sans TC", sans-serif;
   }
@@ -164,7 +165,8 @@
   .svc-soon__top { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; margin-bottom: var(--s-3); }
   .svc-soon__badge {
     font-family: "Noto Serif TC", serif; font-weight: 700; font-size: 0.86rem;
-    color: #fff; background: var(--accent);
+    /* 深一階暖棕（非 --accent #CC7A45，白字僅 3.26:1）→ 白字 5.67:1，通過 WCAG AA */
+    color: #fff; background: #9a5527;
     padding: 0.35rem 0.9rem; border-radius: 999px;
   }
   .svc-soon h2 { font-size: clamp(1.4rem, 3.2vw, 1.9rem); color: var(--primary-deep); }

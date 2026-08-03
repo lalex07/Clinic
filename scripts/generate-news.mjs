@@ -92,7 +92,7 @@ function renderMedia(n) {
     `          <!-- no image → default 公告 placeholder tile (decorative; the heading + body carry the announcement) -->`,
     `          <div class="news-card__media news-card__media--placeholder" aria-hidden="true">`,
     `            <span class="news-card__placeholder">`,
-    `              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>`,
+    `              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>`,
     `              <span class="news-card__placeholder-zh">公告</span>`,
     `              <span class="news-card__placeholder-en">Announcement</span>`,
     `            </span>`,

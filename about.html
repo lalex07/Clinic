@@ -95,7 +95,8 @@
   .tl-soon {
     font-family: "Noto Sans TC", sans-serif;
     font-size: 0.72rem; font-weight: 600; letter-spacing: 0.03em;
-    color: #fff; background: var(--accent);
+    /* 深一階暖棕（非 --accent #CC7A45，白字僅 3.26:1）→ 白字 5.67:1，通過 WCAG AA */
+    color: #fff; background: #9a5527;
     padding: 0.2rem 0.6rem; border-radius: 6px;
     vertical-align: middle; margin-left: 0.6rem; white-space: nowrap;
   }

@@ -37,7 +37,7 @@
     if (headerCta && !links.querySelector('.nav__menu-cta')) {
       var menuCta = document.createElement('a');
       menuCta.className = 'nav__menu-cta';
-      menuCta.href = headerCta.getAttribute('href') || 'contact.html';
+      menuCta.href = headerCta.getAttribute('href') || sitePath('contact.html');
       menuCta.innerHTML = headerCta.innerHTML; // calendar icon + 立即預約 label
       links.appendChild(menuCta);
     }
@@ -162,7 +162,7 @@
   if (footerLogo && footerLogo.parentNode && !footerLogo.parentNode.querySelector('.nhi-mark')) {
     var nhiMark = document.createElement('img');
     nhiMark.className = 'nhi-mark';
-    nhiMark.src = 'assets/nhi-logo.png';
+    nhiMark.src = sitePath('assets/nhi-logo.png');
     nhiMark.alt = '全民健康保險特約院所';
     nhiMark.width = 52;
     nhiMark.height = 52;
@@ -401,7 +401,7 @@
             }).join('') +
           '</ul>' +
         '</div>' +
-        '<a class="booking-modal__more" href="locations.html">查看院區・門診<span aria-hidden="true"> →</span></a>' +
+        '<a class="booking-modal__more" href="' + sitePath('locations.html') + '">查看院區・門診<span aria-hidden="true"> →</span></a>' +
       '</div>';
     document.body.appendChild(overlay);
 
