@@ -47,6 +47,81 @@ const mfaEnrollView = $('mfaEnrollView'), mfaChallengeView = $('mfaChallengeView
 let doctors = [];
 let current = null;        // currently edited doctor object (or null for new)
 
+/* ---------- login-screen idle delight (decoration only) ----------
+ * The clinic's logo doctor slides out from behind the login card at a random
+ * spot on a random edge, pauses, and retreats. Constraints kept here:
+ *   - LOGIN VIEW ONLY: started/stopped from setView(), so it never runs on the
+ *     MFA screens or in the editor and its timer is cleared on any view change.
+ *   - It can never block the form: the element is pointer-events:none and is
+ *     painted behind the card (see admin.css).
+ *   - prefers-reduced-motion: reduce → never runs (CSS also hides the element).
+ * QA hook (decoration only, no data/auth surface):
+ *   window.__adminPeek.now()              → fire one peek immediately
+ *   window.__adminPeek.setRange(800,1500) → shorten the random idle gap
+ *   window.__adminPeek.stop() / .start()
+ */
+const peekImg = $('loginPeek');
+const PEEK_SLIDE_MS = 640;              // must match the CSS transition duration
+const PEEK_HOLD_MS = 1250;              // pause at full peek
+let peekGap = [8000, 25000];            // random idle gap between peeks (ms)
+let peekTimer = null;
+
+const peekRand = (min, max) => min + Math.random() * (max - min);
+const peekMotionOff = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Pick an edge of the card and a spot along it. Percentages are relative to the
+// card-sized peek layer, so this adapts to every width without measuring; the
+// 10–66% range keeps the doctor clear of the card's rounded corners.
+function peekSpot() {
+  const along = `${peekRand(10, 66).toFixed(1)}%`;
+  return [
+    { pos: { top: '0px', left: along },    x: '0%',   y: '-58%' },   // top edge
+    { pos: { bottom: '0px', left: along }, x: '0%',   y: '58%' },    // bottom edge
+    { pos: { left: '0px', top: along },    x: '-55%', y: '0%' },     // left edge
+    { pos: { right: '0px', top: along },   x: '55%',  y: '0%' },     // right edge
+  ][Math.floor(Math.random() * 4)];
+}
+
+function peekOnce() {
+  if (!peekImg || peekMotionOff()) return;
+  clearTimeout(peekTimer);
+  const spot = peekSpot();
+  peekImg.classList.remove('is-out');
+  for (const side of ['top', 'right', 'bottom', 'left']) peekImg.style[side] = '';
+  Object.assign(peekImg.style, spot.pos);
+  peekImg.style.setProperty('--peek-x', spot.x);
+  peekImg.style.setProperty('--peek-y', spot.y);
+  void peekImg.offsetWidth;                     // land the new spot before animating
+  peekImg.classList.add('is-out');
+  peekTimer = setTimeout(() => {
+    peekImg.classList.remove('is-out');         // retreat
+    schedulePeek();
+  }, PEEK_SLIDE_MS + PEEK_HOLD_MS);
+}
+
+function schedulePeek() {
+  clearTimeout(peekTimer);
+  peekTimer = setTimeout(peekOnce, peekRand(peekGap[0], peekGap[1]));
+}
+
+function startPeek() {
+  if (!peekImg || peekMotionOff() || peekTimer) return;
+  schedulePeek();
+}
+
+function stopPeek() {
+  clearTimeout(peekTimer);
+  peekTimer = null;
+  if (peekImg) peekImg.classList.remove('is-out');
+}
+
+window.__adminPeek = {
+  now: peekOnce,
+  start: startPeek,
+  stop: stopPeek,
+  setRange: (min, max) => { peekGap = [min, max]; },
+};
+
 /* ---------- auth + MFA (TOTP two-step verification) ----------
  * App-level enforcement: the admin must reach session AAL2 (password + a
  * verified TOTP factor) AND pass isAdmin() before the editor (showApp) is shown.
@@ -66,6 +141,7 @@ function setView(name) {
   mfaEnrollView.hidden = name !== 'enroll';
   mfaChallengeView.hidden = name !== 'challenge';
   appView.hidden = name !== 'app';
+  if (name === 'login') startPeek(); else stopPeek();   // idle delight, login only
 }
 
 async function isAdmin() {

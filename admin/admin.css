@@ -45,6 +45,41 @@ body.admin {
 .admin-login__card h1 { font-family: "Noto Serif TC", serif; font-size: 1.4rem; color: var(--primary-deep); margin: 0; }
 .admin-login__card label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.9rem; color: var(--ink-soft); }
 
+/* ---- login idle delight: the logo doctor peeks out from behind the card ----
+   LOGIN VIEW ONLY. .admin-login / .admin-login__card are shared with the two MFA
+   views, so every rule below is #loginView-scoped on purpose.
+
+   .admin-login__peek is a layer that exactly overlays the card — same grid cell,
+   same width, stretched to the card's height (align-content:center makes the row
+   card-height instead of viewport-height) — so the doctor can be anchored to the
+   card's own edges without measuring anything in JS. It paints BEHIND the card
+   and takes no pointer events, so the form stays fully usable; the card's solid
+   --surface background is what hides the doctor between peeks.
+   No glow, no blur, no gradient, no shadow — a plain image that slides. */
+#loginView { align-content: center; overflow: hidden; }
+#loginView .admin-login__card { grid-area: 1 / 1; position: relative; z-index: 1; }
+#loginView .admin-login__peek {
+  grid-area: 1 / 1;                 /* same cell as the card */
+  justify-self: center; align-self: stretch;
+  position: relative;
+  width: 100%; max-width: 380px;
+  z-index: 0;                       /* behind the card */
+  pointer-events: none;             /* must never block email / 密碼 / 登入 */
+}
+#loginView .admin-login__peek-img {
+  position: absolute;
+  width: 56px; height: 56px;
+  transform: translate(0, 0);       /* resting: fully behind the card */
+  transition: transform 640ms cubic-bezier(0.33, 0, 0.2, 1);
+}
+#loginView .admin-login__peek-img.is-out {
+  transform: translate(var(--peek-x, 0%), var(--peek-y, 0%));
+}
+/* Reduced motion: no animation AND no visible element at all. */
+@media (prefers-reduced-motion: reduce) {
+  #loginView .admin-login__peek { display: none; }
+}
+
 input, textarea, select {
   font: inherit; color: var(--ink);
   background: var(--surface);

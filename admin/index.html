@@ -33,6 +33,14 @@
     <button type="submit" class="admin-btn admin-btn--primary" id="loginBtn">登入</button>
     <p id="loginError" class="admin-error" role="alert" aria-live="polite"></p>
   </form>
+  <!-- Idle delight, login screen only: the logo doctor peeks out from behind the
+       card at random intervals (see admin.css + app.js). Purely decorative —
+       a sibling of the form on purpose (never a form control, so it cannot
+       affect autocomplete or submission), pointer-events:none, and painted
+       BEHIND the card. Disabled entirely under prefers-reduced-motion. -->
+  <div class="admin-login__peek" aria-hidden="true">
+    <img id="loginPeek" class="admin-login__peek-img" src="../assets/logo.png" alt="" width="56" height="56" />
+  </div>
 </section>
 
 <!-- ===== MFA: second-factor challenge (a verified TOTP factor already exists) ===== -->
