@@ -540,7 +540,16 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
 @media (max-width: 900px) {
   .footer__top { grid-template-columns: 1fr; gap: var(--s-5); }
 }
-@media (max-width: 760px) {
+/* Collapsed (hamburger) navigation.
+   Breakpoint measured, not guessed: the desktop header bar needs 1127px of
+   intrinsic width (brand 195 + 6 nav links 575 + search 40 + 中文|EN 92 + 立即預約 129,
+   plus 4×24px flex gaps). Measured on a served page with the search trigger injected:
+   below 1163px viewport the 立即預約 CTA / 中文|EN / search icon start going off-screen
+   (body{overflow-x:hidden} used to hide that, leaving them silently unreachable), and a
+   full 24px page gutter — the same gutter .wrap gives every other element — only exists
+   from 1211px up. So the collapsed menu owns everything up to 1210px; the one-line
+   desktop header only runs where it genuinely fits. */
+@media (max-width: 1210px) {
   .nav__links, .nav__cta { display: none; }
   .nav__toggle { display: inline-flex; }
   /* tighten so brand + language toggle + hamburger all fit the bar */
@@ -579,6 +588,9 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   .nav__links.open .nav__menu-cta:hover { color: #fff; background: var(--primary-deep); border-color: var(--primary-deep); }
   .nav__links.open .nav__menu-cta:focus-visible { outline: 2px solid var(--primary-deep); outline-offset: 3px; }
   .nav__links.open .nav__menu-cta svg { width: 16px; height: 16px; }
+}
+/* footer only — deliberately stays at 760px; it is not tied to the nav breakpoint above */
+@media (max-width: 760px) {
   .footer__locs { grid-template-columns: 1fr; }
 }
 /* on phones, compact the brand so brand + language toggle + hamburger
