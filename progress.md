@@ -2,7 +2,28 @@
 
 Orientation note for the next session. See `site-spec.md` for the full content brief (source of truth) and `CLAUDE.md` for the rules (design rules + compliance live there).
 
-_Last updated: 2026-08-02 (session 50)_
+_Last updated: 2026-08-03 (session 51)_
+
+## 🗓️ 2026-08-03 (session 51) — 修 header 在平板／小筆電被裁切：從根因（bar 比內容欄還寬 35px）下手，順帶補收合選單的鍵盤可用性
+
+收掉 session 50 後續清單第（5）項：header 在約 761–1030px 之間裝不下、但漢堡鈕還沒接手，於是「最新消息」被切一半，搜尋圖示、`中文|EN`、`立即預約` 直接跑到畫面外且**無法點擊**——因為 `body { overflow-x: hidden }` 把捲軸吃掉，所以沒有任何可見症狀。違反 CLAUDE.md 的「header 於 desktop 寬度必須單行」規則。**本期只動 `assets/site.css` 與 `assets/site.js` 兩個檔案，未碰任何 HTML**——31 個 root 頁面與產生器所有者的檔案一律未動，公開頁本期零位元組變動。**未碰 RLS／auth／已核可醫療文案／`privacy.html`／產生器程式／admin 應用。**
+
+- **中途的權宜修法已被人類否決（必須記錄，這是最終數字長這樣的原因）。** 第一版只把收合斷點從 `max-width: 760px` 拉高到 **1210px**，症狀確實消失、也通過 QA，但那是繞過而非修好——`立即預約` 仍然凸在版面外，只是換成在更寬的區間才露餡。**人類明確否決此版、要求改走根因**，因此才有下面的瘦身。（歷史上這一版已落地為 commit `1c5d0f7`，最終版為 `58aa8da`。）
+- **根因（工作中量出來的）：header bar 比它自己的內容欄寬 35.17px。** `--maxw` 1140 − 2×24px padding = **1092px 內容欄**，而 header 的固有寬度是 **1127.18px**。也就是說 `立即預約` 在**每一個** desktop 寬度（含 1440）都坐在其他所有元素對齊線的右邊約 35px——這才是 header 早在約 1163px 就開始失敗、而不是接近 760px 才失敗的原因。
+- **修法＝把 bar 瘦下來，而不是搬斷點。**（1）`site.css:119-128` `.nav { gap }` `--s-4`→`--s-3`（24px→16px，4 個 gap 共 −32px），並加註「為了塞進內容欄」的理由。（2）`site.css:165-172` `.nav__links a` 的 padding-inline `0.85rem`→`0.75rem`（6 個連結 ×2 側 = −19.12px）；**字級、標籤文字、內部 `0.35rem` gap 一律未動**。（3）`site.css:552-566` 收合斷點 `max-width: 760px` → **`max-width: 1129px`**，註解改寫成量測算式。（4）`site.css:222`、`site.js:31-33` 兩處 `<=760px` 的過期註解更新為 `<=1129px`。
+- **最終數字（測試者以 route interception 對 HEAD 獨立重現全部項目）：** header 固有寬度 1127.18 → **1076.05px**（−51.12）；`.nav__cta` 於 1440 的右緣 1301.17 → **1266.00**，恰好等於 `.wrap` 內容欄右緣 1266；**overhang 由 +35.17px 變成 0.00px**；desktop header 可用到的最低點由「約 1163px（以下開始裁切）」變成 **1130px**。新硬底線 `1076.06 + 48 = 1124.06` → 1125px，斷點訂在 1129px（desktop 自 1130 起）＝底線再加約 5px 緩衝。於 1130px 時仍有 5.95px 餘裕、`ctaRight == contentRight == 1106`、overhang 0。**iPad 橫向（1180／1194）與 1152×864 桌機因此保有完整 header，含始終可見的 `立即預約` CTA。**
+- **`.footer__locs` 刻意留在 760px（`site.css:604`）。** 把它從收合導覽的 media query 裡拆出來、自成一個 `@media (max-width: 760px)` 區塊，避免頁尾的單欄收合被順手拖到新斷點——頁尾與導覽本來就不該共用同一個門檻。
+- **收合選單的鍵盤可用性（`site.js:44-119`）——不動任何 HTML 的前提下修好。** 因為 `#navLinks` 在 DOM 順序上排在 `.nav__toggle` 之前，原本從漢堡鈕按 Tab 會**跳過全部 7 個選單項目**直接落進內文；現在改由 JS 管焦點：開啟時焦點移到第 1 個項目，Tab／Shift+Tab 在「漢堡鈕＋選單項目」共 8 個元素間形成封閉循環。Esc 於漢堡鈕或任一選單項目上皆可關閉並把焦點交回漢堡鈕。新增 `matchMedia('(max-width: 1129px)')` 的 `change` 監聽，跨越斷點時重置 `.open`＋`aria-expanded`，修掉「手機開選單→放大→縮回→選單自己重開」的殘留狀態。`setMenuState()` 把 `.open`／`aria-expanded`／`aria-label` 綁在一起更新，三者不可能脫鉤。**選擇 JS 而非調整 DOM 順序，是為了不動 31 個頁面的 header 標記、不製造產生器變動。**
+- **`site.css:260-263` 新增 `.nav__toggle:focus-visible`（2px solid `var(--primary)`、offset 2px），是這次改動自己造出來的需求。** 上述鍵盤修法會在每次互動中**兩次**以程式把焦點送回漢堡鈕，若仍倚賴瀏覽器預設外框，等於由本次改動引入一個 WCAG 2.4.7 迴歸。實測 Esc 後為 `outline: 2px solid rgb(40,100,92)`、`box-shadow: none`、`filter: none`——**銳利、無 glow，符合設計規則**，對比 6.35:1。
+- **`site.js:207-209` 只加註解、不改值。** 明記 `site.js:271` 統計用的 `matchMedia('(max-width: 760px)')` 裝置門檻**刻意維持 760px**、與導覽斷點脫鉤，否則 `events.device` 的歷史分類會斷層。測試者已確認該值未變。
+- **逐位元組閘門：PASS。** 三個產生器（team／news／faq）重跑，**全部輸出「No change」**（`team.html`、`news.html`、17 篇 `faq-q*.html`、`assets/search-index.js`、`sitemap.xml`），`status-before` 與 `status-after` 完全相同。本 session 交件前再跑一次，同樣全數「No change」、`git status --porcelain` 為空。
+- **clinic-audit（report-only）：PASS。** §九 PASS／設計規則 PASS／無障礙 PASS，零新增發現。
+- **測試者驗證範圍。** **全部 15 個含 nav 的頁面**於 1129／1130／1440 量測結果完全一致（`intr=1076.05 navH=72 overhang=0 docOverflow=0`）；`en/index.html` 有 `.nav` 但無 `#navLinks`，既有的 `if (toggle && links)` 守衛正確處理、無 JS 錯誤。斷點以 1124/1125/1126/1128/1129/1130/1131/1135 掃描，轉換點恰為 1129→1130。**真實鍵盤事件**：Enter 開啟→焦點落在「關於大豐」→Tab1–6 走完全部標籤→Tab7 到漢堡鈕→Tab8 繞回；Shift+Tab 反向正確；Esc 由選單項目與由漢堡鈕兩種情境皆關閉、焦點復位、`aria-label` 回到「開啟選單」。Resize 900 → 1300 → 900 維持關閉。搜尋覆蓋層與預約 modal 開關與焦點復位皆正常；nav 點擊目標 85.5×44.9px（「院區・門診」100.8）、搜尋 40×40，均高於 24×24 的 AA 下限。零 JS 錯誤、零 CSP violation、≥375px 任一寬度皆無橫向捲動。
+- **人類手動確認（稽核軌跡）：**（1）**瘦身後的 header（nav gap 24→16px、連結 padding 0.85→0.75rem，影響全部 31 頁的 chrome）讀起來是「沉穩」而非「擁擠」**——這是 CLAUDE.md 保留給院長的「restraint vs density」判斷，由人類親自看過並確認。（2）**1130px 是正確的收合門檻。** 兩項皆為人類明確確認，非測試推導。
+- **未動：** RLS 政策／`is_admin()`／`is_admin_mfa()`、auth 設定、Edge Function、三個產生器程式、admin 應用、`privacy.html`、任何已核可醫療文案、17 篇衛教專欄、31 個 root HTML 與 `/en/*` 的標記。統計用的 760px 裝置門檻與 `.footer__locs` 的 760px 皆刻意保持原值。
+- **後續（已知／既有問題，本期刻意未修）：**（1）**320px 視窗仍有約 22px 的 header 溢出**——在 HEAD 上完全相同，屬既有問題；低於 375px 的驗收下限，且不在本次 diff 的槓桿範圍內（≤500px 時 `.nav` 的 gap 來自 `max-width:500px` 的 query、`.nav__links` 為 `display:none`）。（2）**由選單內 CTA 開啟的預約 modal，關閉後焦點掉回 `<body>`**——已對 HEAD 重播同一序列確認為既有問題。（3）`.brand` 仍使用瀏覽器預設焦點框（本次 diff 沒有任何路徑會把焦點送到它）。（4）**`site.js` 的 `NAV_COLLAPSE_MQ` 與 CSS 斷點是重複的兩份真相**，兩側已互相加註交叉參照；萬一漂移只會讓 resize 重置時機不準，不會弄壞選單。（5）`news.html:589` 裝飾用 `<svg>` 缺 `aria-hidden="true"`（產生器所有者的檔案）。（6）`en/index.html` 的 `/en/assets/nhi-logo.png` 404（英文佔位頁的相對路徑 bug，session 50 即已列管）。
+- **CLAUDE.md 同步更新（規則異動，非一次性修補）：** 「Header/nav must always fit on one line at desktop widths」補上量測出來的硬約束——header 固有寬度必須塞進 **1092px** 內容欄（`--maxw` 1140 − 2×24），溢出時**要瘦 bar、不要拉斷點**；收合斷點（現為 1129px）是由該量測推導而非挑選，且與 `site.js` 的 `NAV_COLLAPSE_MQ` 必須同步；並明列 `.footer__locs` 與統計 `device` 門檻這兩個 760px **不得**跟著移動。
+- **流程異常（如實記錄）：** 本期的程式碼改動**在本筆記寫成之前就已由人類提交**（`1c5d0f7 tweaks` 為被否決的權宜版、`58aa8da sizing` 為根因版），與 CLAUDE.md「提交前務必先更新 `progress.md`」的慣例相反。本筆記為事後補記；交件時工作樹只剩 `progress.md` 與 `CLAUDE.md`。
 
 ## 🗓️ 2026-07-31 (session 50) — Phase A：無 cookie 互動統計（**僅蒐集，無儀表板**）＋隱私權政策頁
 
