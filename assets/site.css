@@ -18,6 +18,9 @@
   --primary-deep:#0E4A44;
   --primary-soft:#E3EFEC;
   --accent:      #CC7A45;
+  /* --accent 深一階暖棕：實心底色配白字時用這個（--accent 白字僅 3.26:1，未達 AA）。
+     白字 5.67:1、--accent-soft 底 4.68:1，皆通過 WCAG AA */
+  --accent-deep: #9a5527;
   --accent-soft: #F6E7D7;
   /* LINE 預約按鈕用綠：較品牌綠 (#06C755) 加深，白字達 WCAG AA（resting 5.43:1、hover 7.1:1） */
   --line-green:      #117A38;
@@ -1062,7 +1065,7 @@ a.loc:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,
   vertical-align: middle;
 }
 .search-result__badge--faq { background: var(--primary-soft); color: var(--primary-deep); }
-.search-result__badge--location { background: var(--accent-soft); color: #9a5527; } /* 深一階暖棕，確保對比 */
+.search-result__badge--location { background: var(--accent-soft); color: var(--accent-deep); } /* 深一階暖棕，確保對比 */
 .search-result__badge--news { background: var(--bg-2); color: var(--ink-soft); }
 
 /* 查無結果 */

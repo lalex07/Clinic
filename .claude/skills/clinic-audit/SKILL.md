@@ -149,13 +149,18 @@ Zero-tolerance rules. The whole point is grounded, crisp, calm — no light emis
 
 7. **Color contrast (WCAG AA = 4.5:1 normal text, 3:1 large/UI).** Re-check whenever a palette token or a text color changes. Background is cream `--bg #FAF6EF` / white `--surface #FFFFFF`.
    Known-good baseline (passes AA): `--ink #2B2A26`, `--ink-soft #5E584E` (6.5:1), `--primary #28645C` (6.35:1), white-on-`--primary` (6.85:1), `--ink-faint #736C5E` (4.83:1 on cream — was darkened from `#918A7C` which FAILED).
+   Also known-good: `--accent-deep #9a5527` — the AA-safe accent, for **white text on a solid accent fill** (5.67:1 white-on-`--accent-deep`; 4.68:1 as a foreground on `--accent-soft`). Solid accent chips/pills use this token, never `--accent`.
    Use-with-care (large text / icons only, ~3:1): `--accent #CC7A45` (3.03:1 on cream) — never use as small body text; for small text use `--ink-soft` or `--primary`.
 
    **Don't only check text-on-cream.** Any element that overrides its background to a colored token — buttons, chips, pills, callouts (`.svc-callout`, `.svc-future`), the teal CTA bands — must have its **text checked against that element's own background**, not against cream. And check the **`:hover` background too** (a darker hover can drop a label below 4.5:1 even when the resting state passes). Grep for the override sites, then run each fg/bg pair:
    ```
    grep -rn "background:[^;]*var(--accent)\|background:[^;]*var(--primary)\|background: *#" *.html assets/*.css   # find non-cream backgrounds; note the text color + any :hover bg
    ```
-   **Known FAIL to watch for (regression guard):** white `#FFFFFF` text on `--accent #CC7A45` = **3.27:1 → FAILS** (and on the `#b96a38` hover = 4.05:1, still fails). The 立即預約 CTA on `team.html`/`about.html` hit this. In-system fix: **darken the label** (a near-black like `#121110` clears 4.5:1 on both `#CC7A45` resting and `#b96a38` hover — note `--ink #2B2A26` is only 4.40:1 on accent and **does not** clear it), **or** swap the background to a passing token (white on `--primary` is 6.85:1). Keep the 院長-approved terracotta; change only the text color.
+   **Known FAIL to watch for (regression guard):** white `#FFFFFF` text on `--accent #CC7A45` = **3.27:1 → FAILS** (and on the `#b96a38` hover = 4.05:1, still fails). The 立即預約 CTA on `team.html`/`about.html` hit this. In-system fix: **darken the label** (a near-black like `#121110` clears 4.5:1 on both `#CC7A45` resting and `#b96a38` hover — note `--ink #2B2A26` is only 4.40:1 on accent and **does not** clear it), **or** swap the background to a passing token (white on `--primary` is 6.85:1).
+   **Two established patterns — don't "correct" one into the other:**
+   - **CTA buttons** (立即預約 and friends) keep the 院長-approved terracotta `--accent` and darken the *label* to `#121110` (5.78:1). Here the old advice holds: change only the text color.
+   - **Solid accent chips / pills / badges** (`.svc-tag`, `.svc-soon__badge`, `.tl-soon`, `.loc-card__tag--accent`, `.soon-banner__badge`) keep **white** text and darken the *background* to `var(--accent-deep)` (5.67:1) — white-on-terracotta at this size reads as a label, and a dark label on a small pill loses the accent's signalling role.
+   Never revert a chip's `--accent-deep` back to `--accent`: the same 「2026 年 10 月開幕」 pill appears on `services.html`, `about.html`, `locations.html` and `location-zhongshan.html`, and a partial change makes it render two different colours across pages. The token exists so there is one authoritative source — `grep -rn "9a5527" *.html assets/` should return exactly one code hit, the `:root` declaration in `assets/site.css`.
    To check a pair (defaults to cream bg; pass a second hex to check against any element background, e.g. a button or its hover):
    ```
    python3 - <<'PY'

@@ -63,7 +63,8 @@
   padding: 0.18rem 0.6rem;
   border-radius: 6px;
 }
-.loc-card__tag--accent { background: var(--accent); }
+/* --accent-deep 而非 --accent：白字配 --accent 僅 3.26:1，未達 WCAG AA */
+.loc-card__tag--accent { background: var(--accent-deep); }
 .loc-card__tag--soon { background: var(--ink-faint); }
 
 .loc-card__row {
@@ -367,7 +368,9 @@
   font-weight: 700;
   font-size: 0.92rem;
   color: #fff;
-  background: var(--accent);
+  /* --accent-deep 而非 --accent：白字配 --accent 僅 3.26:1，未達 WCAG AA。
+     與 services.html 的 .svc-soon__badge 同一顆藥丸，兩頁須一致 */
+  background: var(--accent-deep);
   padding: 0.4rem 0.9rem;
   border-radius: 999px;
 }
